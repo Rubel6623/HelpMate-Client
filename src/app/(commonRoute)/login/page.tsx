@@ -1,29 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "motion/react";
-import { ArrowRight, Lock, Phone } from "lucide-react";
-import { Button } from "@/src/components/ui/button";
-import { Input } from "@/src/components/ui/input";
-import { Label } from "@/src/components/ui/label";
 import Link from "next/link";
+import LoginForm from "@/src/components/modules/auth/login/LoginForm";
 
 export default function LoginPage() {
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Login attempt", { phone, password });
-    // Implementation for login logic will go here
-  };
-
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-black overflow-hidden px-4">
-      {/* Background Gradients */}
-      <div className="absolute top-0 right-0 w-[50rem] h-[50rem] bg-primary/20 blur-[10rem] rounded-full translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-0 left-0 w-[40rem] h-[40rem] bg-purple-600/10 blur-[10rem] rounded-full -translate-x-1/2 translate-y-1/2" />
+    <div className="relative min-h-screen flex items-center justify-center bg-transparent overflow-hidden px-4">
 
+      
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -42,56 +27,7 @@ export default function LoginPage() {
           <p className="text-gray-400">Please enter your details to login.</p>
         </div>
 
-        <div className="p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-2xl shadow-2xl">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="phone" className="text-gray-300 ml-1">Phone Number</Label>
-              <div className="relative">
-                <Phone className="absolute left-4 top-3 h-5 w-5 text-gray-500" />
-                <Input
-                  id="phone"
-                  placeholder="01XXXXXXXXX"
-                  className="bg-white/5 border-white/10 text-white pl-12 h-12 rounded-xl focus:border-primary transition-colors"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex justify-between items-center px-1">
-                <Label htmlFor="password" className="text-gray-300">Password</Label>
-                <Link href="#" className="text-sm text-primary hover:underline">Forgot password?</Link>
-              </div>
-              <div className="relative">
-                <Lock className="absolute left-4 top-3 h-5 w-5 text-gray-500" />
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  className="bg-white/5 border-white/10 text-white pl-12 h-12 rounded-xl focus:border-primary transition-colors"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-
-            <Button className="w-full h-12 rounded-xl text-lg font-bold bg-primary hover:bg-primary/90 transition-all shadow-xl shadow-primary/20">
-              Sign In
-            </Button>
-          </form>
-
-          <div className="mt-8 text-center">
-            <p className="text-gray-400">
-              Don't have an account?{" "}
-              <Link href="/signup" className="text-white font-bold hover:underline">
-                Create account
-              </Link>
-            </p>
-          </div>
-        </div>
+        <LoginForm />
 
         {/* Info Box */}
         <div className="mt-8 p-4 rounded-2xl bg-primary/10 border border-primary/20 flex items-start gap-4">

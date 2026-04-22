@@ -56,37 +56,37 @@ export const Navbar = () => {
   ];
 
   return (
-    <section className="py-4">
+    <section className="py-4 bg-transparent sticky top-0 z-50 backdrop-blur-md">
       <div className="container">
         <nav className="flex items-center justify-between">
           <a
             href="/"
             className="flex items-center gap-2"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white shadow-lg shadow-primary/20 transition-transform hover:scale-105">
-              <span className="text-2xl font-bold">Q</span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-black shadow-lg shadow-white/10 transition-transform hover:scale-105">
+              <span className="text-2xl font-bold italic">Q</span>
             </div>
-            <span className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">
+            <span className="text-2xl font-bold tracking-tight text-white">
               QuickStep
             </span>
           </a>
           <NavigationMenu className="hidden lg:block">
             <NavigationMenuList>
               <NavigationMenuItem>
-                <NavigationMenuTrigger>Features</NavigationMenuTrigger>
+                <NavigationMenuTrigger className="bg-transparent text-gray-300 hover:text-white">Features</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="grid w-[600px] grid-cols-2 p-3">
+                  <div className="grid w-[600px] grid-cols-2 p-3 bg-black/90 border border-white/10 backdrop-blur-xl">
                     {features.map((feature, index) => (
                       <NavigationMenuLink
                         href={feature.href}
                         key={index}
-                        className="rounded-md p-3 transition-colors hover:bg-muted/70"
+                        className="rounded-md p-3 transition-colors hover:bg-white/10"
                       >
                         <div key={feature.title}>
-                          <p className="mb-1 font-semibold text-foreground">
+                          <p className="mb-1 font-semibold text-white">
                             {feature.title}
                           </p>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-sm text-gray-400">
                             {feature.description}
                           </p>
                         </div>
@@ -98,7 +98,7 @@ export const Navbar = () => {
               <NavigationMenuItem>
                 <NavigationMenuLink
                   href="#"
-                  className={navigationMenuTriggerStyle()}
+                  className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-300 hover:text-white`}
                 >
                   Products
                 </NavigationMenuLink>
@@ -106,7 +106,7 @@ export const Navbar = () => {
               <NavigationMenuItem>
                 <NavigationMenuLink
                   href="#"
-                  className={navigationMenuTriggerStyle()}
+                  className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-300 hover:text-white`}
                 >
                   Resources
                 </NavigationMenuLink>
@@ -114,7 +114,7 @@ export const Navbar = () => {
               <NavigationMenuItem>
                 <NavigationMenuLink
                   href="#"
-                  className={navigationMenuTriggerStyle()}
+                  className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-300 hover:text-white`}
                 >
                   Contact
                 </NavigationMenuLink>
@@ -122,33 +122,32 @@ export const Navbar = () => {
             </NavigationMenuList>
           </NavigationMenu>
           <div className="hidden items-center gap-4 lg:flex">
-            <Button variant="outline">Sign in</Button>
-            <Button>Start for free</Button>
+            <Button variant="ghost" className="text-white hover:bg-white/10">Sign in</Button>
+            <Button className="bg-white text-black hover:bg-white/90">Start for free</Button>
           </div>
           <Sheet>
             <SheetTrigger asChild className="lg:hidden">
-              <Button variant="outline" size="icon">
+              <Button variant="outline" size="icon" className="border-white/10 text-white">
                 <MenuIcon className="h-4 w-4" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="top" className="max-h-screen overflow-auto">
+            <SheetContent side="top" className="max-h-screen overflow-auto bg-black/95 border-white/10">
               <SheetHeader>
                 <SheetTitle>
                   <a
-                    href="https://www.shadcnblocks.com"
+                    href="/"
                     className="flex items-center gap-2"
                   >
-                    <img
-                      src="https://shadcnblocks.com/images/block/logos/shadcnblockscom-icon.svg"
-                      className="max-h-8"
-                      alt="Shadcnblocks"
-                    />
-                    <span className="text-lg font-semibold tracking-tighter">
-                      Shadcnblocks.com
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-black shadow-lg">
+                      <span className="text-lg font-bold italic">Q</span>
+                    </div>
+                    <span className="text-xl font-bold tracking-tight text-white">
+                      QuickStep
                     </span>
                   </a>
                 </SheetTitle>
               </SheetHeader>
+
               <div className="flex flex-col p-4">
                 <Accordion type="single" collapsible className="mt-4 mb-2">
                   <AccordionItem value="solutions" className="border-none">

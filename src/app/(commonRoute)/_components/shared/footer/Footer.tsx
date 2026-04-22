@@ -1,7 +1,9 @@
 "use client";
 
+import { SiFacebook, SiX, SiInstagram, SiLinkerd } from "react-icons/si";
+import {FaLinkedin, FaInstagram, FaFacebook, FaTwitter} from 'react-icons/fa';
 import { Send } from "lucide-react";
-import { SiInstagram, SiTwitter, SiFacebook, SiLinkedin } from "si-icons/react";
+import Link from "next/link";
 
 
 export const Footer = () => {
@@ -25,10 +27,10 @@ export const Footer = () => {
               Making everyday life easier.
             </p>
             <div className="flex gap-4">
-              <SocialIcon icon={SiFacebook} />
-              <SocialIcon icon={SiTwitter} />
-              <SocialIcon icon={SiInstagram} />
-              <SocialIcon icon={SiLinkedin} />
+              <SocialIcon icon={FaFacebook} />
+              <SocialIcon icon={FaTwitter} />
+              <SocialIcon icon={FaInstagram} />
+              <SocialIcon icon={FaLinkedin} />
             </div>
           </div>
 
