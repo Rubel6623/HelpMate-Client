@@ -16,10 +16,10 @@ export const Footer = () => {
           <div className="col-span-1 md:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-3 mb-6">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-black shadow-xl">
-                <span className="text-xl font-bold italic">Q</span>
+                <span className="text-xl font-bold italic">H</span>
               </div>
               <span className="text-2xl font-extrabold tracking-tight">
-                QuickStep
+                HelpMate
               </span>
             </div>
             <p className="text-gray-400 text-lg leading-relaxed mb-8 max-w-sm">
@@ -74,7 +74,7 @@ export const Footer = () => {
 
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-gray-500 text-sm">
-            © 2026 QuickStep. All rights reserved.
+            © 2026 HelpMate. All rights reserved.
           </p>
           <div className="flex gap-8 text-sm text-gray-500">
             <a href="/privacy" className="hover:text-white transition-colors">Privacy Policy</a>

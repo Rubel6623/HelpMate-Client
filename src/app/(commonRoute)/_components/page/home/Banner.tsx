@@ -43,10 +43,10 @@ const BannerPage = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-black shadow-xl">
-                    <span className="text-xl font-bold italic">Q</span>
+                    <span className="text-xl font-bold italic">H</span>
                   </div>
                   <span className="ml-3 text-2xl font-extrabold tracking-tight text-white">
-                    QuickStep
+                    HelpMate
                   </span>
                 </div>
                 <button onClick={() => setMobileMenuOpen(false)}>
@@ -96,7 +96,7 @@ const BannerPage = () => {
               Post a Task
             </button>
             <button className="h-14 rounded-full border-2 border-white/20 bg-white/5 px-10 text-lg font-bold text-white backdrop-blur-md transition-all hover:bg-white/10 active:scale-95">
-              Become a Runner
+              Become a Helper
             </button>
           </div>
 

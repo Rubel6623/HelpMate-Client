@@ -43,7 +43,7 @@ export const updateUser = async (id: string, data: any) => {
   const token = storeCookie.get("token")?.value;
 
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/users/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/users/${id}/status`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

@@ -8,7 +8,7 @@ const reviews = [
     id: 1,
     user: "David Smith",
     role: "Regular Customer",
-    content: "QuickStep saved my day! I was stuck in a meeting and needed some urgent documents delivered. My runner was professional and fast.",
+    content: "HelpMate saved my day! I was stuck in a meeting and needed some urgent documents delivered. My helper was professional and fast.",
     rating: 5,
     avatar: "https://i.pravatar.cc/150?u=david"
   },
@@ -24,7 +24,7 @@ const reviews = [
     id: 3,
     user: "Michael Scott",
     role: "Office Manager",
-    content: "We use QuickStep for small office errands. It's much cheaper than a courier and just as reliable. Highly recommended for local tasks.",
+    content: "We use HelpMate for small office errands. It's much cheaper than a courier and just as reliable. Highly recommended for local tasks.",
     rating: 4,
     avatar: "https://i.pravatar.cc/150?u=michael"
   }
@@ -41,7 +41,7 @@ export const UserReviews = () => {
               What Our <span className="text-primary">Community</span> Says
             </h2>
             <p className="text-gray-400 text-lg">
-              Real stories from real people using QuickStep to simplify their daily lives.
+              Real stories from real people using HelpMate to simplify their daily lives.
             </p>
           </div>
           <div className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white/5 border border-white/10">

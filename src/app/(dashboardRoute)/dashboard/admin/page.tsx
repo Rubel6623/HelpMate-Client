@@ -1,14 +1,60 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { Users, LayoutDashboard, AlertTriangle, CreditCard, ArrowUp, ArrowDown } from "lucide-react";
+import { Users, LayoutDashboard, AlertTriangle, CreditCard, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
+import { getUsers } from "@/src/services/user";
+import { getTasks } from "@/src/services/tasks";
+import { getDisputes } from "@/src/services/disputes";
 
 export default function AdminDashboard() {
+  const [data, setData] = useState({
+    users: [],
+    tasks: [],
+    disputes: [],
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const [usersRes, tasksRes, disputesRes] = await Promise.all([
+          getUsers(),
+          getTasks(),
+          getDisputes(),
+        ]);
+
+        setData({
+          users: usersRes?.data || [],
+          tasks: tasksRes?.data || [],
+          disputes: disputesRes?.data || [],
+        });
+      } catch (error) {
+        console.error("Failed to fetch dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Loader2 className="w-10 h-10 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const activeTasksCount = data.tasks.filter((t: any) => t.status !== "COMPLETED" && t.status !== "CANCELLED").length;
+  const totalRevenue = data.tasks.filter((t: any) => t.status === "COMPLETED").reduce((acc: number, t: any) => acc + (t.offerPrice || 0), 0);
+
   const stats = [
-    { label: "Total Users", value: "1,284", icon: Users, change: "+12%", trend: "up", color: "text-blue-600" },
-    { label: "Active Tasks", value: "156", icon: LayoutDashboard, change: "+5%", trend: "up", color: "text-purple-600" },
-    { label: "Revenue", value: "৳45,200", icon: CreditCard, change: "+18%", trend: "up", color: "text-green-600" },
-    { label: "Disputes", value: "4", icon: AlertTriangle, change: "-2%", trend: "down", color: "text-red-600" },
+    { label: "Total Users", value: data.users.length.toString(), icon: Users, change: "+0%", trend: "up", color: "text-blue-600" },
+    { label: "Active Tasks", value: activeTasksCount.toString(), icon: LayoutDashboard, change: "+0%", trend: "up", color: "text-purple-600" },
+    { label: "Est. Revenue", value: `৳${totalRevenue}`, icon: CreditCard, change: "+0%", trend: "up", color: "text-green-600" },
+    { label: "Disputes", value: data.disputes.length.toString(), icon: AlertTriangle, change: "0%", trend: "down", color: "text-red-600" },
   ];
 
   return (
@@ -46,69 +92,65 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Recent Users Table */}
-        <div className="p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-gray-100 dark:border-white/5 shadow-sm">
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-2xl font-bold text-black dark:text-white">New Verifications</h3>
+        <div className="p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-gray-100 dark:border-white/5 shadow-sm h-[400px] overflow-y-auto">
+          <div className="flex items-center justify-between mb-8 sticky top-0 bg-white dark:bg-zinc-900 z-10 pb-2">
+            <h3 className="text-2xl font-bold text-black dark:text-white">Recent Users</h3>
             <button className="text-primary font-bold hover:underline">View all</button>
           </div>
-          <div className="space-y-6">
-            {[1, 2, 3].map((_, i) => (
+          <div className="space-y-4">
+            {data.users.slice(0, 5).map((user: any, i: number) => (
               <div key={i} className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors cursor-pointer">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold">
-                    AS
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold uppercase">
+                    {user.name.substring(0, 2)}
                   </div>
                   <div>
-                    <h4 className="font-bold text-black dark:text-white">Ariful Islam</h4>
-                    <p className="text-sm text-gray-400 italic">Runner • DU</p>
+                    <h4 className="font-bold text-black dark:text-white">{user.name}</h4>
+                    <p className="text-sm text-gray-400 italic capitalize">{user.role?.toLowerCase()} • {user.isActive ? 'Active' : 'Suspended'}</p>
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <button className="px-4 py-2 rounded-lg bg-green-500 text-white text-xs font-bold hover:bg-green-600 transition-colors">
-                    Approve
-                  </button>
-                  <button className="px-4 py-2 rounded-lg bg-red-500/10 text-red-500 text-xs font-bold hover:bg-red-500 hover:text-white transition-colors">
-                    Reject
-                  </button>
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${user.isActive ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
+                    {user.isActive ? 'ACTIVE' : 'SUSPENDED'}
+                  </span>
                 </div>
               </div>
             ))}
+            {data.users.length === 0 && (
+              <p className="text-center text-gray-500 mt-10">No users found.</p>
+            )}
           </div>
         </div>
 
-        {/* System Health */}
-        <div className="p-8 rounded-3xl bg-black text-white shadow-xl relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2" />
-            <h3 className="text-2xl font-bold mb-8">System Health</h3>
-            <div className="space-y-8">
+        {/* Recent Tasks */}
+        <div className="p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-gray-100 dark:border-white/5 shadow-sm h-[400px] overflow-y-auto">
+          <div className="flex items-center justify-between mb-8 sticky top-0 bg-white dark:bg-zinc-900 z-10 pb-2">
+            <h3 className="text-2xl font-bold text-black dark:text-white">Recent Tasks</h3>
+            <button className="text-primary font-bold hover:underline">View all</button>
+          </div>
+          <div className="space-y-4">
+            {data.tasks.slice(0, 5).map((task: any, i: number) => (
+              <div key={i} className="flex flex-col gap-2 p-4 rounded-2xl bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors cursor-pointer">
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-                        <span className="font-bold">API Services</span>
-                    </div>
-                    <span className="text-gray-400">Operational</span>
+                  <h4 className="font-bold text-black dark:text-white truncate max-w-[200px]">{task.title}</h4>
+                  <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                    task.status === 'COMPLETED' ? 'bg-green-500/10 text-green-500' : 
+                    task.status === 'OPEN' ? 'bg-blue-500/10 text-blue-500' : 
+                    'bg-yellow-500/10 text-yellow-500'
+                  }`}>
+                    {task.status}
+                  </span>
                 </div>
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-                        <span className="font-bold">Payment Gateway</span>
-                    </div>
-                    <span className="text-gray-400">Operational</span>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-400">Offer: ৳{task.offerPrice}</span>
+                  <span className="text-gray-400">{new Date(task.createdAt).toLocaleDateString()}</span>
                 </div>
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <div className="w-3 h-3 bg-yellow-500 rounded-full" />
-                        <span className="font-bold">SMS Engine</span>
-                    </div>
-                    <span className="text-gray-400 italic">Delayed (3s)</span>
-                </div>
-                <div className="pt-4 border-t border-white/10">
-                    <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-4">Server Load</p>
-                    <div className="w-full h-3 bg-white/10 rounded-full overflow-hidden">
-                        <div className="h-full bg-primary w-[34%]" />
-                    </div>
-                </div>
-            </div>
+              </div>
+            ))}
+            {data.tasks.length === 0 && (
+              <p className="text-center text-gray-500 mt-10">No tasks found.</p>
+            )}
+          </div>
         </div>
       </div>
     </div>

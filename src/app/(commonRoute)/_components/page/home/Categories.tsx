@@ -55,7 +55,7 @@ export const Categories = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-6">
           <div className="max-w-2xl">
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-black dark:text-white">
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-white dark:text-white">
               Errands for <br />
               <span className="text-primary italic">Every Occasion</span>
             </h2>

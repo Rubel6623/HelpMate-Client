@@ -94,7 +94,7 @@ export const RunnerServices = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-6xl font-bold text-black dark:text-white mb-6 tracking-tight"
+            className="text-4xl md:text-6xl font-bold text-white dark:text-white mb-6 tracking-tight"
           >
             Diverse Services for <span className="text-primary italic">Every Need</span>
           </motion.h2>
