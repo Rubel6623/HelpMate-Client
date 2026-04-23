@@ -1,6 +1,9 @@
 "use client";
 
-import { MenuIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { MenuIcon, LogOut, LayoutDashboard, UserCircle, PlusCircle } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import {
   Accordion,
@@ -25,8 +28,27 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/src/components/ui/sheet";
+import { getUser, UserLogOut } from "@/src/services/auth";
 
 export const Navbar = () => {
+  const router = useRouter();
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userData = await getUser();
+      setUser(userData);
+    };
+    fetchUser();
+  }, []);
+
+  const handleLogout = async () => {
+    await UserLogOut();
+    setUser(null);
+    router.push("/");
+    router.refresh();
+  };
+
   const features = [
     {
       title: "How it Works",
@@ -44,14 +66,9 @@ export const Navbar = () => {
       href: "/safety",
     },
     {
-      title: "Become a Runner",
-      description: "Join our community of verified student runners",
-      href: "/signup?role=RUNNER",
-    },
-    {
-      title: "Support",
-      description: "Get help from our 24/7 ops team",
-      href: "/support",
+      title: "About HelpMate",
+      description: "Our mission to support student employment",
+      href: "/about-us",
     },
   ];
 
@@ -59,72 +76,112 @@ export const Navbar = () => {
     <section className="py-4 bg-transparent sticky top-0 z-50 backdrop-blur-md">
       <div className="container">
         <nav className="flex items-center justify-between">
-          <a
+          <Link
             href="/"
             className="flex items-center gap-2"
           >
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-black shadow-lg shadow-white/10 transition-transform hover:scale-105">
-              <span className="text-2xl font-bold italic">Q</span>
+              <span className="text-2xl font-bold italic">H</span>
             </div>
             <span className="text-2xl font-bold tracking-tight text-white">
-              QuickStep
+              HelpMate
             </span>
-          </a>
+          </Link>
+
           <NavigationMenu className="hidden lg:block">
             <NavigationMenuList>
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent text-gray-300 hover:text-white">Features</NavigationMenuTrigger>
+                <NavigationMenuTrigger className="bg-transparent text-gray-300 hover:text-white">Explore</NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="grid w-[600px] grid-cols-2 p-3 bg-black/90 border border-white/10 backdrop-blur-xl">
                     {features.map((feature, index) => (
                       <NavigationMenuLink
-                        href={feature.href}
+                        asChild
                         key={index}
-                        className="rounded-md p-3 transition-colors hover:bg-white/10"
+                        className="rounded-md p-3 transition-colors hover:bg-white/10 cursor-pointer"
                       >
-                        <div key={feature.title}>
+                        <Link href={feature.href}>
                           <p className="mb-1 font-semibold text-white">
                             {feature.title}
                           </p>
                           <p className="text-sm text-gray-400">
                             {feature.description}
                           </p>
-                        </div>
+                        </Link>
                       </NavigationMenuLink>
                     ))}
                   </div>
                 </NavigationMenuContent>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <NavigationMenuLink
-                  href="#"
-                  className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-300 hover:text-white`}
-                >
-                  Products
+                <NavigationMenuLink asChild>
+                  <Link
+                    href="/tasks"
+                    className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-300 hover:text-white`}
+                  >
+                    Find Tasks
+                  </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <NavigationMenuLink
-                  href="#"
-                  className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-300 hover:text-white`}
-                >
-                  Resources
+                <NavigationMenuLink asChild>
+                  <Link
+                    href="/about-us"
+                    className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-300 hover:text-white`}
+                  >
+                    About
+                  </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <NavigationMenuLink
-                  href="#"
-                  className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-300 hover:text-white`}
-                >
-                  Contact
+                <NavigationMenuLink asChild>
+                  <Link
+                    href="/contact"
+                    className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-300 hover:text-white`}
+                  >
+                    Contact
+                  </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
+
           <div className="hidden items-center gap-4 lg:flex">
-            <Button variant="ghost" className="text-white hover:bg-white/10">Sign in</Button>
-            <Button className="bg-white text-black hover:bg-white/90">Start for free</Button>
+            {user ? (
+              <>
+                <Link href="/dashboard/user/post-task">
+                  <Button className="bg-primary text-white hover:bg-primary/90 flex gap-2 shadow-lg shadow-primary/20">
+                    <PlusCircle className="w-4 h-4" />
+                    Post a Task
+                  </Button>
+                </Link>
+                <Link href="/dashboard">
+                  <Button variant="ghost" className="text-white hover:bg-white/10 flex gap-2">
+                    <LayoutDashboard className="w-4 h-4" />
+                    Dashboard
+                  </Button>
+                </Link>
+                <Button 
+                  onClick={handleLogout}
+                  variant="ghost" 
+                  className="text-gray-400 hover:text-red-400 hover:bg-red-500/10 flex gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button variant="ghost" className="text-white hover:bg-white/10">Sign in</Button>
+                </Link>
+                <Link href="/register">
+                  <Button className="bg-white text-black hover:bg-white/90">Join Now</Button>
+                </Link>
+              </>
+            )}
           </div>
+
           <Sheet>
             <SheetTrigger asChild className="lg:hidden">
               <Button variant="outline" size="icon" className="border-white/10 text-white">
@@ -134,63 +191,93 @@ export const Navbar = () => {
             <SheetContent side="top" className="max-h-screen overflow-auto bg-black/95 border-white/10">
               <SheetHeader>
                 <SheetTitle>
-                  <a
+                  <Link
                     href="/"
                     className="flex items-center gap-2"
                   >
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-black shadow-lg">
-                      <span className="text-lg font-bold italic">Q</span>
+                      <span className="text-lg font-bold italic">H</span>
                     </div>
                     <span className="text-xl font-bold tracking-tight text-white">
-                      QuickStep
+                      HelpMate
                     </span>
-                  </a>
+                  </Link>
                 </SheetTitle>
               </SheetHeader>
 
               <div className="flex flex-col p-4">
                 <Accordion type="single" collapsible className="mt-4 mb-2">
                   <AccordionItem value="solutions" className="border-none">
-                    <AccordionTrigger className="text-base hover:no-underline">
-                      Features
+                    <AccordionTrigger className="text-base hover:no-underline text-white">
+                      Explore
                     </AccordionTrigger>
                     <AccordionContent>
-                      <div className="grid md:grid-cols-2">
+                      <div className="grid grid-cols-1 gap-2">
                         {features.map((feature, index) => (
-                          <a
+                          <Link
                             href={feature.href}
                             key={index}
-                            className="rounded-md p-3 transition-colors hover:bg-muted/70"
+                            className="rounded-md p-3 transition-colors hover:bg-white/5"
                           >
-                            <div key={feature.title}>
-                              <p className="mb-1 font-semibold text-foreground">
-                                {feature.title}
-                              </p>
-                              <p className="text-sm text-muted-foreground">
-                                {feature.description}
-                              </p>
-                            </div>
-                          </a>
+                            <p className="mb-1 font-semibold text-white">
+                              {feature.title}
+                            </p>
+                            <p className="text-sm text-gray-400">
+                              {feature.description}
+                            </p>
+                          </Link>
                         ))}
                       </div>
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
-                <div className="flex flex-col gap-6">
-                  <a href="#" className="font-medium">
-                    Templates
-                  </a>
-                  <a href="#" className="font-medium">
-                    Blog
-                  </a>
-                  <a href="#" className="font-medium">
-                    Pricing
-                  </a>
+                <div className="flex flex-col gap-4 mb-8">
+                  <Link href="/tasks" className="text-lg font-medium text-white hover:text-white/80 transition-colors">
+                    Find Tasks
+                  </Link>
+                  <Link href="/about-us" className="text-lg font-medium text-white hover:text-white/80 transition-colors">
+                    About
+                  </Link>
+                  <Link href="/contact" className="text-lg font-medium text-white hover:text-white/80 transition-colors">
+                    Contact
+                  </Link>
                 </div>
-                {/* <div className="mt-6 flex flex-col gap-4">
-                  <Button variant="outline">Sign in</Button>
-                  <Button>Start for free</Button>
-                </div> */}
+                
+                <div className="flex flex-col gap-4 pt-4 border-t border-white/10">
+                  {user ? (
+                    <>
+                      <Link href="/dashboard/user/post-task">
+                        <Button className="w-full justify-start gap-3 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20">
+                          <PlusCircle className="w-5 h-5" />
+                          Post a Task
+                        </Button>
+                      </Link>
+                      <Link href="/dashboard">
+                        <Button className="w-full justify-start gap-3 bg-white/5 hover:bg-white/10 text-white border border-white/10">
+                          <LayoutDashboard className="w-5 h-5" />
+                          Dashboard
+                        </Button>
+                      </Link>
+                      <Button 
+                        onClick={handleLogout}
+                        variant="outline" 
+                        className="w-full justify-start gap-3 border-red-500/30 text-red-400 hover:bg-red-500/10 hover:text-red-400"
+                      >
+                        <LogOut className="w-5 h-5" />
+                        Logout
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Link href="/login">
+                        <Button variant="outline" className="w-full border-white/20 text-white hover:bg-white/10">Sign in</Button>
+                      </Link>
+                      <Link href="/register">
+                        <Button className="w-full bg-white text-black hover:bg-white/90">Join Now</Button>
+                      </Link>
+                    </>
+                  )}
+                </div>
               </div>
             </SheetContent>
           </Sheet>

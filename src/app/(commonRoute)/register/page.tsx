@@ -17,10 +17,10 @@ export default function SignupPage() {
         <div className="text-center mb-10">
           <Link href="/" className="inline-flex items-center gap-3 mb-6">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-black shadow-2xl">
-              <span className="text-2xl font-bold italic">Q</span>
+              <span className="text-2xl font-bold italic">H</span>
             </div>
             <span className="text-3xl font-extrabold tracking-tight text-white">
-              QuickStep
+              HelpMate
             </span>
           </Link>
           <h1 className="text-3xl font-bold text-white mb-2">Create an account</h1>

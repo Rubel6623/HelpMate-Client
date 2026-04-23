@@ -17,6 +17,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
+import { getUser, UserLogOut } from "@/src/services/auth";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const menuItems = {
   USER: [
@@ -45,8 +48,38 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  // Mock role - in real app, this would come from auth context
-  const role: "USER" | "RUNNER" | "ADMIN" = "USER"; 
+  const [user, setUser] = useState<any>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userData = await getUser();
+      if (!userData) {
+        router.push("/login");
+      } else {
+        setUser(userData);
+      }
+    };
+    fetchUser();
+  }, [router]);
+
+  const handleLogout = async () => {
+    await UserLogOut();
+    router.push("/login");
+  };
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-zinc-950">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+          <p className="text-muted-foreground font-medium animate-pulse">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const role = user.role as keyof typeof menuItems;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 flex">
@@ -61,11 +94,11 @@ export default function DashboardLayout({
           >
             <div className="p-6 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
               <Link href="/" className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white shadow-lg">
-                  <span className="text-xl font-bold italic">Q</span>
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white shadow-lg shadow-primary/30">
+                  <span className="text-xl font-bold italic">H</span>
                 </div>
                 <span className="text-2xl font-bold tracking-tight text-black dark:text-white">
-                  QuickStep
+                  HelpMate
                 </span>
               </Link>
               <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-gray-400">
@@ -98,7 +131,8 @@ export default function DashboardLayout({
                 <span className="font-semibold">Profile</span>
               </Link>
               <button
-                className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-all"
+                onClick={handleLogout}
+                className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all"
               >
                 <LogOut className="w-5 h-5" />
                 <span className="font-semibold">Logout</span>
@@ -122,7 +156,7 @@ export default function DashboardLayout({
               </button>
             )}
             <h2 className="text-xl font-bold text-black dark:text-white hidden md:block">
-              Welcome back, User!
+              Welcome back, {user.name}!
             </h2>
           </div>
 
@@ -134,14 +168,18 @@ export default function DashboardLayout({
             <div className="flex items-center gap-4 pl-6 border-l border-gray-200 dark:border-white/5">
               <div className="text-right hidden sm:block">
                 <p className="text-sm font-bold text-black dark:text-white leading-none mb-1">
-                  John Doe
+                  {user.name}
                 </p>
                 <p className="text-xs text-primary font-semibold">
-                  {role} Account
+                  {user.role} Account
                 </p>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold">
-                JD
+              <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold overflow-hidden">
+                {user.avatarUrl ? (
+                  <img src={user.avatarUrl} alt={user.name} className="w-full h-full object-cover" />
+                ) : (
+                  user.name.charAt(0)
+                )}
               </div>
             </div>
           </div>
