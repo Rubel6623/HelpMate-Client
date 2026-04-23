@@ -5,6 +5,7 @@ import { Navbar } from "./_components/shared/navbar/Navbar";
 import BannerPage from "./_components/page/home/Banner";
 import { Carousel } from "./_components/page/home/Carousel";
 import { Categories } from "./_components/page/home/Categories";
+import { RunnerServices } from "./_components/page/home/RunnerServices";
 import { TopRunners } from "./_components/page/home/TopRunners";
 import { UserReviews } from "./_components/page/home/UserReviews";
 import { Footer } from "./_components/shared/footer/Footer";
@@ -21,6 +22,7 @@ export default function HomePage() {
         <BannerPage />
         <Carousel />
         <Categories />
+        <RunnerServices />
         <TopRunners />
         <UserReviews />
         <Footer />
