@@ -1,25 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { motion } from "motion/react";
 import { PlusCircle, MapPin, Calendar, Clock, DollarSign, FileText, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast, Toaster } from "sonner";
-import { useRouter } from "next/navigation";
-
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Textarea } from "@/src/components/ui/textarea";
 import { Label } from "@/src/components/ui/label";
 import { getCategories } from "@/src/services/category";
 import { createTask } from "@/src/services/tasks";
+import { getRunnerProfile } from "@/src/services/runners";
 import { postTaskSchema, PostTaskValues } from "@/src/validation/task.validation";
 
-export default function PostTaskPage() {
+function PostTaskForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const runnerId = searchParams.get("runnerId");
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [targetRunner, setTargetRunner] = useState<any>(null);
 
   const {
     register,
@@ -40,14 +43,23 @@ export default function PostTaskPage() {
       }
     };
     fetchCategories();
-  }, []);
+
+    if (runnerId) {
+      const fetchRunner = async () => {
+        const res = await getRunnerProfile(runnerId);
+        if (res?.success && res.data && res.data.length > 0) {
+          setTargetRunner(res.data[0]);
+        }
+      };
+      fetchRunner();
+    }
+  }, [runnerId]);
 
   const onSubmit = async (data: PostTaskValues) => {
     setIsSubmitting(true);
     try {
-      // Construct the payload for the backend
       const startDateTime = new Date(`${data.executionDate}T${data.preferredTime}`);
-      const endDateTime = new Date(startDateTime.getTime() + 4 * 60 * 60 * 1000); // 4 hours later
+      const endDateTime = new Date(startDateTime.getTime() + 4 * 60 * 60 * 1000); 
 
       const payload = {
         title: data.title,
@@ -56,13 +68,13 @@ export default function PostTaskPage() {
         categoryId: data.categoryId,
         timeWindowStart: startDateTime.toISOString(),
         timeWindowEnd: endDateTime.toISOString(),
-        estimatedDuration: 60, // Default 60 mins
+        estimatedDuration: 60, 
         stops: [
           {
             order: 1,
             locationLabel: "Main Location",
-            locationLat: 23.8103, // Default Dhaka Lat
-            locationLng: 90.4125, // Default Dhaka Lng
+            locationLat: 23.8103, 
+            locationLng: 90.4125, 
             address: data.location,
           },
         ],
@@ -72,7 +84,7 @@ export default function PostTaskPage() {
 
       if (res?.success) {
         toast.success("Task published successfully!");
-        router.push("/dashboard/user/tasks"); // Updated route based on typical structure
+        router.push("/dashboard/user/tasks");
       } else {
         toast.error(res?.message || "Failed to publish task");
       }
@@ -87,22 +99,22 @@ export default function PostTaskPage() {
     <div className="relative max-w-4xl mx-auto pb-16">
       <Toaster position="top-right" richColors />
       
-      {/* Fancy Background Decoration */}
       <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-[600px] h-[600px] bg-primary/20 blur-[150px] rounded-full pointer-events-none" />
       <div className="absolute top-1/2 left-0 -translate-x-1/2 w-[500px] h-[500px] bg-blue-500/10 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="relative z-10">
-        {/* Header Section */}
         <div className="mb-12 text-center md:text-left flex flex-col md:flex-row items-center gap-6">
           <div className="w-20 h-20 rounded-[2rem] bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center shadow-xl shadow-primary/30 rotate-3">
             <PlusCircle className="w-10 h-10 text-white -rotate-3" />
           </div>
           <div>
             <h1 className="text-4xl md:text-5xl font-black mb-3 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-500 dark:from-white dark:to-gray-400">
-              Post a New Task
+              {targetRunner ? `Book ${targetRunner.name || targetRunner.user?.name}` : "Post a New Task"}
             </h1>
             <p className="text-lg text-muted-foreground max-w-xl">
-              Describe what you need help with in detail, set your budget, and connect with verified runners instantly.
+              {targetRunner 
+                ? `You're booking ${targetRunner.name || targetRunner.user?.name} from ${targetRunner.runnerProfile?.university || targetRunner.university}. Describe your task and they'll get a notification.`
+                : "Describe what you need help with in detail, set your budget, and connect with verified runners instantly."}
             </p>
           </div>
         </div>
@@ -114,11 +126,9 @@ export default function PostTaskPage() {
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="relative p-8 md:p-12 rounded-[2.5rem] bg-white/60 dark:bg-[#0a0a0a]/60 backdrop-blur-3xl border border-gray-200/50 dark:border-white/10 shadow-2xl overflow-hidden"
         >
-          {/* Subtle inner highlight */}
           <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/5 pointer-events-none rounded-[2.5rem]" />
 
           <div className="relative space-y-10">
-            {/* Section 1: Basic Info */}
             <div className="space-y-6">
               <div className="flex items-center gap-3 border-b border-gray-200 dark:border-white/10 pb-4">
                 <FileText className="w-5 h-5 text-primary" />
@@ -168,7 +178,6 @@ export default function PostTaskPage() {
               </div>
             </div>
 
-            {/* Section 2: Location & Logistics */}
             <div className="space-y-6 pt-4">
               <div className="flex items-center gap-3 border-b border-gray-200 dark:border-white/10 pb-4">
                 <MapPin className="w-5 h-5 text-primary" />
@@ -223,7 +232,6 @@ export default function PostTaskPage() {
               </div>
             </div>
 
-            {/* Section 3: Budget */}
             <div className="space-y-6 pt-4">
               <div className="flex items-center gap-3 border-b border-gray-200 dark:border-white/10 pb-4">
                 <DollarSign className="w-5 h-5 text-green-500" />
@@ -254,7 +262,6 @@ export default function PostTaskPage() {
                 disabled={isSubmitting}
                 className="w-full h-20 rounded-[1.5rem] bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 text-white text-xl font-black shadow-2xl shadow-primary/30 flex gap-4 transition-all hover:-translate-y-1 active:scale-[0.98] group overflow-hidden relative"
               >
-                {/* Button shine effect */}
                 <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12" />
                 
                 {isSubmitting ? (
@@ -275,5 +282,13 @@ export default function PostTaskPage() {
         </motion.form>
       </div>
     </div>
+  );
+}
+
+export default function PostTaskPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="w-10 h-10 animate-spin text-primary" /></div>}>
+      <PostTaskForm />
+    </Suspense>
   );
 }

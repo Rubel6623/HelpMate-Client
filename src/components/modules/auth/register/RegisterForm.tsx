@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, FieldValues } from "react-hook-form";
 import { motion, AnimatePresence } from "motion/react";
-import { User, Rocket, Phone, Mail, Lock, Building, CreditCard } from "lucide-react";
+import { User, Rocket, Phone, Mail, Lock, Building, CreditCard, ShieldCheck } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
@@ -157,6 +157,19 @@ export default function RegisterForm() {
                   />
                 </div>
                 {errors.studentId && <span className="text-red-500 text-xs ml-1">{errors.studentId.message as string}</span>}
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-gray-300 ml-1">National ID (NID)</Label>
+                <div className="relative">
+                  <ShieldCheck className="absolute left-4 top-3 h-5 w-5 text-gray-500" />
+                  <Input
+                    placeholder="NID Number"
+                    className="bg-white/5 border-white/10 text-white pl-12 h-12 rounded-xl focus:border-primary transition-colors"
+                    {...register("nationalId", { required: role === "RUNNER" ? "National ID is required" : false })}
+                  />
+                </div>
+                {errors.nationalId && <span className="text-red-500 text-xs ml-1">{errors.nationalId.message as string}</span>}
               </div>
             </motion.div>
           )}

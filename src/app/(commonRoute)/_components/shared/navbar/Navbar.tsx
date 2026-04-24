@@ -80,7 +80,7 @@ export const Navbar = () => {
             href="/"
             className="flex items-center gap-2"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-black shadow-lg shadow-white/10 transition-transform hover:scale-105">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-black shadow-lg shadow-white/10 transition-transform hover:scale-105 ">
               <span className="text-2xl font-bold italic">H</span>
             </div>
             <span className="text-2xl font-bold tracking-tight text-white">
@@ -91,7 +91,7 @@ export const Navbar = () => {
           <NavigationMenu className="hidden lg:block">
             <NavigationMenuList>
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent text-gray-300 hover:text-white">Explore</NavigationMenuTrigger>
+                <NavigationMenuTrigger className="bg-transparent text-gray-100 hover:text-amber-500 ">Explore</NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="grid w-[600px] grid-cols-2 p-3 bg-black/90 border border-white/10 backdrop-blur-xl">
                     {features.map((feature, index) => (
@@ -113,21 +113,35 @@ export const Navbar = () => {
                   </div>
                 </NavigationMenuContent>
               </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink asChild>
-                  <Link
-                    href="/tasks"
-                    className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-300 hover:text-white`}
-                  >
-                    Find Tasks
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
+              {(user?.role === "RUNNER" || user?.role === "ADMIN" || user?.role === "SUPERADMIN") && (
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <Link
+                      href="/tasks"
+                      className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-100 hover:text-amber-500`}
+                    >
+                      Find Tasks
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              )}
+              {(user?.role === "USER" || user?.role === "ADMIN" || user?.role === "SUPERADMIN") && (
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <Link
+                      href="/runners"
+                      className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-100 hover:text-amber-500`}
+                    >
+                      Find Runner
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              )}
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
                   <Link
                     href="/about-us"
-                    className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-300 hover:text-white`}
+                    className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-100 hover:text-amber-500`}
                   >
                     About
                   </Link>
@@ -137,7 +151,7 @@ export const Navbar = () => {
                 <NavigationMenuLink asChild>
                   <Link
                     href="/contact"
-                    className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-300 hover:text-white`}
+                    className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-100 hover:text-amber-500`}
                   >
                     Contact
                   </Link>
@@ -156,7 +170,7 @@ export const Navbar = () => {
                   </Button>
                 </Link>
                 <Link href="/dashboard">
-                  <Button variant="ghost" className="text-white hover:bg-white/10 flex gap-2">
+                  <Button variant="ghost" className="text-white hover:bg-white/50 flex gap-2">
                     <LayoutDashboard className="w-4 h-4" />
                     Dashboard
                   </Button>
@@ -232,9 +246,16 @@ export const Navbar = () => {
                   </AccordionItem>
                 </Accordion>
                 <div className="flex flex-col gap-4 mb-8">
-                  <Link href="/tasks" className="text-lg font-medium text-white hover:text-white/80 transition-colors">
-                    Find Tasks
-                  </Link>
+                  {(user?.role === "RUNNER" || user?.role === "ADMIN" || user?.role === "SUPERADMIN") && (
+                    <Link href="/tasks" className="text-lg font-medium text-white hover:text-white/80 transition-colors">
+                      Find Tasks
+                    </Link>
+                  )}
+                  {(user?.role === "USER" || user?.role === "ADMIN" || user?.role === "SUPERADMIN") && (
+                    <Link href="/runners" className="text-lg font-medium text-white hover:text-white/80 transition-colors">
+                      Find Runner
+                    </Link>
+                  )}
                   <Link href="/about-us" className="text-lg font-medium text-white hover:text-white/80 transition-colors">
                     About
                   </Link>

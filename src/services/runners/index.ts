@@ -2,12 +2,12 @@
 
 import { cookies } from "next/headers";
 
-export const getMyWallet = async () => {
+export const getAllRunners = async (query?: string) => {
   const storeCookie = await cookies();
   const token = storeCookie.get("token")?.value;
 
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/wallets/my-wallet`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/runner-profiles${query ? `?${query}` : ''}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token}`
@@ -20,36 +20,17 @@ export const getMyWallet = async () => {
   }
 };
 
-export const withdrawFunds = async (amount: number) => {
+export const getRunnerProfile = async (userId: string) => {
   const storeCookie = await cookies();
   const token = storeCookie.get("token")?.value;
 
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/wallets/withdraw`, {
-      method: "POST",
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/runner-profiles?userId=${userId}`, {
+      method: "GET",
       headers: {
-        "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`
       },
-      body: JSON.stringify({ amount }),
-    });
-    return await res.json();
-  } catch (error: any) {
-    return { success: false, message: error.message };
-  }
-};
-export const topUpWallet = async (amount: number, reference?: string) => {
-  const storeCookie = await cookies();
-  const token = storeCookie.get("token")?.value;
-
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/wallets/top-up`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({ amount, reference }),
+      cache: "no-store",
     });
     return await res.json();
   } catch (error: any) {
@@ -57,18 +38,37 @@ export const topUpWallet = async (amount: number, reference?: string) => {
   }
 };
 
-export const createPaymentIntent = async (amount: number, taskId?: string) => {
+export const updateRunnerProfile = async (data: any) => {
   const storeCookie = await cookies();
   const token = storeCookie.get("token")?.value;
 
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/payment/create-payment-intent`, {
-      method: "POST",
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/runner-profiles/my-profile`, {
+      method: "PUT",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    return await res.json();
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+};
+
+export const verifyRunnerProfile = async (id: string, isVerified: boolean) => {
+  const storeCookie = await cookies();
+  const token = storeCookie.get("token")?.value;
+
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/runner-profiles/${id}/verify`, {
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`
       },
-      body: JSON.stringify({ amount, taskId }),
+      body: JSON.stringify({ isVerified }),
     });
     return await res.json();
   } catch (error: any) {

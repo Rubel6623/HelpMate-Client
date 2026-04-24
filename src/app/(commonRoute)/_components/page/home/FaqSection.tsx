@@ -47,7 +47,7 @@ export default function FaqSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl font-black text-black dark:text-white mb-6"
+            className="text-4xl md:text-5xl font-black text-white dark:text-white mb-6"
           >
             Got Questions? <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-600">We've Got Answers</span>
           </motion.h2>

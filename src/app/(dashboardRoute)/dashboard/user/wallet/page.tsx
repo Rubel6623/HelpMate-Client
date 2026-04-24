@@ -1,15 +1,26 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Wallet, ArrowUpRight, ArrowDownLeft, Plus, History, CreditCard } from "lucide-react";
-import { Button } from "@/src/components/ui/button";
+import { getMyWallet } from "@/src/services/wallets";
+import { TopUpDialog } from "./_components/TopUpDialog";
 
 export default function WalletPage() {
-  const transactions = [
-    { id: "1", type: "Debit", amount: "৳250", reason: "Grocery Shopping", date: "Today, 2:30 PM", status: "Success" },
-    { id: "2", type: "Credit", amount: "৳1,000", reason: "Top Up via bKash", date: "Yesterday, 10:00 AM", status: "Success" },
-    { id: "3", type: "Debit", amount: "৳500", reason: "Queue for Passport", date: "22 Apr, 11:00 AM", status: "Success" },
-  ];
+  const [wallet, setWallet] = useState<any>(null);
+  const [transactions, setTransactions] = useState<any[]>([]);
+
+  const fetchWallet = async () => {
+    const res = await getMyWallet();
+    if (res?.success && res.data) {
+      setWallet(res.data);
+      setTransactions(res.data.transactions || []);
+    }
+  };
+
+  useEffect(() => {
+    fetchWallet();
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -18,10 +29,7 @@ export default function WalletPage() {
           <h1 className="text-3xl font-extrabold text-black dark:text-white mb-2">My Wallet</h1>
           <p className="text-muted-foreground text-lg">Manage your funds and track your spending.</p>
         </div>
-        <Button className="h-14 px-8 rounded-2xl bg-primary hover:bg-primary/90 text-lg font-bold shadow-xl shadow-primary/20 flex gap-3">
-          <Plus className="w-6 h-6" />
-          Top Up Balance
-        </Button>
+        <TopUpDialog onTopUpSuccess={fetchWallet} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -37,7 +45,7 @@ export default function WalletPage() {
             </div>
             <div className="relative z-10">
                <p className="text-white/60 font-bold text-sm uppercase tracking-widest mb-2">Available Balance</p>
-               <h3 className="text-6xl font-black mb-2 tracking-tighter">৳2,450</h3>
+               <h3 className="text-6xl font-black mb-2 tracking-tighter">৳{wallet ? Number(wallet.balance).toLocaleString() : 0}</h3>
                <p className="text-white/40 text-sm font-medium">Last updated: Just now</p>
             </div>
             <div className="mt-12 space-y-4 relative z-10">
@@ -76,20 +84,20 @@ export default function WalletPage() {
               >
                 <div className="flex items-center gap-6">
                   <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 ${
-                    tx.type === "Credit" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
+                    tx.type === "CREDIT" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
                   }`}>
-                    {tx.type === "Credit" ? <ArrowDownLeft className="w-7 h-7" /> : <ArrowUpRight className="w-7 h-7" />}
+                    {tx.type === "CREDIT" ? <ArrowDownLeft className="w-7 h-7" /> : <ArrowUpRight className="w-7 h-7" />}
                   </div>
                   <div>
-                    <h4 className="font-bold text-black dark:text-white text-lg">{tx.reason}</h4>
-                    <p className="text-sm text-gray-400 mt-0.5">{tx.date}</p>
+                    <h4 className="font-bold text-black dark:text-white text-lg">{tx.reason || tx.note || "Transaction"}</h4>
+                    <p className="text-sm text-gray-400 mt-0.5">{new Date(tx.createdAt).toLocaleString()}</p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className={`text-2xl font-black ${
-                    tx.type === "Credit" ? "text-green-500" : "text-black dark:text-white"
+                    tx.type === "CREDIT" ? "text-green-500" : "text-black dark:text-white"
                   }`}>
-                    {tx.type === "Credit" ? "+" : "-"}{tx.amount}
+                    {tx.type === "CREDIT" ? "+" : "-"}{tx.amount}
                   </p>
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">{tx.status}</p>
                 </div>

@@ -37,6 +37,7 @@ const menuItems = {
   ADMIN: [
     { label: "Analytics", icon: BarChart3, href: "/dashboard/admin" },
     { label: "Users", icon: User, href: "/dashboard/admin/users" },
+    { label: "Verify Runner", icon: ShieldCheck, href: "/dashboard/admin/verify-runner" },
     { label: "Tasks", icon: ListTodo, href: "/dashboard/admin/tasks" },
     { label: "Disputes", icon: ShieldCheck, href: "/dashboard/admin/disputes" },
   ],
