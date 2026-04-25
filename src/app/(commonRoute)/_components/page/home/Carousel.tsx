@@ -7,27 +7,43 @@ import { ChevronLeft, ChevronRight, Star, Clock, MapPin } from "lucide-react";
 const slides = [
   {
     id: 1,
-    title: "Grocery Delivery in 30 mins",
-    description: "Reliable runners available for your daily needs.",
-    image: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1000",
-    stats: { rating: 4.9, time: "25m", distance: "0.8km" },
-    tag: "Trending"
+    title: "Grocery & Daily Essentials",
+    description: "Get fresh groceries and daily necessities delivered from local markets to your doorstep in minutes.",
+    image: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1000&auto=format&fit=crop",
+    stats: { rating: 4.9, time: "25m", distance: "1.4 km" },
+    tag: "Top Rated"
   },
   {
     id: 2,
-    title: "Queue Standing at Tech Launch",
-    description: "Don't wait in line. Let our student runners do it for you.",
-    image: "https://images.unsplash.com/photo-1531050171669-014464ce05cd?auto=format&fit=crop&q=80&w=1000",
-    stats: { rating: 4.8, time: "2h", distance: "2.1km" },
-    tag: "Popular"
+    title: "Personal Shopping Partner",
+    description: "Need help navigating the mall or picking up specific items? Hire a dedicated shopping assistant.",
+    image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1000&q=80",
+    stats: { rating: 4.8, time: "50m", distance: "3.2 km" },
+    tag: "Flexible"
   },
   {
     id: 3,
-    title: "Document Delivery Across Campus",
-    description: "Secure and fast handling of your important paperwork.",
-    image: "https://images.unsplash.com/photo-1586769852044-692d6e3703a0?auto=format&fit=crop&q=80&w=1000",
-    stats: { rating: 5.0, time: "15m", distance: "0.5km" },
+    title: "Secure Document Courier",
+    description: "Safe and confidential handling of university papers, bank documents, or urgent office files.",
+    image: "https://images.unsplash.com/photo-1586769852044-692d6e3703a0?q=80&w=1000&auto=format&fit=crop",
+    stats: { rating: 5.0, time: "15m", distance: "0.7 km" },
     tag: "Essential"
+  },
+  {
+    id: 4,
+    title: "Instant Technical Support",
+    description: "Troubleshoot software issues or get help with device setups from tech-savvy student experts.",
+    image: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=1000&auto=format&fit=crop",
+    stats: { rating: 4.7, time: "40m", distance: "1.9 km" },
+    tag: "Expert Help"
+  },
+  {
+    id: 5,
+    title: "Queue Standing Service",
+    description: "Save hours by letting our runners hold your spot at hospitals, banks, or government offices.",
+    image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=1000&auto=format&fit=crop",
+    stats: { rating: 4.9, time: "2h+", distance: "4.5 km" },
+    tag: "Time Saver"
   }
 ];
 

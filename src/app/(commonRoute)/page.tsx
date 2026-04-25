@@ -15,6 +15,7 @@ import { DualCTA } from "./_components/page/home/DualCTA";
 import { PricingFees } from "./_components/page/home/PricingFees";
 import FaqSection from "./_components/page/home/FaqSection";
 import { Footer } from "./_components/shared/footer/Footer";
+import { Carousel } from "./_components/page/home/Carousel";
 
 export default function HomePage() {
   return (
@@ -27,6 +28,8 @@ export default function HomePage() {
       >
         {/* 1. Hero Section */}
         <BannerPage />
+
+        <Carousel></Carousel>
 
         {/* 2. Social Proof / Trust Bar */}
         <TrustBar />

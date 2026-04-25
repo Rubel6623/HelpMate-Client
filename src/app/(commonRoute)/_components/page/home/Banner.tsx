@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { MotionRunner } from "./MotionRunner";
 
 const BannerPage = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -80,27 +81,54 @@ const BannerPage = () => {
         </div>
 
         {/* Hero section */}
-        <div className="container mx-auto mt-12 px-4 text-center">
-          <h1 className="mx-auto max-w-4xl text-5xl font-extrabold leading-[1.1] text-white md:text-7xl lg:text-8xl tracking-tight">
-            Get Anything Done. <br />
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 animate-gradient-x">
-              Right Now.
-            </span>
-          </h1>
-          <p className="mx-auto mt-8 max-w-2xl text-xl text-gray-300 font-medium">
-            Connect with verified university students for quick, affordable errands. 
-            Grocery runs, queue standing, or document delivery — we've got you covered.
-          </p>
-          <div className="mt-12 flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-x-6 sm:space-y-0">
-            <button className="h-14 rounded-full bg-white px-10 text-lg font-bold text-black transition-all hover:scale-105 hover:bg-gray-100 active:scale-95 shadow-2xl shadow-white/10">
-              Post a Task
-            </button>
-            <button className="h-14 rounded-full border-2 border-white/20 bg-white/5 px-10 text-lg font-bold text-white backdrop-blur-md transition-all hover:bg-white/10 active:scale-95">
-              Become a Helper
-            </button>
+        <div className="container mx-auto mt-12 lg:mt-20 px-4">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8">
+            {/* Text Content */}
+            <div className="w-full lg:w-1/2 text-center lg:text-left space-y-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <h1 className="text-5xl font-extrabold leading-[1.1] text-white md:text-7xl lg:text-8xl tracking-tight">
+                  Get Anything Done. <br />
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 animate-gradient-x">
+                    Right Now.
+                  </span>
+                </h1>
+              </motion.div>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="max-w-2xl text-xl text-gray-300 font-medium"
+              >
+                Connect with verified university students for quick, affordable
+                errands. Grocery runs, queue standing, or document delivery —
+                we've got you covered.
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="flex flex-col items-center lg:items-start justify-center lg:justify-start space-y-4 sm:flex-row sm:space-x-6 sm:space-y-0"
+              >
+                <button className="h-14 rounded-full bg-white px-10 text-lg font-bold text-black transition-all hover:scale-105 hover:bg-gray-100 active:scale-95 shadow-2xl shadow-white/10">
+                  Post a Task
+                </button>
+                <button className="h-14 rounded-full border-2 border-white/20 bg-white/5 px-10 text-lg font-bold text-white backdrop-blur-md transition-all hover:bg-white/10 active:scale-95">
+                  Become a Helper
+                </button>
+              </motion.div>
+            </div>
+
+            {/* Motion Runner Illustration */}
+            <div className="w-full lg:w-1/2 flex justify-center lg:justify-end">
+              <MotionRunner />
+            </div>
           </div>
-
-
         </div>
       </div>
     </div>
