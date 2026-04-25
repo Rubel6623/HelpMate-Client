@@ -12,6 +12,7 @@ import {
   Search,
   CheckCircle2
 } from "lucide-react";
+import Link from "next/link";
 
 const services = [
   {
@@ -21,7 +22,8 @@ const services = [
     icon: ShoppingBag,
     features: ["Grocery Shopping", "Pharmacy Pickup", "Gift Delivery"],
     color: "from-blue-500 to-cyan-400",
-    delay: 0.1
+    delay: 0.1,
+    href: "/tasks?type=errand"
   },
   {
     title: "Queue Standing",
@@ -30,7 +32,8 @@ const services = [
     icon: Clock,
     features: ["Hospital Tokens", "Bank Queues", "Ticket Collection"],
     color: "from-purple-500 to-pink-500",
-    delay: 0.2
+    delay: 0.2,
+    href: "/tasks?type=queue"
   },
   {
     title: "Document & Logistics",
@@ -39,7 +42,8 @@ const services = [
     icon: FileText,
     features: ["Bank Submissions", "Printing & Delivery", "Courier Tasks"],
     color: "from-emerald-500 to-teal-400",
-    delay: 0.3
+    delay: 0.3,
+    href: "/tasks?type=documents"
   },
   {
     title: "Technical Support",
@@ -48,7 +52,8 @@ const services = [
     icon: Cpu,
     features: ["Phone Setup", "App Installation", "Basic Troubleshooting"],
     color: "from-orange-500 to-yellow-500",
-    delay: 0.4
+    delay: 0.4,
+    href: "/tasks?type=tech"
   },
   {
     title: "Pet & Home Care",
@@ -57,7 +62,8 @@ const services = [
     icon: Dog,
     features: ["Dog Walking", "Furniture Assembly", "Plant Watering"],
     color: "from-red-500 to-rose-400",
-    delay: 0.5
+    delay: 0.5,
+    href: "/tasks?type=petcare"
   },
   {
     title: "Special Requests",
@@ -66,7 +72,8 @@ const services = [
     icon: Sparkles,
     features: ["Event Setup", "Local Research", "Custom Errands"],
     color: "from-indigo-500 to-violet-500",
-    delay: 0.6
+    delay: 0.6,
+    href: "/dashboard/user/post-task"
   }
 ];
 
@@ -113,15 +120,14 @@ export const RunnerServices = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.map((service, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: service.delay }}
-              className="group relative"
-            >
-              <div className="h-full p-8 rounded-[2.5rem] bg-gray-50 dark:bg-white/5 border border-transparent hover:border-primary/40 transition-all duration-500 hover:bg-white dark:hover:bg-white/10 shadow-sm hover:shadow-2xl hover:shadow-primary/10 backdrop-blur-sm flex flex-col">
+            <Link href={service.href} key={index} className="block group relative">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: service.delay }}
+                className="h-full p-8 rounded-[2.5rem] bg-gray-50 dark:bg-white/5 border border-transparent hover:border-primary/40 transition-all duration-500 hover:bg-white dark:hover:bg-white/10 shadow-sm hover:shadow-2xl hover:shadow-primary/10 backdrop-blur-sm flex flex-col"
+              >
                 {/* Icon Header */}
                 <div className="flex items-start justify-between mb-8">
                   <div className={`p-4 rounded-2xl bg-gradient-to-br ${service.color} shadow-lg shadow-current/20`}>
@@ -161,8 +167,8 @@ export const RunnerServices = () => {
                     <Search className="w-5 h-5" />
                   </div>
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            </Link>
           ))}
         </div>
 
@@ -178,9 +184,11 @@ export const RunnerServices = () => {
             Our runners are versatile! Post a custom task with your specific requirements 
             and we'll find the perfect match for you.
           </p>
-          <button className="px-10 py-4 rounded-full bg-primary text-white font-black text-lg hover:scale-105 transition-all shadow-xl shadow-primary/20">
-            Post a Custom Task
-          </button>
+          <Link href="/dashboard/user/post-task">
+            <button className="px-10 py-4 rounded-full bg-primary text-white font-black text-lg hover:scale-105 transition-all shadow-xl shadow-primary/20">
+              Post a Custom Task
+            </button>
+          </Link>
         </motion.div>
       </div>
     </section>

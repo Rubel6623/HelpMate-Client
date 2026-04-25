@@ -17,32 +17,53 @@ import {
 } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { getMyAssignments, startAssignment, completeAssignment } from "@/src/services/assignments";
+import { getMyApplications } from "@/src/services/task-applications";
 import Link from "next/link";
 
 export default function RunnerJobsPage() {
-  const [assignments, setAssignments] = useState<any[]>([]);
+  const [activeJobs, setActiveJobs] = useState<any[]>([]);
+  const [completedJobs, setCompletedJobs] = useState<any[]>([]);
+  const [pendingJobs, setPendingJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
-    fetchAssignments();
+    fetchData();
   }, []);
 
-  const fetchAssignments = async () => {
+  const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await getMyAssignments();
-      if (res?.success && res.data) {
-        setAssignments(res.data);
+      const [assignmentsRes, applicationsRes] = await Promise.all([
+        getMyAssignments(),
+        getMyApplications()
+      ]);
+
+      if (assignmentsRes?.success && assignmentsRes.data) {
+        const assignments = assignmentsRes.data;
+        setActiveJobs(assignments.filter((a: any) => !a.confirmedAt));
+        setCompletedJobs(assignments.filter((a: any) => a.confirmedAt));
+      }
+
+      if (applicationsRes?.success && applicationsRes.data) {
+        const assignedTaskIds = new Set(
+          assignmentsRes?.data?.map((a: any) => a.taskId) || []
+        );
+        const pending = applicationsRes.data.filter(
+          (app: any) => !assignedTaskIds.has(app.taskId) && app.status === "PENDING"
+        );
+        setPendingJobs(pending);
       }
     } catch (error) {
-      console.error("Error fetching assignments:", error);
+      console.error("Error fetching data:", error);
     } finally {
       setLoading(false);
     }
   };
+
+  const fetchAssignments = fetchData;
 
   const handleStart = async (assignmentId: string) => {
     setActionLoading(assignmentId);
@@ -102,10 +123,6 @@ export default function RunnerJobsPage() {
     return "Assigned";
   };
 
-  // Separate into active and completed
-  const activeJobs = assignments.filter((a) => !a.confirmedAt);
-  const completedJobs = assignments.filter((a) => a.confirmedAt);
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -129,6 +146,48 @@ export default function RunnerJobsPage() {
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 font-semibold flex items-center gap-3">
           <AlertCircle className="w-5 h-5" /> {errorMsg}
         </motion.div>
+      )}
+
+      {/* Pending Jobs */}
+      {pendingJobs.length > 0 && (
+        <div className="space-y-6">
+          <h3 className="text-2xl font-bold text-black dark:text-white px-2 flex items-center gap-2">
+            <Clock className="w-6 h-6 text-amber-500" />
+            Pending Approval ({pendingJobs.length})
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {pendingJobs.map((app) => (
+              <motion.div
+                key={app.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="p-6 rounded-3xl bg-white dark:bg-white/5 border border-amber-500/10 shadow-sm space-y-4"
+              >
+                <div className="flex justify-between items-start">
+                  <span className="px-3 py-1 bg-amber-500/10 text-amber-600 text-xs font-black rounded-full uppercase tracking-widest">
+                    Waiting for Poster
+                  </span>
+                  <p className="text-xl font-black text-black dark:text-white">
+                    ৳{app.task.offerPrice}
+                  </p>
+                </div>
+                <h4 className="text-xl font-bold text-black dark:text-white line-clamp-1">
+                  {app.task.title}
+                </h4>
+                <div className="flex items-center gap-4 text-sm text-muted-foreground font-medium">
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="w-4 h-4" />
+                    {app.task.location}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Calendar className="w-4 h-4" />
+                    Applied {new Date(app.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
       )}
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -235,7 +294,7 @@ export default function RunnerJobsPage() {
                     <div className="text-right">
                       <p className="text-gray-400 font-bold uppercase tracking-widest text-sm mb-1">Earning</p>
                       <p className="text-5xl font-black text-primary">
-                        ৳{task?.budget || task?.estimatedBudget || "N/A"}
+                        ৳{task?.offerPrice || "N/A"}
                       </p>
                     </div>
                     <div className="flex flex-col w-full gap-3">
@@ -257,18 +316,14 @@ export default function RunnerJobsPage() {
 
                       {/* Complete button - only if started but not completed */}
                       {assignment.startedAt && !assignment.completedAt && (
-                        <Button
-                          onClick={() => handleComplete(assignment.id)}
-                          disabled={isCompleting}
-                          className="w-full h-14 rounded-xl bg-green-500 hover:bg-green-600 text-white font-black text-lg shadow-xl shadow-green-500/20 flex gap-3"
-                        >
-                          {isCompleting ? (
-                            <Loader2 className="w-6 h-6 animate-spin" />
-                          ) : (
+                        <Link href={`/dashboard/runner/jobs/${assignment.id}/complete`} className="w-full">
+                          <Button
+                            className="w-full h-14 rounded-xl bg-green-500 hover:bg-green-600 text-white font-black text-lg shadow-xl shadow-green-500/20 flex gap-3"
+                          >
                             <CheckCircle2 className="w-6 h-6" />
-                          )}
-                          {isCompleting ? "Completing..." : "Mark as Completed"}
-                        </Button>
+                            Mark as Completed
+                          </Button>
+                        </Link>
                       )}
 
                       {/* Waiting for confirmation */}
@@ -311,7 +366,7 @@ export default function RunnerJobsPage() {
                       Confirmed
                     </span>
                     <p className="text-2xl font-black text-black dark:text-white">
-                      ৳{task?.budget || task?.estimatedBudget || "N/A"}
+                      ৳{task?.offerPrice || "N/A"}
                     </p>
                   </div>
                   <h4 className="text-xl font-bold text-black dark:text-white mb-2 line-clamp-1">

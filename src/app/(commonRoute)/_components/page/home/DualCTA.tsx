@@ -37,7 +37,7 @@ export const DualCTA = () => {
                 </p>
               </div>
               <Link
-                href="/dashboard/post-task"
+                href="/dashboard/user/post-task"
                 className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-primary text-white font-bold text-lg hover:scale-105 transition-all shadow-xl shadow-primary/20 w-fit group/btn"
               >
                 Post a Task

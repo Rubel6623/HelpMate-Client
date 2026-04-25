@@ -13,7 +13,8 @@ import {
   X,
   Search,
   ShieldCheck,
-  BarChart3
+  BarChart3,
+  FolderOpen
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
@@ -30,6 +31,7 @@ const menuItems = {
   ],
   RUNNER: [
     { label: "Task Feed", icon: Search, href: "/dashboard/runner" },
+    { label: "My Task", icon: ListTodo, href: "/dashboard/runner/my-task" },
     { label: "Active Jobs", icon: ListTodo, href: "/dashboard/runner/jobs" },
     { label: "Earnings", icon: Wallet, href: "/dashboard/runner/earnings" },
     { label: "Badges", icon: ShieldCheck, href: "/dashboard/runner/badges" },
@@ -39,6 +41,7 @@ const menuItems = {
     { label: "Users", icon: User, href: "/dashboard/admin/users" },
     { label: "Verify Runner", icon: ShieldCheck, href: "/dashboard/admin/verify-runner" },
     { label: "Tasks", icon: ListTodo, href: "/dashboard/admin/tasks" },
+    { label: "Categories", icon: FolderOpen, href: "/dashboard/admin/categories" },
     { label: "Disputes", icon: ShieldCheck, href: "/dashboard/admin/disputes" },
   ],
 };

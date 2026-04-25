@@ -64,7 +64,9 @@ export default function TasksPage() {
       const res = await applyForTask({ taskId });
       if (res?.success) {
         setAppliedTaskIds(prev => new Set(prev).add(taskId));
-        setSuccessMsg("Applied successfully! The task poster will review your application.");
+        setSuccessMsg("Task accepted! Head to My Task to track your progress.");
+        // Refetch tasks so accepted task (now ASSIGNED) is removed from list
+        await fetchData();
         setTimeout(() => setSuccessMsg(""), 4000);
       } else {
         setErrorMsg(res?.message || "Failed to apply for this task.");
@@ -158,7 +160,7 @@ export default function TasksPage() {
                         {task.category?.name || "General"}
                       </span>
                       <p className="text-2xl font-black text-black dark:text-white">
-                        ৳{task.budget || task.estimatedBudget || "N/A"}
+                        ৳{task.offerPrice || "N/A"}
                       </p>
                     </div>
                     <h4 className="text-xl font-bold mb-3 text-black dark:text-white flex-1 line-clamp-2">

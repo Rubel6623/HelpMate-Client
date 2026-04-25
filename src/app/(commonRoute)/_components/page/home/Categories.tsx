@@ -2,6 +2,7 @@
 
 import { ShoppingCart, Clock, FileText, Home, Cpu, Dog, ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
+import Link from "next/link";
 
 const categories = [
   {
@@ -10,6 +11,7 @@ const categories = [
     icon: ShoppingCart,
     color: "bg-blue-500",
     duration: "60-90 min",
+    href: "/tasks?category=grocery",
   },
   {
     title: "Queue & Waiting",
@@ -17,6 +19,7 @@ const categories = [
     icon: Clock,
     color: "bg-purple-500",
     duration: "1-3 hrs",
+    href: "/tasks?category=queue",
   },
   {
     title: "Document Handling",
@@ -24,6 +27,7 @@ const categories = [
     icon: FileText,
     color: "bg-green-500",
     duration: "30-60 min",
+    href: "/tasks?category=documents",
   },
   {
     title: "Household Assistance",
@@ -31,6 +35,7 @@ const categories = [
     icon: Home,
     color: "bg-yellow-500",
     duration: "60-120 min",
+    href: "/tasks?category=household",
   },
   {
     title: "Tech Help",
@@ -38,6 +43,7 @@ const categories = [
     icon: Cpu,
     color: "bg-red-500",
     duration: "30-60 min",
+    href: "/tasks?category=tech",
   },
   {
     title: "Pet Care",
@@ -45,6 +51,7 @@ const categories = [
     icon: Dog,
     color: "bg-orange-500",
     duration: "30-90 min",
+    href: "/tasks?category=petcare",
   },
 ];
 
@@ -64,43 +71,47 @@ export const Categories = () => {
               Choose a category and get started in seconds.
             </p>
           </div>
-          <button className="flex items-center gap-2 text-lg font-semibold hover:text-primary transition-colors group">
-            View all categories 
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </button>
+          <Link href="/tasks">
+            <button className="flex items-center gap-2 text-lg font-semibold hover:text-primary transition-colors group">
+              View all categories 
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {categories.map((category, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              viewport={{ once: true }}
-              className="group relative p-8 rounded-3xl bg-gray-50 dark:bg-white/5 border border-transparent hover:border-primary/20 hover:bg-white dark:hover:bg-white/10 transition-all duration-300 shadow-sm hover:shadow-2xl hover:shadow-primary/10"
-            >
-              <div className={`w-14 h-14 ${category.color} rounded-2xl flex items-center justify-center mb-6 text-white shadow-lg shadow-current/20`}>
-                <category.icon className="w-7 h-7" />
-              </div>
-              <h3 className="text-2xl font-bold mb-3 text-black dark:text-white">
-                {category.title}
-              </h3>
-              <p className="text-muted-foreground mb-6 leading-relaxed">
-                {category.description}
-              </p>
-              <div className="flex items-center justify-between pt-6 border-t border-gray-200 dark:border-white/10">
-                <span className="text-sm font-medium text-muted-foreground">
-                  Avg. {category.duration}
-                </span>
-                <span className="text-primary font-bold opacity-0 group-hover:opacity-100 transition-opacity">
-                  Book Now
-                </span>
-              </div>
-            </motion.div>
+            <Link href={category.href} key={index} className="block group">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="relative p-8 h-full rounded-3xl bg-gray-50 dark:bg-white/5 border border-transparent hover:border-primary/20 hover:bg-white dark:hover:bg-white/10 transition-all duration-300 shadow-sm hover:shadow-2xl hover:shadow-primary/10"
+              >
+                <div className={`w-14 h-14 ${category.color} rounded-2xl flex items-center justify-center mb-6 text-white shadow-lg shadow-current/20`}>
+                  <category.icon className="w-7 h-7" />
+                </div>
+                <h3 className="text-2xl font-bold mb-3 text-black dark:text-white">
+                  {category.title}
+                </h3>
+                <p className="text-muted-foreground mb-6 leading-relaxed">
+                  {category.description}
+                </p>
+                <div className="flex items-center justify-between pt-6 border-t border-gray-200 dark:border-white/10">
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Avg. {category.duration}
+                  </span>
+                  <span className="text-primary font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                    Book Now
+                  </span>
+                </div>
+              </motion.div>
+            </Link>
           ))}
         </div>
       </div>
     </section>
   );
 };
+

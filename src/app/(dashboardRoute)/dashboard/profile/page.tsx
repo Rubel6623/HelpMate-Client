@@ -28,6 +28,7 @@ export default function ProfilePage() {
     bio: "",
     skills: [] as string[],
     preferredRadius: 5.0,
+    stripeAccountId: "",
   });
 
   useEffect(() => {
@@ -50,6 +51,7 @@ export default function ProfilePage() {
             bio: profile.data.runnerProfile.bio || "",
             skills: profile.data.runnerProfile.skills || [],
             preferredRadius: profile.data.runnerProfile.preferredRadius || 5.0,
+            stripeAccountId: profile.data.runnerProfile.stripeAccountId || "",
           });
         }
       }
@@ -267,6 +269,19 @@ export default function ProfilePage() {
                     disabled={!isEditing}
                     value={runnerData.preferredRadius}
                     onChange={(e) => setRunnerData({...runnerData, preferredRadius: parseFloat(e.target.value)})}
+                    className="h-12 rounded-xl bg-gray-50 dark:bg-white/5 border-none font-semibold text-black dark:text-white" 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+                    Stripe Account ID 
+                    <span className="text-[10px] text-primary bg-primary/10 px-2 py-0.5 rounded-full">Required for Payouts</span>
+                  </Label>
+                  <Input 
+                    disabled={!isEditing}
+                    value={runnerData.stripeAccountId}
+                    onChange={(e) => setRunnerData({...runnerData, stripeAccountId: e.target.value})}
+                    placeholder="acct_xxxxxxxxxxxxxx"
                     className="h-12 rounded-xl bg-gray-50 dark:bg-white/5 border-none font-semibold text-black dark:text-white" 
                   />
                 </div>

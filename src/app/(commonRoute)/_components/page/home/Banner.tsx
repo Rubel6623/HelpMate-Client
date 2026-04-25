@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ArrowRight, Menu, X } from "lucide-react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import { MotionRunner } from "./MotionRunner";
 
@@ -55,30 +56,34 @@ const BannerPage = () => {
                 </button>
               </div>
               <div className="mt-8 flex flex-col space-y-6">
-                <MobileNavItem label="Use Cases" />
-                <MobileNavItem label="Products" />
-                <MobileNavItem label="Resources" />
-                <MobileNavItem label="Pricing" />
+                <MobileNavItem label="How It Works" href="#how-it-works" />
+                <MobileNavItem label="Services" href="#services" />
+                <MobileNavItem label="About Us" href="/about-us" />
+                <MobileNavItem label="Pricing" href="#pricing" />
                 <div className="pt-4">
-                  <button className="w-full justify-start border border-gray-700 text-white">
-                    Log in
-                  </button>
+                  <Link href="/login" className="block w-full">
+                    <button className="w-full justify-start border border-gray-700 text-white p-3 rounded-xl hover:bg-white/5 transition-colors text-left">
+                      Log in
+                    </button>
+                  </Link>
                 </div>
-                <button className="h-12 rounded-full bg-white px-8 text-base font-medium text-black hover:bg-white/90">
-                  Get Started For Free
-                </button>
+                <Link href="/register" className="block w-full">
+                  <button className="w-full h-12 rounded-full bg-white px-8 text-base font-medium text-black hover:bg-white/90">
+                    Get Started For Free
+                  </button>
+                </Link>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
         {/* Badge */}
-        <div className="mx-auto mt-6 flex max-w-fit items-center justify-center space-x-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
+        <Link href="#services" className="mx-auto mt-6 flex max-w-fit items-center justify-center space-x-2 rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm hover:bg-white/20 transition-colors">
           <span className="text-sm font-medium text-white">
             Join the revolution today!
           </span>
           <ArrowRight className="h-4 w-4 text-white" />
-        </div>
+        </Link>
 
         {/* Hero section */}
         <div className="container mx-auto mt-12 lg:mt-20 px-4">
@@ -115,14 +120,19 @@ const BannerPage = () => {
                 transition={{ duration: 0.5, delay: 0.4 }}
                 className="flex flex-col items-center lg:items-start justify-center lg:justify-start space-y-4 sm:flex-row sm:space-x-6 sm:space-y-0"
               >
-                <button className="h-14 rounded-full bg-white px-10 text-lg font-bold text-black transition-all hover:scale-105 hover:bg-gray-100 active:scale-95 shadow-2xl shadow-white/10">
-                  Post a Task
-                </button>
-                <button className="h-14 rounded-full border-2 border-white/20 bg-white/5 px-10 text-lg font-bold text-white backdrop-blur-md transition-all hover:bg-white/10 active:scale-95">
-                  Become a Helper
-                </button>
+                <Link href="/dashboard/user/post-task">
+                  <button className="h-14 rounded-full bg-white px-10 text-lg font-bold text-black transition-all hover:scale-105 hover:bg-gray-100 active:scale-95 shadow-2xl shadow-white/10">
+                    Post a Task
+                  </button>
+                </Link>
+                <Link href="/register">
+                  <button className="h-14 rounded-full border-2 border-white/20 bg-white/5 px-10 text-lg font-bold text-white backdrop-blur-md transition-all hover:bg-white/10 active:scale-95">
+                    Become a Helper
+                  </button>
+                </Link>
               </motion.div>
             </div>
+
 
             {/* Motion Runner Illustration */}
             <div className="w-full lg:w-1/2 flex justify-center lg:justify-end">
@@ -165,12 +175,12 @@ function NavItem({
   );
 }
 
-function MobileNavItem({ label }: { label: string }) {
+function MobileNavItem({ label, href }: { label: string; href?: string }) {
   return (
-    <div className="flex items-center justify-between border-b border-gray-800 pb-2 text-lg text-white">
+    <Link href={href || "#"} className="flex items-center justify-between border-b border-gray-800 pb-2 text-lg text-white">
       <span>{label}</span>
       <ArrowRight className="h-4 w-4 text-gray-400" />
-    </div>
+    </Link>
   );
 }
 

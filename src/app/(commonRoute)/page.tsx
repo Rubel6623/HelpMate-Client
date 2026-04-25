@@ -32,35 +32,51 @@ export default function HomePage() {
         <Carousel></Carousel>
 
         {/* 2. Social Proof / Trust Bar */}
-        <TrustBar />
+        <div id="trust">
+          <TrustBar />
+        </div>
 
         {/* 3. How It Works (4 Steps) */}
-        <HowItWorks />
+        <div id="how-it-works">
+          <HowItWorks />
+        </div>
 
         {/* 4. Core Services / Categories */}
-        <Categories />
-        <RunnerServices />
+        <div id="services">
+          <Categories />
+          <RunnerServices />
+        </div>
 
         {/* 5. Why Choose HelpMate */}
-        <WhyChooseUs />
+        <div id="why-choose-us">
+          <WhyChooseUs />
+        </div>
 
         {/* 6. Safety & Trust */}
-        <SafetyTrust />
+        <div id="safety">
+          <SafetyTrust />
+        </div>
 
         {/* 7. Featured Tasks / Live Marketplace */}
         <FeaturedTasks />
 
         {/* 8. Testimonials / Reviews */}
-        <UserReviews />
+        <div id="reviews">
+          <UserReviews />
+        </div>
 
         {/* 9. Dual CTA Section */}
         <DualCTA />
 
         {/* 10. Pricing / Fees */}
-        <PricingFees />
+        <div id="pricing">
+          <PricingFees />
+        </div>
 
         {/* 11. FAQ */}
-        <FaqSection />
+        <div id="faq">
+          <FaqSection />
+        </div>
 
         {/* 12. Footer */}
         <Footer />

@@ -2,19 +2,27 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { Search, Filter, Eye, Trash2, Clock, CheckCircle2, AlertCircle, Loader2, XCircle, Pencil } from "lucide-react";
+import { Search, Filter, Eye, Trash2, Clock, CheckCircle2, AlertCircle, Loader2, XCircle, Pencil, CreditCard } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { getMyTasks, updateTaskStatus, deleteTask } from "@/src/services/tasks";
 import Link from "next/link";
 import { toast, Toaster } from "sonner";
+import { TaskPaymentModal } from "@/src/components/shared/TaskPaymentModal";
+import { TaskConfirmationModal } from "@/src/components/shared/TaskConfirmationModal";
 
 export default function MyTasksPage() {
   const [tasks, setTasks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
-  const [successMsg, setSuccessMsg] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  
+  // Payment Modal State (for initial funding if needed)
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  
+  // Confirmation Modal State (for releasing payment)
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  
+  const [selectedTask, setSelectedTask] = useState<any>(null);
 
   useEffect(() => {
     fetchTasks();
@@ -32,6 +40,16 @@ export default function MyTasksPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleOpenPayment = (task: any) => {
+    setSelectedTask(task);
+    setIsPaymentModalOpen(true);
+  };
+
+  const handleOpenConfirmation = (task: any) => {
+    setSelectedTask(task);
+    setIsConfirmModalOpen(true);
   };
 
   const handleCancelTask = async (taskId: string) => {
@@ -108,6 +126,28 @@ export default function MyTasksPage() {
   return (
     <div className="space-y-8">
       <Toaster position="top-right" richColors />
+
+      {/* Payment Modal Integration */}
+      {selectedTask && (
+        <TaskPaymentModal
+          taskId={selectedTask.id}
+          amount={Number(selectedTask.offerPrice) || 0}
+          isOpen={isPaymentModalOpen}
+          onClose={() => setIsPaymentModalOpen(false)}
+          onSuccess={fetchTasks}
+        />
+      )}
+
+      {/* Confirmation Modal (for releasing payment) */}
+      {selectedTask && (
+        <TaskConfirmationModal
+          taskId={selectedTask.id}
+          assignment={selectedTask.assignment}
+          isOpen={isConfirmModalOpen}
+          onClose={() => setIsConfirmModalOpen(false)}
+          onSuccess={fetchTasks}
+        />
+      )}
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
@@ -187,7 +227,7 @@ export default function MyTasksPage() {
                     </td>
                     <td className="p-6">
                       <span className="font-black text-lg text-black dark:text-white">
-                        ৳{task.budget || task.estimatedBudget || "N/A"}
+                        ৳{task.offerPrice || "N/A"}
                       </span>
                     </td>
                     <td className="p-6 text-right">
@@ -195,6 +235,16 @@ export default function MyTasksPage() {
                          <button className="p-2 hover:bg-primary/10 text-primary rounded-lg transition-colors" title="View Details">
                             <Eye className="w-5 h-5" />
                          </button>
+                         {task.status === "COMPLETED" && (
+                           <button 
+                             onClick={() => handleOpenConfirmation(task)}
+                             className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2"
+                             title="Review & Confirm"
+                           >
+                              <CheckCircle2 className="w-4 h-4" />
+                              Review & Confirm
+                           </button>
+                         )}
                          {task.status === "OPEN" && (
                            <Link href={`/dashboard/user/tasks/${task.id}/edit`}>
                              <button className="p-2 hover:bg-amber-50 text-amber-500 rounded-lg transition-colors" title="Edit Task">
