@@ -14,7 +14,11 @@ import {
   Search,
   ShieldCheck,
   BarChart3,
-  FolderOpen
+  FolderOpen,
+  ShieldAlert,
+  CreditCard,
+  Award,
+  Star
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
@@ -28,13 +32,22 @@ const menuItems = {
     { label: "Post a Task", icon: PlusCircle, href: "/dashboard/user/post-task" },
     { label: "My Tasks", icon: ListTodo, href: "/dashboard/user/tasks" },
     { label: "Wallet", icon: Wallet, href: "/dashboard/user/wallet" },
+    { label: "Notifications", icon: Bell, href: "/dashboard/notifications" },
+    { label: "Disputes", icon: ShieldCheck, href: "/dashboard/user/disputes" },
+    { label: "Badges", icon: Award, href: "/dashboard/user/badges" },
+    { label: "Reviews", icon: Star, href: "/dashboard/user/reviews" },
+    { label: "SOS Alert", icon: ShieldAlert, href: "/dashboard/user/sos" },
   ],
   RUNNER: [
     { label: "Task Feed", icon: Search, href: "/dashboard/runner" },
-    { label: "My Task", icon: ListTodo, href: "/dashboard/runner/my-task" },
-    { label: "Active Jobs", icon: ListTodo, href: "/dashboard/runner/jobs" },
+    { label: "Applications", icon: FolderOpen, href: "/dashboard/runner/applications" },
+    { label: "My Tasks", icon: ListTodo, href: "/dashboard/runner/my-tasks" },
     { label: "Earnings", icon: Wallet, href: "/dashboard/runner/earnings" },
-    { label: "Badges", icon: ShieldCheck, href: "/dashboard/runner/badges" },
+    { label: "Notifications", icon: Bell, href: "/dashboard/notifications" },
+    { label: "Badges", icon: Award, href: "/dashboard/runner/badges" },
+    { label: "Disputes", icon: ShieldCheck, href: "/dashboard/runner/disputes" },
+    { label: "Reviews", icon: Star, href: "/dashboard/runner/reviews" },
+    { label: "SOS Alert", icon: ShieldAlert, href: "/dashboard/runner/sos" },
   ],
   ADMIN: [
     { label: "Analytics", icon: BarChart3, href: "/dashboard/admin" },
@@ -42,7 +55,12 @@ const menuItems = {
     { label: "Verify Runner", icon: ShieldCheck, href: "/dashboard/admin/verify-runner" },
     { label: "Tasks", icon: ListTodo, href: "/dashboard/admin/tasks" },
     { label: "Categories", icon: FolderOpen, href: "/dashboard/admin/categories" },
+    { label: "Notifications", icon: Bell, href: "/dashboard/notifications" },
     { label: "Disputes", icon: ShieldCheck, href: "/dashboard/admin/disputes" },
+    { label: "SOS Alerts", icon: ShieldAlert, href: "/dashboard/admin/sos" },
+    { label: "Transactions", icon: CreditCard, href: "/dashboard/admin/transactions" },
+    { label: "Badges", icon: Award, href: "/dashboard/admin/badges" },
+    { label: "Reviews", icon: Star, href: "/dashboard/admin/reviews" },
   ],
 };
 

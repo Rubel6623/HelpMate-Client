@@ -17,7 +17,7 @@ import {
   DollarSign
 } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
-import { getMyAssignments, startAssignment, completeAssignment } from "@/src/services/assignments";
+import { getMyAssignments, startAssignment, submitAssignment } from "@/src/services/assignments";
 import { getMyApplications } from "@/src/services/task-applications";
 import Link from "next/link";
 
@@ -94,7 +94,7 @@ export default function MyTaskPage() {
     setSuccessMsg("");
     setErrorMsg("");
     try {
-      const res = await completeAssignment(assignmentId);
+      const res = await submitAssignment(assignmentId);
       if (res?.success) {
         setSuccessMsg("Task marked as done! Waiting for buyer confirmation.");
         await fetchAssignments();
@@ -338,9 +338,11 @@ export default function MyTaskPage() {
                             </div>
                           )}
                           
-                          <Button variant="ghost" className="w-full font-bold text-muted-foreground hover:text-black dark:hover:text-white rounded-xl">
-                            View Details
-                          </Button>
+                          <Link href={`/dashboard/runner/jobs/${assignment.id}`}>
+                            <Button variant="ghost" className="w-full font-bold text-muted-foreground hover:text-black dark:hover:text-white rounded-xl">
+                              View Details
+                            </Button>
+                          </Link>
                         </div>
                       </div>
                     </div>

@@ -55,12 +55,12 @@ export const startAssignment = async (id: string) => {
   }
 };
 
-export const completeAssignment = async (id: string, proofUrls: string[] = []) => {
+export const submitAssignment = async (id: string, proofUrls: string[] = []) => {
   const storeCookie = await cookies();
   const token = storeCookie.get("token")?.value;
 
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/assignments/${id}/complete`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/assignments/${id}/submit`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -74,12 +74,12 @@ export const completeAssignment = async (id: string, proofUrls: string[] = []) =
   }
 };
 
-export const confirmAssignment = async (id: string, otp: string) => {
+export const approveAssignment = async (id: string, otp: string) => {
   const storeCookie = await cookies();
   const token = storeCookie.get("token")?.value;
 
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/assignments/${id}/confirm`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/assignments/${id}/approve`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

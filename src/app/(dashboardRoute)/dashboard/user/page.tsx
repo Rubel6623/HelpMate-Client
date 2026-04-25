@@ -16,7 +16,7 @@ import {
 import { Button } from "@/src/components/ui/button";
 import { getMyTasks } from "@/src/services/tasks";
 import { getMyWallet } from "@/src/services/wallets";
-import { confirmAssignment } from "@/src/services/assignments";
+import { approveAssignment } from "@/src/services/assignments";
 import { toast, Toaster } from "sonner";
 import Link from "next/link";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/src/components/ui/dialog";
@@ -59,7 +59,7 @@ export default function UserDashboard() {
 
     setIsSubmitting(true);
     try {
-      const res = await confirmAssignment(confirmingTask.assignment.id, otp);
+      const res = await approveAssignment(confirmingTask.assignment.id, otp);
       if (res?.success) {
         toast.success("Payment released and task confirmed!");
         setConfirmingTask(null);
@@ -78,14 +78,14 @@ export default function UserDashboard() {
   const stats = [
     { 
       label: "Active Tasks", 
-      value: tasks.filter(t => t.status === "OPEN" || t.status === "ASSIGNED" || t.status === "IN_PROGRESS").length, 
+      value: tasks.filter(t => t.status === "PENDING" || t.status === "ACCEPTED" || t.status === "IN_PROGRESS" || t.status === "SUBMITTED").length, 
       icon: Clock, 
       color: "text-blue-500", 
       bg: "bg-blue-50" 
     },
     { 
       label: "Completed", 
-      value: tasks.filter(t => t.status === "CONFIRMED").length, 
+      value: tasks.filter(t => t.status === "RELEASED").length, 
       icon: CheckCircle2, 
       color: "text-green-500", 
       bg: "bg-green-50" 
@@ -168,7 +168,7 @@ export default function UserDashboard() {
                   <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-xl text-white shadow-lg ${
                     task.status === "IN_PROGRESS" ? "bg-blue-500" : 
                     task.status === "COMPLETED" ? "bg-amber-500" : 
-                    task.status === "CONFIRMED" ? "bg-green-500" : "bg-gray-400"
+                    task.status === "RELEASED" ? "bg-green-500" : "bg-gray-400"
                     }`}>
                     {task.title.charAt(0)}
                   </div>
@@ -178,7 +178,7 @@ export default function UserDashboard() {
                       <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest ${
                         task.status === "IN_PROGRESS" ? "bg-blue-100 text-blue-600" : 
                         task.status === "COMPLETED" ? "bg-amber-100 text-amber-600" : 
-                        task.status === "CONFIRMED" ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-500"
+                        task.status === "RELEASED" ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-500"
                         }`}>
                         {task.status.replace("_", " ")}
                       </span>

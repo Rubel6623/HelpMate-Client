@@ -37,41 +37,58 @@ export default function VerifyRunnerPage() {
 
   const fetchRunners = async () => {
     setLoading(true);
-    const res = await getAllRunners();
-    if (res.success) {
-      setUsers(res.data);
+    try {
+      const res = await getAllRunners();
+      if (res.success) {
+        setUsers(res.data);
+      } else {
+        toast.error(res.message || "Failed to load runners list");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "An unexpected error occurred while fetching runners");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleVerify = async (userId: string, runnerProfileId: string | undefined, status: boolean) => {
     if (!runnerProfileId && status) {
-      toast.error("Runner has not completed their profile yet.");
+      toast.error("Runner has not completed their profile yet. Cannot verify without student ID/NID.");
       return;
     }
 
     setLoading(true);
+    const loadingToast = toast.loading(status ? "Verifying runner..." : "Rejecting verification...");
+
     try {
       let runnerSuccess = true;
+      let runnerMessage = "";
+
+      // 1. Verify the Runner Profile (contains NID, Student ID, etc.)
       if (runnerProfileId) {
         const runnerRes = await verifyRunnerProfile(runnerProfileId, status);
         runnerSuccess = runnerRes.success;
+        runnerMessage = runnerRes.message;
       }
       
+      // 2. Update the User account verification status (global status)
       const userRes = await updateUser(userId, { 
         verificationStatus: status ? "VERIFIED" : "REJECTED" 
       });
 
       if (runnerSuccess && userRes.success) {
-        toast.success(status ? "Runner & User account verified!" : "Verification rejected");
-        fetchRunners();
+        toast.success(status ? "Runner verified successfully!" : "Verification rejected", { id: loadingToast });
+        await fetchRunners();
       } else {
-        toast.error("Action partially failed. Please check backend logs.");
+        const errorMsg = !runnerSuccess ? runnerMessage : userRes.message;
+        toast.error(errorMsg || "Failed to update status. Please try again.", { id: loadingToast });
       }
-    } catch (error) {
-      toast.error("An error occurred during verification");
+    } catch (error: any) {
+      console.error("Verification error:", error);
+      toast.error(error.message || "An unexpected error occurred during verification", { id: loadingToast });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const filteredUsers = users.filter(user => {

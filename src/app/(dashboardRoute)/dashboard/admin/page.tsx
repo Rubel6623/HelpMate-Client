@@ -2,32 +2,40 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { Users, LayoutDashboard, AlertTriangle, CreditCard, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
+import { Users, LayoutDashboard, AlertTriangle, CreditCard, ArrowUp, ArrowDown, Loader2, ShieldAlert } from "lucide-react";
 import { getUsers } from "@/src/services/user";
 import { getTasks } from "@/src/services/tasks";
 import { getDisputes } from "@/src/services/disputes";
+import { getSosAlerts } from "@/src/services/sos";
+import { getMyBadges } from "@/src/services/badges";
 
 export default function AdminDashboard() {
   const [data, setData] = useState({
     users: [],
     tasks: [],
     disputes: [],
+    sos: [],
+    badges: [],
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const [usersRes, tasksRes, disputesRes] = await Promise.all([
+        const [usersRes, tasksRes, disputesRes, sosRes, badgesRes] = await Promise.all([
           getUsers(),
           getTasks(),
           getDisputes(),
+          getSosAlerts(),
+          getMyBadges(),
         ]);
 
         setData({
           users: usersRes?.data || [],
           tasks: tasksRes?.data || [],
           disputes: disputesRes?.data || [],
+          sos: sosRes?.data || [],
+          badges: badgesRes?.data || [],
         });
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
@@ -49,12 +57,13 @@ export default function AdminDashboard() {
 
   const activeTasksCount = data.tasks.filter((t: any) => t.status !== "COMPLETED" && t.status !== "CANCELLED").length;
   const totalRevenue = data.tasks.filter((t: any) => t.status === "COMPLETED").reduce((acc: number, t: any) => acc + (t.offerPrice || 0), 0);
+  const activeSos = data.sos.filter((s: any) => !s.isResolved).length;
 
   const stats = [
     { label: "Total Users", value: data.users.length.toString(), icon: Users, change: "+0%", trend: "up", color: "text-blue-600" },
     { label: "Active Tasks", value: activeTasksCount.toString(), icon: LayoutDashboard, change: "+0%", trend: "up", color: "text-purple-600" },
     { label: "Est. Revenue", value: `৳${totalRevenue}`, icon: CreditCard, change: "+0%", trend: "up", color: "text-green-600" },
-    { label: "Disputes", value: data.disputes.length.toString(), icon: AlertTriangle, change: "0%", trend: "down", color: "text-red-600" },
+    { label: "SOS Alerts", value: activeSos.toString(), icon: ShieldAlert, change: "0%", trend: "down", color: "text-red-600" },
   ];
 
   return (

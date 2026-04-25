@@ -15,7 +15,7 @@ import {
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
-import { getAssignmentById, completeAssignment } from "@/src/services/assignments";
+import { getAssignmentById, submitAssignment } from "@/src/services/assignments";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast, Toaster } from "sonner";
@@ -40,7 +40,7 @@ export default function CompleteJobPage({ params }: { params: Promise<{ id: stri
           // Redirect if already completed
           if (res.data.completedAt) {
             toast.info("This task is already marked as completed.");
-            router.push("/dashboard/runner/jobs");
+            router.push("/dashboard/runner/my-tasks");
           }
         } else {
           toast.error("Failed to load task details.");
@@ -78,11 +78,11 @@ export default function CompleteJobPage({ params }: { params: Promise<{ id: stri
     const filteredUrls = proofUrls.filter(url => url.trim() !== "");
     
     try {
-      const res = await completeAssignment(id, filteredUrls);
+      const res = await submitAssignment(id, filteredUrls);
       if (res?.success) {
         toast.success("Task marked as completed successfully!");
         setTimeout(() => {
-          router.push("/dashboard/runner/jobs");
+          router.push("/dashboard/runner/my-tasks");
         }, 2000);
       } else {
         toast.error(res?.message || "Failed to complete task.");
@@ -107,8 +107,8 @@ export default function CompleteJobPage({ params }: { params: Promise<{ id: stri
       <div className="text-center py-20">
         <AlertCircle className="w-16 h-16 mx-auto text-red-500 mb-4" />
         <h2 className="text-2xl font-bold mb-4">Task Not Found</h2>
-        <Link href="/dashboard/runner/jobs">
-          <Button variant="outline">Back to Jobs</Button>
+        <Link href="/dashboard/runner/my-tasks">
+          <Button variant="outline">Back to My Tasks</Button>
         </Link>
       </div>
     );
@@ -118,9 +118,9 @@ export default function CompleteJobPage({ params }: { params: Promise<{ id: stri
     <div className="max-w-3xl mx-auto space-y-8 pb-20">
       <Toaster position="top-right" richColors />
       
-      <Link href="/dashboard/runner/jobs" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors font-bold group">
+      <Link href="/dashboard/runner/my-tasks" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors font-bold group">
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-        Back to Active Jobs
+        Back to My Tasks
       </Link>
 
       <div className="space-y-2">

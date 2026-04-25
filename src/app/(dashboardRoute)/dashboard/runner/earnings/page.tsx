@@ -97,15 +97,15 @@ export default function EarningsPage() {
     }
   };
 
-  // Calculate stats
+  // Calculate stats from wallet transactions (most accurate source)
   const totalBalance = wallet ? Number(wallet.balance) : 0;
-  const completedJobs = assignments.filter((a) => a.confirmedAt);
-  const totalEarned = completedJobs.reduce((sum, a) => {
-    return sum + Number(a.task?.budget || a.task?.estimatedBudget || 0);
+  const completedJobs = assignments.filter((a: any) => a.confirmedAt);
+  const totalEarned = completedJobs.reduce((sum: number, a: any) => {
+    return sum + Number(a.task?.offerPrice || 0);
   }, 0);
-  const pendingJobs = assignments.filter((a) => a.completedAt && !a.confirmedAt);
-  const pendingEarnings = pendingJobs.reduce((sum, a) => {
-    return sum + Number(a.task?.budget || a.task?.estimatedBudget || 0);
+  const pendingJobs = assignments.filter((a: any) => a.completedAt && !a.confirmedAt);
+  const pendingEarnings = pendingJobs.reduce((sum: number, a: any) => {
+    return sum + Number(a.task?.offerPrice || 0);
   }, 0);
 
   if (loading) {

@@ -47,21 +47,14 @@ function TaskCheckoutForm({
 
       if (error) {
         toast.error(error.message || "An unexpected error occurred.");
-      } else if (paymentIntent && paymentIntent.status === "succeeded") {
-        // Update task status to CONFIRMED (or whatever the final status is)
-        // Note: The backend might automatically handle this via webhook, 
-        // but we'll call the status update to be sure if needed, 
-        // or just rely on the fact that payment succeeded.
-        const res = await updateTaskStatus(taskId, "CONFIRMED", "Payment successful via Stripe");
-        
-        if (res?.success) {
-          toast.success("Payment successful! Task confirmed.");
-          onSuccess();
-        } else {
-          // If status update fails but payment succeeded, we should still tell the user
-          toast.success("Payment successful! Updating task status...");
-          onSuccess();
-        }
+      } else if (paymentIntent && (
+        paymentIntent.status === "succeeded" || 
+        paymentIntent.status === "requires_capture" // manual capture mode
+      )) {
+        toast.success("Payment authorized! Assigning runner...");
+        onSuccess();
+      } else {
+        toast.error("Payment was not completed. Please try again.");
       }
     } catch (err: any) {
       toast.error(err.message || "Payment failed");

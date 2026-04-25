@@ -96,11 +96,12 @@ export default function MyTasksPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "OPEN": return "bg-blue-100 text-blue-600";
-      case "ASSIGNED": return "bg-purple-100 text-purple-600";
+      case "PENDING": return "bg-blue-100 text-blue-600";
+      case "ACCEPTED": return "bg-purple-100 text-purple-600";
       case "IN_PROGRESS": return "bg-yellow-100 text-yellow-600";
+      case "SUBMITTED": return "bg-orange-100 text-orange-600";
       case "COMPLETED": return "bg-green-100 text-green-600";
-      case "CONFIRMED": return "bg-emerald-100 text-emerald-600";
+      case "RELEASED": return "bg-emerald-100 text-emerald-600";
       case "CANCELLED": return "bg-red-100 text-red-600";
       default: return "bg-gray-100 text-gray-600";
     }
@@ -232,27 +233,29 @@ export default function MyTasksPage() {
                     </td>
                     <td className="p-6 text-right">
                       <div className="flex items-center justify-end gap-2">
-                         <button className="p-2 hover:bg-primary/10 text-primary rounded-lg transition-colors" title="View Details">
-                            <Eye className="w-5 h-5" />
-                         </button>
-                         {task.status === "COMPLETED" && (
+                         <Link href={`/dashboard/user/tasks/${task.id}`}>
+                           <button className="p-2 hover:bg-primary/10 text-primary rounded-lg transition-colors" title="View Details">
+                              <Eye className="w-5 h-5" />
+                           </button>
+                         </Link>
+                         {task.status === "SUBMITTED" && (
                            <button 
                              onClick={() => handleOpenConfirmation(task)}
                              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2"
-                             title="Review & Confirm"
+                             title="Review & Approve"
                            >
                               <CheckCircle2 className="w-4 h-4" />
-                              Review & Confirm
+                              Review & Approve
                            </button>
                          )}
-                         {task.status === "OPEN" && (
+                         {task.status === "PENDING" && (
                            <Link href={`/dashboard/user/tasks/${task.id}/edit`}>
                              <button className="p-2 hover:bg-amber-50 text-amber-500 rounded-lg transition-colors" title="Edit Task">
                                 <Pencil className="w-5 h-5" />
                              </button>
                            </Link>
                          )}
-                         {(task.status === "OPEN" || task.status === "ASSIGNED") && (
+                         {(task.status === "PENDING" || task.status === "ACCEPTED") && (
                            <button 
                              onClick={() => handleCancelTask(task.id)}
                              disabled={isActionLoading}
@@ -266,7 +269,7 @@ export default function MyTasksPage() {
                              )}
                            </button>
                          )}
-                         {(task.status === "OPEN" || task.status === "CANCELLED") && (
+                         {(task.status === "PENDING" || task.status === "CANCELLED") && (
                            <button 
                              onClick={() => handleDeleteTask(task.id)}
                              disabled={isActionLoading}

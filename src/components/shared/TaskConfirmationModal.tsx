@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/src/components/ui/dialog";
 import { Button } from "@/src/components/ui/button";
 import { CheckCircle2, Loader2, ShieldCheck, Image as ImageIcon, AlertCircle, DollarSign, User, ExternalLink } from "lucide-react";
-import { getAssignmentById, confirmAssignment } from "@/src/services/assignments";
+import { getAssignmentById, approveAssignment } from "@/src/services/assignments";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -33,7 +33,7 @@ export function TaskConfirmationModal({
     try {
       // Since we modified the backend to allow posters to confirm without OTP, 
       // we can pass null/empty for otp
-      const res = await confirmAssignment(assignment.id, "");
+      const res = await approveAssignment(assignment.id, "");
       if (res?.success) {
         toast.success("Task confirmed and payment released!");
         onSuccess();

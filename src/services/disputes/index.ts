@@ -56,3 +56,20 @@ export const resolveDispute = async (id: string, data: { status: string; adminNo
     return { success: false, message: error.message };
   }
 };
+export const getMyDisputes = async () => {
+  const storeCookie = await cookies();
+  const token = storeCookie.get("token")?.value;
+
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/disputes/my-disputes`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
+      cache: "no-store",
+    });
+    return await res.json();
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+};

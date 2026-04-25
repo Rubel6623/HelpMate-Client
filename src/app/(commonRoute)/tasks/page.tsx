@@ -31,7 +31,7 @@ export default function TasksPage() {
       setUser(currentUser);
 
       const [tasksRes, applicationsRes] = await Promise.all([
-        getTasks("status=OPEN"),
+        getTasks("status=NOT_COMPLETED"),
         currentUser?.role === "RUNNER" ? getMyApplications() : Promise.resolve(null),
       ]);
 

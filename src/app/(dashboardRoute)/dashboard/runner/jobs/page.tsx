@@ -16,7 +16,7 @@ import {
   Package,
 } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
-import { getMyAssignments, startAssignment, completeAssignment } from "@/src/services/assignments";
+import { getMyAssignments, startAssignment, submitAssignment } from "@/src/services/assignments";
 import { getMyApplications } from "@/src/services/task-applications";
 import Link from "next/link";
 
@@ -92,7 +92,7 @@ export default function RunnerJobsPage() {
     setSuccessMsg("");
     setErrorMsg("");
     try {
-      const res = await completeAssignment(assignmentId);
+      const res = await submitAssignment(assignmentId);
       if (res?.success) {
         setSuccessMsg("Task marked as completed! Waiting for user confirmation.");
         await fetchAssignments();
@@ -298,6 +298,11 @@ export default function RunnerJobsPage() {
                       </p>
                     </div>
                     <div className="flex flex-col w-full gap-3">
+                      <Link href={`/dashboard/runner/jobs/${assignment.id}`}>
+                        <Button variant="ghost" className="w-full font-bold text-muted-foreground hover:text-black dark:hover:text-white rounded-xl">
+                           View Details
+                        </Button>
+                      </Link>
                       {/* Start button - only if not started yet */}
                       {!assignment.startedAt && !assignment.completedAt && (
                         <Button

@@ -38,3 +38,36 @@ export const createReview = async (data: any) => {
     return { success: false, message: error.message };
   }
 };
+export const deleteReview = async (id: string) => {
+    const storeCookie = await cookies();
+    const token = storeCookie.get("token")?.value;
+  
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/reviews/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        },
+      });
+      return await res.json();
+    } catch (error: any) {
+      return { success: false, message: error.message };
+    }
+  };
+export const getMyReviews = async () => {
+  const storeCookie = await cookies();
+  const token = storeCookie.get("token")?.value;
+
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/reviews/my-reviews`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
+      cache: "no-store",
+    });
+    return await res.json();
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+};

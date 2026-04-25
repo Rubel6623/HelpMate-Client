@@ -117,3 +117,22 @@ export const deleteTask = async (id: string) => {
     return { success: false, message: error.message };
   }
 };
+
+export const applyForTask = async (data: { taskId: string }) => {
+  const storeCookie = await cookies();
+  const token = storeCookie.get("token")?.value;
+
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/task-applications`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(data),
+    });
+    return await res.json();
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+};
