@@ -16,7 +16,7 @@ const BannerPage = () => {
       {/* Content container */}
       <div className="relative z-10">
         {/* Navigation */}
-        <nav className="container mx-auto flex items-center justify-between px-4 py-4 mt-6">          
+        <nav className="container mx-auto flex items-center justify-between px-4 py-4 mt-6">
 
           {/* Mobile menu button */}
           <button
@@ -79,10 +79,10 @@ const BannerPage = () => {
 
         {/* Badge */}
         <Link href="#services" className="mx-auto mt-6 flex max-w-fit items-center justify-center space-x-2 rounded-full bg-black/5 dark:bg-white/10 px-4 py-2 backdrop-blur-sm hover:bg-black/10 dark:hover:bg-white/20 transition-colors">
-          <span className="text-sm font-medium text-black dark:text-white">
+          <span className="text-sm font-medium text-white dark:text-white">
             Join the revolution today!
           </span>
-          <ArrowRight className="h-4 w-4 text-black dark:text-white" />
+          <ArrowRight className="h-4 w-4 text-white dark:text-black" />
         </Link>
 
         {/* Hero section */}
@@ -95,7 +95,7 @@ const BannerPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <h1 className="text-5xl font-extrabold leading-[1.1] text-black dark:text-white md:text-7xl lg:text-8xl tracking-tight">
+                <h1 className="text-5xl font-extrabold leading-[1.1] text-white dark:text-white md:text-7xl lg:text-8xl tracking-tight">
                   Get Anything Done. <br />
                   <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 animate-gradient-x">
                     Right Now.
@@ -121,12 +121,12 @@ const BannerPage = () => {
                 className="flex flex-col items-center lg:items-start justify-center lg:justify-start space-y-4 sm:flex-row sm:space-x-6 sm:space-y-0"
               >
                 <Link href="/dashboard/user/post-task">
-                  <button className="h-14 rounded-full bg-black dark:bg-white px-10 text-lg font-bold text-white dark:text-black transition-all hover:scale-105 hover:bg-black/90 dark:hover:bg-gray-100 active:scale-95 shadow-2xl shadow-black/10 dark:shadow-white/10">
+                  <button className="h-14 rounded-full bg-primary dark:bg-white px-10 text-lg font-bold text-white dark:text-black transition-all hover:scale-105 hover:bg-primary/80 dark:hover:bg-gray-100 active:scale-95 shadow-2xl shadow-black/10 dark:shadow-white/10">
                     Post a Task
                   </button>
                 </Link>
                 <Link href="/register">
-                  <button className="h-14 rounded-full border-2 border-black/10 dark:border-white/20 bg-black/5 dark:bg-white/5 px-10 text-lg font-bold text-black dark:text-white backdrop-blur-md transition-all hover:bg-black/10 dark:hover:bg-white/10 active:scale-95">
+                  <button className="h-14 rounded-full border-2 border-primary/10 dark:border-white/20 bg-primary dark:bg-white/5 px-10 text-lg font-bold text-white dark:text-black backdrop-blur-md transition-all hover:bg-primary/40 dark:hover:bg-white/10 active:scale-95">
                     Become a Helper
                   </button>
                 </Link>

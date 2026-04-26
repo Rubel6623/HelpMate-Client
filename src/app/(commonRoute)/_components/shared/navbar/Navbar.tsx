@@ -74,7 +74,7 @@ export const Navbar = () => {
   ];
 
   return (
-    <section className="py-4 bg-transparent sticky top-0 z-50 backdrop-blur-md">
+    <section className="py-4 bg-background/80 sticky top-0 z-50 backdrop-blur-md border-b border-border">
       <div className="container">
         <nav className="flex items-center justify-between">
           <Link
@@ -94,18 +94,18 @@ export const Navbar = () => {
               <NavigationMenuItem>
                 <NavigationMenuTrigger className="bg-transparent text-gray-700 dark:text-gray-100 hover:text-amber-500 dark:hover:text-amber-500">Explore</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="grid w-[600px] grid-cols-2 p-3 bg-black/90 border border-white/10 backdrop-blur-xl">
+                  <div className="grid w-[600px] grid-cols-2 p-3 bg-background border border-border shadow-2xl rounded-2xl">
                     {features.map((feature, index) => (
                       <NavigationMenuLink
                         asChild
                         key={index}
-                        className="rounded-md p-3 transition-colors hover:bg-white/10 cursor-pointer"
+                        className="rounded-md p-3 transition-colors hover:bg-muted cursor-pointer"
                       >
                         <Link href={feature.href}>
-                          <p className="mb-1 font-semibold text-white">
+                          <p className="mb-1 font-semibold text-foreground">
                             {feature.title}
                           </p>
-                          <p className="text-sm text-gray-400">
+                          <p className="text-sm text-muted-foreground">
                             {feature.description}
                           </p>
                         </Link>
@@ -172,7 +172,7 @@ export const Navbar = () => {
                   </Button>
                 </Link>
                 <Link href="/dashboard">
-                  <Button variant="ghost" className="text-white hover:bg-white/50 flex gap-2">
+                  <Button variant="ghost" className="text-foreground hover:bg-muted flex gap-2">
                     <LayoutDashboard className="w-4 h-4" />
                     Dashboard
                   </Button>
@@ -207,17 +207,17 @@ export const Navbar = () => {
                 </Button>
               </SheetTrigger>
             </div>
-            <SheetContent side="top" className="max-h-screen overflow-auto bg-black/95 border-white/10">
+            <SheetContent side="top" className="max-h-screen overflow-auto bg-background border-border">
               <SheetHeader>
                 <SheetTitle>
                   <Link
                     href="/"
                     className="flex items-center gap-2"
                   >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white text-black shadow-lg">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-black dark:bg-white text-white dark:text-black shadow-lg">
                       <span className="text-lg font-bold italic">H</span>
                     </div>
-                    <span className="text-xl font-bold tracking-tight text-white">
+                    <span className="text-xl font-bold tracking-tight text-foreground">
                       HelpMate
                     </span>
                   </Link>
@@ -227,7 +227,7 @@ export const Navbar = () => {
               <div className="flex flex-col p-4">
                 <Accordion type="single" collapsible className="mt-4 mb-2">
                   <AccordionItem value="solutions" className="border-none">
-                    <AccordionTrigger className="text-base hover:no-underline text-white">
+                    <AccordionTrigger className="text-base hover:no-underline text-foreground">
                       Explore
                     </AccordionTrigger>
                     <AccordionContent>
@@ -236,12 +236,12 @@ export const Navbar = () => {
                           <Link
                             href={feature.href}
                             key={index}
-                            className="rounded-md p-3 transition-colors hover:bg-white/5"
+                            className="rounded-md p-3 transition-colors hover:bg-muted"
                           >
-                            <p className="mb-1 font-semibold text-white">
+                            <p className="mb-1 font-semibold text-foreground">
                               {feature.title}
                             </p>
-                            <p className="text-sm text-gray-400">
+                            <p className="text-sm text-muted-foreground">
                               {feature.description}
                             </p>
                           </Link>
@@ -252,24 +252,24 @@ export const Navbar = () => {
                 </Accordion>
                 <div className="flex flex-col gap-4 mb-8">
                   {(user?.role === "RUNNER" || user?.role === "ADMIN" || user?.role === "SUPERADMIN") && (
-                    <Link href="/tasks" className="text-lg font-medium text-white hover:text-white/80 transition-colors">
+                    <Link href="/tasks" className="text-lg font-medium text-foreground hover:text-primary transition-colors">
                       Find Tasks
                     </Link>
                   )}
                   {(user?.role === "USER" || user?.role === "ADMIN" || user?.role === "SUPERADMIN") && (
-                    <Link href="/runners" className="text-lg font-medium text-white hover:text-white/80 transition-colors">
+                    <Link href="/runners" className="text-lg font-medium text-foreground hover:text-primary transition-colors">
                       Find Runner
                     </Link>
                   )}
-                  <Link href="/about-us" className="text-lg font-medium text-white hover:text-white/80 transition-colors">
+                  <Link href="/about-us" className="text-lg font-medium text-foreground hover:text-primary transition-colors">
                     About
                   </Link>
-                  <Link href="/contact" className="text-lg font-medium text-white hover:text-white/80 transition-colors">
+                  <Link href="/contact" className="text-lg font-medium text-foreground hover:text-primary transition-colors">
                     Contact
                   </Link>
                 </div>
                 
-                <div className="flex flex-col gap-4 pt-4 border-t border-white/10">
+                <div className="flex flex-col gap-4 pt-4 border-t border-border">
                   {user ? (
                     <>
                       <Link href="/dashboard/user/post-task">
@@ -279,7 +279,7 @@ export const Navbar = () => {
                         </Button>
                       </Link>
                       <Link href="/dashboard">
-                        <Button className="w-full justify-start gap-3 bg-white/5 hover:bg-white/10 text-white border border-white/10">
+                        <Button className="w-full justify-start gap-3 bg-muted hover:bg-muted/80 text-foreground border border-border">
                           <LayoutDashboard className="w-5 h-5" />
                           Dashboard
                         </Button>
@@ -296,10 +296,10 @@ export const Navbar = () => {
                   ) : (
                     <>
                       <Link href="/login">
-                        <Button variant="outline" className="w-full border-white/20 text-white hover:bg-white/10">Sign in</Button>
+                        <Button variant="outline" className="w-full border-border text-foreground hover:bg-muted">Sign in</Button>
                       </Link>
                       <Link href="/register">
-                        <Button className="w-full bg-white text-black hover:bg-white/90">Join Now</Button>
+                        <Button className="w-full bg-black dark:bg-white text-white dark:text-black hover:bg-black/90 dark:hover:bg-white/90">Join Now</Button>
                       </Link>
                     </>
                   )}
