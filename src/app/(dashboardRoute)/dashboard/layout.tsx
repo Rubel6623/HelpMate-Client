@@ -25,6 +25,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { getUser, UserLogOut } from "@/src/services/auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { ThemeToggle } from "@/src/components/shared/ThemeToggle";
 
 const menuItems = {
   USER: [
@@ -183,6 +184,7 @@ export default function DashboardLayout({
           </div>
 
           <div className="flex items-center gap-6">
+            <ThemeToggle />
             <button className="relative p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors">
               <Bell className="w-6 h-6" />
               <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 border-2 border-white dark:border-zinc-900 rounded-full" />

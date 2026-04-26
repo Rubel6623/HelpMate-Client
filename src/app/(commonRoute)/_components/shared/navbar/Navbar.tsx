@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { MenuIcon, LogOut, LayoutDashboard, UserCircle, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ThemeToggle } from "@/src/components/shared/ThemeToggle";
 
 import {
   Accordion,
@@ -80,10 +81,10 @@ export const Navbar = () => {
             href="/"
             className="flex items-center gap-2"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-black shadow-lg shadow-white/10 transition-transform hover:scale-105 ">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-black dark:bg-white text-white dark:text-black shadow-lg shadow-black/10 dark:shadow-white/10 transition-transform hover:scale-105 ">
               <span className="text-2xl font-bold italic">H</span>
             </div>
-            <span className="text-2xl font-bold tracking-tight text-white">
+            <span className="text-2xl font-bold tracking-tight text-black dark:text-white">
               HelpMate
             </span>
           </Link>
@@ -91,7 +92,7 @@ export const Navbar = () => {
           <NavigationMenu className="hidden lg:block">
             <NavigationMenuList>
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent text-gray-100 hover:text-amber-500 ">Explore</NavigationMenuTrigger>
+                <NavigationMenuTrigger className="bg-transparent text-gray-700 dark:text-gray-100 hover:text-amber-500 dark:hover:text-amber-500">Explore</NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="grid w-[600px] grid-cols-2 p-3 bg-black/90 border border-white/10 backdrop-blur-xl">
                     {features.map((feature, index) => (
@@ -118,7 +119,7 @@ export const Navbar = () => {
                   <NavigationMenuLink asChild>
                     <Link
                       href="/tasks"
-                      className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-100 hover:text-amber-500`}
+                      className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-700 dark:text-gray-100 hover:text-amber-500 dark:hover:text-amber-500`}
                     >
                       Find Tasks
                     </Link>
@@ -130,7 +131,7 @@ export const Navbar = () => {
                   <NavigationMenuLink asChild>
                     <Link
                       href="/runners"
-                      className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-100 hover:text-amber-500`}
+                      className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-700 dark:text-gray-100 hover:text-amber-500 dark:hover:text-amber-500`}
                     >
                       Find Runner
                     </Link>
@@ -141,7 +142,7 @@ export const Navbar = () => {
                 <NavigationMenuLink asChild>
                   <Link
                     href="/about-us"
-                    className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-100 hover:text-amber-500`}
+                    className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-700 dark:text-gray-100 hover:text-amber-500 dark:hover:text-amber-500`}
                   >
                     About
                   </Link>
@@ -151,7 +152,7 @@ export const Navbar = () => {
                 <NavigationMenuLink asChild>
                   <Link
                     href="/contact"
-                    className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-100 hover:text-amber-500`}
+                    className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-700 dark:text-gray-100 hover:text-amber-500 dark:hover:text-amber-500`}
                   >
                     Contact
                   </Link>
@@ -161,6 +162,7 @@ export const Navbar = () => {
           </NavigationMenu>
 
           <div className="hidden items-center gap-4 lg:flex">
+            <ThemeToggle />
             {user ? (
               <>
                 <Link href="/dashboard/user/post-task">
@@ -187,21 +189,24 @@ export const Navbar = () => {
             ) : (
               <>
                 <Link href="/login">
-                  <Button variant="ghost" className="text-white hover:bg-white/10">Sign in</Button>
+                  <Button variant="ghost" className="text-gray-700 dark:text-white hover:bg-black/5 dark:hover:bg-white/10">Sign in</Button>
                 </Link>
                 <Link href="/register">
-                  <Button className="bg-white text-black hover:bg-white/90">Join Now</Button>
+                  <Button className="bg-black dark:bg-white text-white dark:text-black hover:bg-black/90 dark:hover:bg-white/90">Join Now</Button>
                 </Link>
               </>
             )}
           </div>
 
           <Sheet>
-            <SheetTrigger asChild className="lg:hidden">
-              <Button variant="outline" size="icon" className="border-white/10 text-white">
-                <MenuIcon className="h-4 w-4" />
-              </Button>
-            </SheetTrigger>
+            <div className="flex items-center gap-2 lg:hidden">
+              <ThemeToggle />
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon" className="border-black/10 dark:border-white/10 text-black dark:text-white">
+                  <MenuIcon className="h-4 w-4" />
+                </Button>
+              </SheetTrigger>
+            </div>
             <SheetContent side="top" className="max-h-screen overflow-auto bg-black/95 border-white/10">
               <SheetHeader>
                 <SheetTitle>
