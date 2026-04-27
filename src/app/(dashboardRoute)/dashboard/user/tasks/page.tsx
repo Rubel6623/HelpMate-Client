@@ -234,11 +234,11 @@ export default function MyTasksPage() {
                     <td className="p-6 text-right">
                       <div className="flex items-center justify-end gap-2">
                          <Link href={`/dashboard/user/tasks/${task.id}`}>
-                           <button className="p-2 hover:bg-primary/10 text-primary rounded-lg transition-colors" title="View Details">
-                              <Eye className="w-5 h-5" />
+                           <button className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2" title="View Details">
+                              Review & Approve
                            </button>
                          </Link>
-                         {task.status === "SUBMITTED" && (
+                         {/* {task.status === "SUBMITTED" && (
                            <button 
                              onClick={() => handleOpenConfirmation(task)}
                              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2"
@@ -247,7 +247,7 @@ export default function MyTasksPage() {
                               <CheckCircle2 className="w-4 h-4" />
                               Review & Approve
                            </button>
-                         )}
+                         )} */}
                          {task.status === "PENDING" && (
                            <Link href={`/dashboard/user/tasks/${task.id}/edit`}>
                              <button className="p-2 hover:bg-amber-50 text-amber-500 rounded-lg transition-colors" title="Edit Task">

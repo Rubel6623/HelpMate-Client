@@ -27,6 +27,7 @@ import { getMyApplications } from "@/src/services/task-applications";
 import { getMyAssignments } from "@/src/services/assignments";
 import { getMyWallet } from "@/src/services/wallets";
 import { getMe } from "@/src/services/auth";
+import { capturePayment } from "@/src/services/payment";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -126,8 +127,11 @@ export default function RunnerDashboard() {
     try {
       const res = await applyForTask({ taskId });
       if (res?.success) {
+        // Capture payment (ESCROW phase)
+        await capturePayment(taskId);
+        
         setAppliedTaskIds(prev => new Set(prev).add(taskId));
-        setSuccessMsg("Task accepted successfully! Redirecting to your worklist...");
+        setSuccessMsg("Task accepted and funds escrowed! Redirecting...");
         setTimeout(() => {
           router.push("/dashboard/runner/my-tasks");
         }, 1500);

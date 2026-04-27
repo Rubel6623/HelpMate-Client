@@ -72,7 +72,7 @@ export const Categories = () => {
             </p>
           </div>
           <Link href="/tasks">
-            <button className="flex items-center gap-2 text-lg font-semibold hover:text-primary transition-colors group">
+            <button className="flex items-center gap-2 text-lg font-semibold text-white hover:text-primary transition-colors group">
               View all categories 
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>

@@ -7,7 +7,7 @@ import { Input } from "@/src/components/ui/input";
 import { Plus, CreditCard, Loader2 } from "lucide-react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import { createPaymentIntent, topUpWallet } from "@/src/services/wallets";
+import { createPaymentIntent, topUpWallet } from "@/src/services/payment";
 import { toast } from "sonner";
 
 // Initialize Stripe (use environment variable or a fallback for testing)

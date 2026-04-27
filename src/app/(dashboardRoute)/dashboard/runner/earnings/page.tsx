@@ -19,14 +19,19 @@ import {
 import { Button } from "@/src/components/ui/button";
 import { getMyWallet, withdrawFunds } from "@/src/services/wallets";
 import { getMyAssignments } from "@/src/services/assignments";
+import { getMe } from "@/src/services/auth";
+import { createConnectAccount, createOnboardingLink } from "@/src/services/payment";
+import { toast } from "sonner";
 
 export default function EarningsPage() {
   const [wallet, setWallet] = useState<any>(null);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [assignments, setAssignments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [withdrawing, setWithdrawing] = useState(false);
+  const [isOnboarding, setIsOnboarding] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -38,9 +43,10 @@ export default function EarningsPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [walletRes, assignmentsRes] = await Promise.all([
+      const [walletRes, assignmentsRes, meRes] = await Promise.all([
         getMyWallet(),
         getMyAssignments(),
+        getMe(),
       ]);
 
       if (walletRes?.success && walletRes.data) {
@@ -51,10 +57,35 @@ export default function EarningsPage() {
       if (assignmentsRes?.success && assignmentsRes.data) {
         setAssignments(assignmentsRes.data);
       }
+
+      if (meRes?.success) {
+        setUser(meRes.data);
+      }
     } catch (error) {
       console.error("Error fetching earnings:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSetupPayouts = async () => {
+    setIsOnboarding(true);
+    try {
+      const accountRes = await createConnectAccount();
+      if (accountRes.success && accountRes.data?.accountId) {
+        const linkRes = await createOnboardingLink(accountRes.data.accountId);
+        if (linkRes.success && linkRes.data?.url) {
+          window.location.href = linkRes.data.url;
+        } else {
+          toast.error(linkRes.message || "Failed to create onboarding link");
+        }
+      } else {
+        toast.error(accountRes.message || "Failed to create payout account");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Something went wrong during onboarding");
+    } finally {
+      setIsOnboarding(false);
     }
   };
 
@@ -108,6 +139,8 @@ export default function EarningsPage() {
     return sum + Number(a.task?.offerPrice || 0);
   }, 0);
 
+  const isStripeConnected = !!user?.runnerProfile?.stripeAccountId;
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -138,13 +171,26 @@ export default function EarningsPage() {
           <h1 className="text-3xl font-extrabold text-black dark:text-white mb-2">My Earnings</h1>
           <p className="text-muted-foreground text-lg">Track your income and withdraw your earnings.</p>
         </div>
-        <Button
-          onClick={() => setShowWithdrawModal(true)}
-          className="h-14 px-8 rounded-2xl bg-black dark:bg-white dark:text-black text-lg font-black shadow-xl flex gap-3"
-        >
-          <Banknote className="w-6 h-6" />
-          Withdraw Funds
-        </Button>
+        <div className="flex gap-4">
+          {!isStripeConnected ? (
+            <Button
+              onClick={handleSetupPayouts}
+              disabled={isOnboarding}
+              className="h-14 px-8 rounded-2xl bg-primary text-white font-black shadow-xl flex gap-3"
+            >
+              {isOnboarding ? <Loader2 className="w-6 h-6 animate-spin" /> : <Landmark className="w-6 h-6" />}
+              Setup Payouts
+            </Button>
+          ) : (
+             <Button
+                onClick={() => setShowWithdrawModal(true)}
+                className="h-14 px-8 rounded-2xl bg-black dark:bg-white dark:text-black text-lg font-black shadow-xl flex gap-3"
+              >
+                <Banknote className="w-6 h-6" />
+                Withdraw Funds
+              </Button>
+          )}
+        </div>
       </div>
 
       {/* Stats Cards */}

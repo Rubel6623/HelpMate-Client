@@ -219,7 +219,7 @@ export default function UserDashboard() {
             <h3 className="text-5xl font-black mb-10 relative z-10">৳{wallet?.balance || "0.00"}</h3>
             
             <div className="grid grid-cols-2 gap-4 relative z-10">
-              <Link href="/dashboard/user/wallet">
+              <Link href="/dashboard/user/payment">
                 <Button className="w-full bg-white text-primary font-black uppercase text-[10px] tracking-widest hover:bg-white/90 rounded-xl h-12 shadow-xl shadow-black/10">
                   Top Up
                 </Button>

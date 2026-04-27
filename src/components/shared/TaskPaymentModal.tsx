@@ -6,7 +6,7 @@ import { Button } from "@/src/components/ui/button";
 import { CreditCard, Loader2, ShieldCheck, CheckCircle2, XCircle } from "lucide-react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import { createPaymentIntent } from "@/src/services/wallets";
+import { createPaymentIntent } from "@/src/services/payment";
 import { updateTaskStatus } from "@/src/services/tasks";
 import { toast } from "sonner";
 
@@ -26,6 +26,34 @@ function TaskCheckoutForm({
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
   const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    if (!stripe) return;
+
+    const clientSecret = new URLSearchParams(window.location.search).get("payment_intent_client_secret");
+    if (!clientSecret) return;
+
+    stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
+      if (!paymentIntent) return;
+      
+      switch (paymentIntent.status) {
+        case "succeeded":
+        case "requires_capture":
+          toast.success("Payment authorized! Assigning runner...");
+          onSuccess();
+          break;
+        case "processing":
+          toast.info("Your payment is processing.");
+          break;
+        case "requires_payment_method":
+          toast.error("Your payment was not successful, please try again.");
+          break;
+        default:
+          toast.error("Something went wrong with the payment.");
+          break;
+      }
+    });
+  }, [stripe, onSuccess]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

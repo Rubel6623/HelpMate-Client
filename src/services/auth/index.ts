@@ -13,6 +13,19 @@ export const registerUser = async (userData: FieldValues) => {
       },
       body: JSON.stringify(userData),
     });
+    if (!res.ok) {
+      const text = await res.text();
+      try {
+        const errorData = JSON.parse(text);
+        return errorData;
+      } catch (e) {
+        return {
+          success: false,
+          message: `Server error (${res.status}): ${text.slice(0, 100)}`
+        };
+      }
+    }
+
     return await res.json();
   } catch (error: any) {
     return {
@@ -31,6 +44,19 @@ export const loginUser = async (userData: FieldValues) => {
       },
       body: JSON.stringify(userData),
     });
+
+    if (!res.ok) {
+      const text = await res.text();
+      try {
+        const errorData = JSON.parse(text);
+        return errorData;
+      } catch (e) {
+        return {
+          success: false,
+          message: `Server error (${res.status}): ${text.slice(0, 100)}`
+        };
+      }
+    }
 
     const result = await res.json();
     const storeCookie = await cookies();

@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Wallet, ArrowUpRight, ArrowDownLeft, Plus, History, CreditCard } from "lucide-react";
+import { Button } from "@/src/components/ui/button";
 import { getMyWallet } from "@/src/services/wallets";
-import { TopUpDialog } from "./_components/TopUpDialog";
+import Link from "next/link";
 
 export default function WalletPage() {
   const [wallet, setWallet] = useState<any>(null);
@@ -29,7 +30,12 @@ export default function WalletPage() {
           <h1 className="text-3xl font-extrabold text-black dark:text-white mb-2">My Wallet</h1>
           <p className="text-muted-foreground text-lg">Manage your funds and track your spending.</p>
         </div>
-        <TopUpDialog onTopUpSuccess={fetchWallet} />
+        <Link href="/dashboard/user/payment">
+          <Button className="h-14 px-8 rounded-2xl bg-primary hover:bg-primary/90 text-lg font-bold shadow-xl shadow-primary/20 flex gap-3">
+            <Plus className="w-6 h-6" />
+            Top Up Balance
+          </Button>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

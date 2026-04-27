@@ -33,6 +33,7 @@ const menuItems = {
     { label: "Post a Task", icon: PlusCircle, href: "/dashboard/user/post-task" },
     { label: "My Tasks", icon: ListTodo, href: "/dashboard/user/tasks" },
     { label: "Wallet", icon: Wallet, href: "/dashboard/user/wallet" },
+    { label: "Add Funds", icon: CreditCard, href: "/dashboard/user/payment" },
     { label: "Notifications", icon: Bell, href: "/dashboard/notifications" },
     { label: "Disputes", icon: ShieldCheck, href: "/dashboard/user/disputes" },
     { label: "Badges", icon: Award, href: "/dashboard/user/badges" },

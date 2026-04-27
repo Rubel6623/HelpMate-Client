@@ -81,10 +81,10 @@ export const Navbar = () => {
             href="/"
             className="flex items-center gap-2"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-black dark:bg-white text-white dark:text-black shadow-lg shadow-black/10 dark:shadow-white/10 transition-transform hover:scale-105 ">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary dark:bg-violet-400 text-white dark:text-black shadow-lg shadow-black/10 dark:shadow-white/10 transition-transform hover:scale-105 ">
               <span className="text-2xl font-bold italic">H</span>
             </div>
-            <span className="text-2xl font-bold tracking-tight text-black dark:text-white">
+            <span className="text-2xl font-bold tracking-tight text-primary dark:text-white">
               HelpMate
             </span>
           </Link>
@@ -92,7 +92,7 @@ export const Navbar = () => {
           <NavigationMenu className="hidden lg:block">
             <NavigationMenuList>
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent text-gray-700 dark:text-gray-100 hover:text-amber-500 dark:hover:text-amber-500">Explore</NavigationMenuTrigger>
+                <NavigationMenuTrigger className="bg-transparent text-black dark:text-gray-100 hover:text-primary dark:hover:text-amber-500">Explore</NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="grid w-[600px] grid-cols-2 p-3 bg-background border border-border shadow-2xl rounded-2xl">
                     {features.map((feature, index) => (
@@ -119,7 +119,7 @@ export const Navbar = () => {
                   <NavigationMenuLink asChild>
                     <Link
                       href="/tasks"
-                      className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-700 dark:text-gray-100 hover:text-amber-500 dark:hover:text-amber-500`}
+                      className={`${navigationMenuTriggerStyle()} bg-transparent text-black dark:text-gray-100 hover:text-primary dark:hover:text-amber-500`}
                     >
                       Find Tasks
                     </Link>
@@ -131,7 +131,7 @@ export const Navbar = () => {
                   <NavigationMenuLink asChild>
                     <Link
                       href="/runners"
-                      className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-700 dark:text-gray-100 hover:text-amber-500 dark:hover:text-amber-500`}
+                      className={`${navigationMenuTriggerStyle()} bg-transparent text-black dark:text-gray-100 hover:text-primary dark:hover:text-amber-500`}
                     >
                       Find Runner
                     </Link>
@@ -142,7 +142,7 @@ export const Navbar = () => {
                 <NavigationMenuLink asChild>
                   <Link
                     href="/about-us"
-                    className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-700 dark:text-gray-100 hover:text-amber-500 dark:hover:text-amber-500`}
+                    className={`${navigationMenuTriggerStyle()} bg-transparent text-black dark:text-gray-100 hover:text-primary dark:hover:text-amber-500`}
                   >
                     About
                   </Link>
@@ -152,7 +152,7 @@ export const Navbar = () => {
                 <NavigationMenuLink asChild>
                   <Link
                     href="/contact"
-                    className={`${navigationMenuTriggerStyle()} bg-transparent text-gray-700 dark:text-gray-100 hover:text-amber-500 dark:hover:text-amber-500`}
+                    className={`${navigationMenuTriggerStyle()} bg-transparent text-black dark:text-gray-100 hover:text-primary dark:hover:text-amber-500`}
                   >
                     Contact
                   </Link>
