@@ -39,7 +39,7 @@ export const Footer = () => {
             <ul className="space-y-4">
               <FooterLink href="/how-it-works">How it Works</FooterLink>
               <FooterLink href="/categories">Task Categories</FooterLink>
-              <FooterLink href="/signup?role=RUNNER">Become a Runner</FooterLink>
+              <FooterLink href="/register?role=RUNNER">Become a Runner</FooterLink>
               <FooterLink href="/safety">Trust & Safety</FooterLink>
             </ul>
           </div>
@@ -47,12 +47,13 @@ export const Footer = () => {
           <div>
             <h4 className="text-xl font-bold mb-6">Company</h4>
             <ul className="space-y-4">
-              <FooterLink href="/about">About Us</FooterLink>
+              <FooterLink href="/about-us">About Us</FooterLink>
               <FooterLink href="/careers">Careers</FooterLink>
               <FooterLink href="/blog">Blog</FooterLink>
               <FooterLink href="/contact">Contact</FooterLink>
             </ul>
           </div>
+
 
           <div>
             <h4 className="text-xl font-bold mb-6">Newsletter</h4>
@@ -77,10 +78,11 @@ export const Footer = () => {
             © 2026 HelpMate. All rights reserved.
           </p>
           <div className="flex gap-8 text-sm text-gray-500">
-            <a href="/privacy" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="/terms" className="hover:text-white transition-colors">Terms of Service</a>
-            <a href="/cookies" className="hover:text-white transition-colors">Cookie Policy</a>
+            <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+            <Link href="/cookies" className="hover:text-white transition-colors">Cookie Policy</Link>
           </div>
+
         </div>
       </div>
     </footer>
@@ -95,9 +97,10 @@ const SocialIcon = ({ icon: Icon }: { icon: any }) => (
 
 const FooterLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
   <li>
-    <a href={href} className="text-gray-400 hover:text-white transition-colors flex items-center group">
+    <Link href={href} className="text-gray-400 hover:text-white transition-colors flex items-center group">
       <span className="w-0 group-hover:w-4 h-0.5 bg-primary mr-0 group-hover:mr-2 transition-all duration-300" />
       {children}
-    </a>
+    </Link>
   </li>
 );
+

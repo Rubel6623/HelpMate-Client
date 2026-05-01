@@ -29,7 +29,18 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/src/components/ui/sheet";
-import { getUser, UserLogOut } from "@/src/services/auth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/src/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar";
+import { getUser, UserLogOut, getMe } from "@/src/services/auth";
+
+
 
 export const Navbar = () => {
   const router = useRouter();
@@ -37,11 +48,19 @@ export const Navbar = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const userData = await getUser();
-      setUser(userData);
+      const decodedUser = await getUser();
+      if (decodedUser) {
+        const fullProfile = await getMe();
+        if (fullProfile?.success) {
+          setUser(fullProfile.data);
+        } else {
+          setUser(decodedUser);
+        }
+      }
     };
     fetchUser();
   }, []);
+
 
   const handleLogout = async () => {
     await UserLogOut();
@@ -71,6 +90,11 @@ export const Navbar = () => {
       description: "Our mission to support student employment",
       href: "/about-us",
     },
+    {
+      title: "Blog",
+      description: "Our mission to support student employment",
+      href: "/blog",
+    },
   ];
 
   return (
@@ -94,12 +118,12 @@ export const Navbar = () => {
               <NavigationMenuItem>
                 <NavigationMenuTrigger className="bg-transparent text-black dark:text-gray-100 hover:text-primary dark:hover:text-amber-500">Explore</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="grid w-[600px] grid-cols-2 p-3 bg-background border border-border shadow-2xl rounded-2xl">
+                  <div className="border-primary/50 bg-transparent shadow-lg shadow-primary/5 grid w-[600px] grid-cols-2 p-3 border-1 rounded-xl">
                     {features.map((feature, index) => (
                       <NavigationMenuLink
                         asChild
                         key={index}
-                        className="rounded-md p-3 transition-colors hover:bg-muted cursor-pointer"
+                        className=" rounded-md p-3 transition-colors hover:bg-primary/5 cursor-pointer"
                       >
                         <Link href={feature.href}>
                           <p className="mb-1 font-semibold text-foreground">
@@ -151,6 +175,16 @@ export const Navbar = () => {
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
                   <Link
+                    href="/blog"
+                    className={`${navigationMenuTriggerStyle()} bg-transparent text-black dark:text-gray-100 hover:text-primary dark:hover:text-amber-500`}
+                  >
+                    Blog
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <Link
                     href="/contact"
                     className={`${navigationMenuTriggerStyle()} bg-transparent text-black dark:text-gray-100 hover:text-primary dark:hover:text-amber-500`}
                   >
@@ -164,38 +198,68 @@ export const Navbar = () => {
           <div className="hidden items-center gap-4 lg:flex">
             <ThemeToggle />
             {user ? (
-              <>
+              <div className="flex items-center gap-4">
                 <Link href="/dashboard/user/post-task">
-                  <Button className="bg-primary text-white hover:bg-primary/90 flex gap-2 shadow-lg shadow-primary/20">
+                  <Button className="bg-primary text-white hover:bg-primary/90 flex gap-2 shadow-lg shadow-primary/20 rounded-xl px-6">
                     <PlusCircle className="w-4 h-4" />
                     Post a Task
                   </Button>
                 </Link>
-                <Link href="/dashboard">
-                  <Button variant="ghost" className="text-foreground hover:bg-muted flex gap-2">
-                    <LayoutDashboard className="w-4 h-4" />
-                    Dashboard
-                  </Button>
-                </Link>
-                <Button 
-                  onClick={handleLogout}
-                  variant="ghost" 
-                  className="text-gray-400 hover:text-red-400 hover:bg-red-500/10 flex gap-2"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Logout
-                </Button>
-              </>
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-transparent p-0">
+                       <Avatar className="h-10 w-10 border-2 border-border hover:border-primary transition-colors">
+                         <AvatarImage src={user.avatarUrl} alt={user.name} />
+                         <AvatarFallback className="bg-primary/10 text-primary font-bold">{user.name?.[0]}</AvatarFallback>
+                       </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-64 p-2 rounded-2xl bg-white dark:bg-zinc-950 border-border shadow-2xl" align="end" sideOffset={12}>
+                    <DropdownMenuLabel className="font-normal p-3">
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-bold leading-none">{user.name}</p>
+                        <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                        <span className="mt-1 w-fit px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-black rounded-full uppercase tracking-widest">
+                          {user.role}
+                        </span>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator className="bg-border/50 my-1" />
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard" className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-muted transition-colors font-medium">
+                        <LayoutDashboard className="w-4 h-4 text-primary" />
+                        <span>Dashboard</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard/profile" className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-muted transition-colors font-medium">
+                        <UserCircle className="w-4 h-4 text-primary" />
+                        <span>My Profile</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator className="bg-border/50 my-1" />
+                    <DropdownMenuItem 
+                      onClick={handleLogout}
+                      className="flex items-center gap-3 p-3 rounded-xl cursor-pointer text-red-500 hover:bg-red-500/10 focus:bg-red-500/10 transition-colors font-bold"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>Log out</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             ) : (
-              <>
+              <div className="flex items-center gap-3">
                 <Link href="/login">
-                  <Button variant="ghost" className="text-gray-700 dark:text-white hover:bg-black/5 dark:hover:bg-white/10">Sign in</Button>
+                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 font-bold hover:bg-muted rounded-xl">Sign in</Button>
                 </Link>
                 <Link href="/register">
-                  <Button className="bg-black dark:bg-white text-white dark:text-black hover:bg-black/90 dark:hover:bg-white/90">Join Now</Button>
+                  <Button className="bg-black dark:bg-white text-white dark:text-black hover:scale-105 transition-transform font-bold px-6 rounded-xl shadow-xl">Join Now</Button>
                 </Link>
-              </>
+              </div>
             )}
+
           </div>
 
           <Sheet>

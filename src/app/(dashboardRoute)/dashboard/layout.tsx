@@ -63,8 +63,10 @@ const menuItems = {
     { label: "Transactions", icon: CreditCard, href: "/dashboard/admin/transactions" },
     { label: "Badges", icon: Award, href: "/dashboard/admin/badges" },
     { label: "Reviews", icon: Star, href: "/dashboard/admin/reviews" },
+    { label: "Blogs", icon: ListTodo, href: "/dashboard/admin/blogs" },
   ],
 };
+
 
 export default function DashboardLayout({
   children,

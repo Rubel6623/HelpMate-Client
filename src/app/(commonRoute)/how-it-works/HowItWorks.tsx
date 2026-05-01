@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import { User, Rocket, CheckCircle } from "lucide-react";
+import Link from "next/link";
 
 const steps = [
   {
@@ -74,9 +75,11 @@ export const HowItWorks = () => {
                     </p>
                 </div>
             </div>
-            <button className="h-14 rounded-full bg-primary px-10 text-lg font-bold text-white shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95">
+            <Link href={"/register"}>
+                <button className="h-14 rounded-full bg-primary px-10 text-lg font-bold text-white shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95">
                 Get Started Now
             </button>
+            </Link>
         </div>
       </div>
     </section>

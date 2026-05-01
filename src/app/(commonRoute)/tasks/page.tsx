@@ -9,6 +9,10 @@ import { Button } from "@/src/components/ui/button";
 import { getTasks } from "@/src/services/tasks";
 import { applyForTask, getMyApplications } from "@/src/services/task-applications";
 import { getUser } from "@/src/services/auth";
+import { Skeleton } from "@/src/components/ui/skeleton";
+import { PlusCircle } from "lucide-react";
+import Link from "next/link";
+
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -112,7 +116,21 @@ export default function TasksPage() {
               className="h-14 w-full pl-14 pr-4 rounded-2xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 outline-none focus:border-primary transition-colors font-medium shadow-lg text-black dark:text-white"
             />
           </div>
+
+          <div className="mt-12 p-8 rounded-[2.5rem] bg-primary/5 dark:bg-primary/10 border border-primary/10 flex flex-col md:flex-row items-center justify-between gap-6 max-w-4xl mx-auto">
+            <div className="text-left">
+              <h3 className="text-xl font-bold text-black dark:text-white">Can't find what you're looking for?</h3>
+              <p className="text-muted-foreground">Post your custom task and let our runners help you out.</p>
+            </div>
+            <Link href="/dashboard/user/post-task">
+              <Button className="h-14 px-8 rounded-2xl bg-primary hover:bg-primary/90 text-white font-bold flex gap-2 shadow-xl shadow-primary/20 hover:-translate-y-1 transition-all">
+                <PlusCircle className="w-5 h-5" />
+                Post a New Task
+              </Button>
+            </Link>
+          </div>
         </motion.div>
+
 
         <div className="max-w-6xl w-full">
           {successMsg && (
@@ -127,15 +145,24 @@ export default function TasksPage() {
           )}
 
           {loading ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex flex-col items-center justify-center py-20 text-gray-500 dark:text-gray-400"
-            >
-              <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
-              <p className="text-lg font-medium">Loading available tasks...</p>
-            </motion.div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="p-8 rounded-3xl bg-white dark:bg-white/5 border border-gray-100 dark:border-white/5 space-y-6">
+                  <div className="flex justify-between items-center">
+                    <Skeleton className="h-6 w-24 rounded-full" />
+                    <Skeleton className="h-8 w-16 rounded-lg" />
+                  </div>
+                  <Skeleton className="h-10 w-full rounded-xl" />
+                  <div className="space-y-3">
+                    <Skeleton className="h-5 w-3/4 rounded-lg" />
+                    <Skeleton className="h-5 w-1/2 rounded-lg" />
+                  </div>
+                  <Skeleton className="h-12 w-full rounded-xl" />
+                </div>
+              ))}
+            </div>
           ) : filteredTasks.length === 0 ? (
+
             <div className="p-20 text-center rounded-3xl bg-white dark:bg-white/5 border border-gray-100 dark:border-white/5 shadow-sm">
               <p className="text-2xl font-bold text-gray-400 mb-2">No open tasks available</p>
               <p className="text-muted-foreground">Check back later for new opportunities.</p>
