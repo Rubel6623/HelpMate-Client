@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { Award, Sparkles, ShieldCheck, Star, Loader2, Clock, CheckCircle2 } from "lucide-react";
 import { getMyBadges } from "@/src/services/badges";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 export default function UserBadgesPage() {
   const [userBadges, setUserBadges] = useState<any[]>([]);
@@ -37,7 +37,7 @@ export default function UserBadgesPage() {
 
   return (
     <div className="space-y-12 pb-20">
-      <Toaster position="top-right" richColors />
+      
       
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-2">

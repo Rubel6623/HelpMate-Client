@@ -4,7 +4,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 // Fallback chain: try each model in order until one works
-const GEMINI_MODELS = ["gemini-1.5-flash", "gemini-1.5-flash-8b", "gemini-pro"];
+const GEMINI_MODELS = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-flash-latest"];
 
 const CHAT_SYSTEM = `You are HelpMate Assistant — the friendly, helpful AI for HelpMate, a platform that connects busy people (Users) with verified helpers for quick, affordable tasks.
 
@@ -54,6 +54,12 @@ async function callGemini(messages, system, maxTokens = 800) {
     return getMockResponse(messages, system);
   }
 
+  // Check for internet connection
+  if (typeof window !== "undefined" && !window.navigator.onLine) {
+    console.warn("User is offline, using mock response");
+    return getMockResponse(messages, system, true);
+  }
+
   const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
   // Build the chat history (all but last message)
@@ -81,6 +87,12 @@ async function callGemini(messages, system, maxTokens = 800) {
       return result.response.text();
     } catch (err) {
       const status = err?.status || err?.message || "";
+      
+      // Handle network errors explicitly
+      if (String(status).includes("Failed to fetch") || String(err?.message).includes("fetch")) {
+         return getMockResponse(messages, system, true);
+      }
+
       // If quota exhausted or model not found, try next model
       if (String(status).includes("429") || String(status).includes("404") ||
           String(err?.message).includes("quota") || String(err?.message).includes("not found")) {
@@ -97,7 +109,10 @@ async function callGemini(messages, system, maxTokens = 800) {
 }
 
 // ─── MOCK RESPONSES FOR DEMO ──────────────────────────────────────────────────
-function getMockResponse(messages, system) {
+function getMockResponse(messages, system, isOffline = false) {
+  if (isOffline) {
+    return "It looks like you're offline. Please check your internet connection to chat with the live AI. I'll be here once you're back online!";
+  }
   const lastMsg = messages[messages.length - 1].content.toLowerCase();
   
   if (system && system.includes("JSON")) {
@@ -113,6 +128,24 @@ function getMockResponse(messages, system) {
     });
   }
 
+  if (lastMsg.includes("hello") || lastMsg.includes("hi") || lastMsg.includes("hey")) {
+    return "Hi there! I'm your HelpMate Assistant. How can I help you today? I can help you post a task, become a runner, or answer questions about payments and safety.";
+  }
+  if (lastMsg.includes("কিভাবে") || lastMsg.includes("টাস্ক") || lastMsg.includes("পোস্ট")) {
+    return "টাস্ক পোস্ট করা খুব সহজ! 'Post a Task' বাটনে ট্যাপ করুন, ক্যাটাগরি সিলেক্ট করুন, বিস্তারিত লিখুন এবং আপনার বাজেট সেট করে কনফার্ম করুন। আমাদের রানাররা শীঘ্রই আপনার সাথে যোগাযোগ করবে।";
+  }
+  if (lastMsg.includes("টাকা") || lastMsg.includes("পেমেন্ট")) {
+    return "আপনার পেমেন্ট হেল্পমেট ওয়ালেটে সুরক্ষিত থাকে। টাস্ক শেষ হওয়ার পর এবং আপনি কনফার্ম করলে টাকা রানারের কাছে পৌঁছে যাবে। আপনি bKash, Nagad বা কার্ডের মাধ্যমে পেমেন্ট করতে পারবেন।";
+  }
+  if (lastMsg.includes("fee") || lastMsg.includes("charge") || lastMsg.includes("cost")) {
+    return "HelpMate keeps it simple! We take a small 10-15% service fee from the total task price to keep the platform running smoothly and safely for everyone.";
+  }
+  if (lastMsg.includes("grocery") || lastMsg.includes("shop") || lastMsg.includes("buy")) {
+    return "Our 'Grocery & Shopping' category is perfect for when you're busy! A Runner can pick up anything from your local bazaar or supermarket and deliver it right to your door.";
+  }
+  if (lastMsg.includes("queue") || lastMsg.includes("line") || lastMsg.includes("wait")) {
+    return "Need someone to stand in line for you at the Passport Office or for tickets? Our 'Queue & Waiting' service is here to save you hours of time!";
+  }
   if (lastMsg.includes("post") || lastMsg.includes("task")) {
     return "To post a task, just tap the 'Post a Task' button on your dashboard. Pick a category, describe what you need, set your budget, and you're good to go! Would you like help drafting a description?";
   }

@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 import { Pencil, MapPin, Calendar, Clock, DollarSign, FileText, Loader2, ArrowLeft } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
@@ -126,7 +126,7 @@ export default function EditTaskPage({ params }: { params: Promise<{ id: string 
 
   return (
     <div className="relative max-w-4xl mx-auto pb-16">
-      <Toaster position="top-right" richColors />
+      
       
       <div className="relative z-10">
         <div className="mb-8">

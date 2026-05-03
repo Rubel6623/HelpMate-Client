@@ -17,7 +17,7 @@ import { Button } from "@/src/components/ui/button";
 import { getMyTasks } from "@/src/services/tasks";
 import { getMyWallet } from "@/src/services/wallets";
 import { approveAssignment } from "@/src/services/assignments";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import Link from "next/link";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/src/components/ui/dialog";
 import { Input } from "@/src/components/ui/input";
@@ -109,7 +109,7 @@ export default function UserDashboard() {
 
   return (
     <div className="space-y-8">
-      <Toaster position="top-right" richColors />
+      
 
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">

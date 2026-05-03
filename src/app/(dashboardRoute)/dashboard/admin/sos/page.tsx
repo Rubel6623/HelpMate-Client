@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { AlertCircle, CheckCircle2, Clock, MapPin, Phone, User, Loader2, ShieldAlert } from "lucide-react";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import { getSosAlerts, resolveSosAlert } from "@/src/services/sos";
 
 export default function AdminSosPage() {
@@ -60,7 +60,7 @@ export default function AdminSosPage() {
 
   return (
     <div className="space-y-8">
-      <Toaster position="top-right" richColors />
+      
       
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>

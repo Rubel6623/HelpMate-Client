@@ -18,18 +18,21 @@ import {
   CreditCard,
   FileText,
   Star,
-  ShieldAlert
+  ShieldAlert,
+  Send
 } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { getTaskById, updateTaskStatus } from "@/src/services/tasks";
 import { approveAssignment } from "@/src/services/assignments";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/src/components/ui/dialog";
 import { Input } from "@/src/components/ui/input";
 import { TaskPaymentModal } from "@/src/components/shared/TaskPaymentModal";
 import { updateApplicationStatus } from "@/src/services/task-applications";
+import { sendMessageToRunner } from "@/src/services/notifications";
+import { Textarea } from "@/src/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage, Badge } from "@/src/components/ui";
 
 export default function UserTaskDetailsPage({ params }: { params: Promise<{ id: string }> }) {
@@ -43,6 +46,9 @@ export default function UserTaskDetailsPage({ params }: { params: Promise<{ id: 
   const [selectedApplication, setSelectedApplication] = useState<any>(null);
   const [otp, setOtp] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
+  const [messageText, setMessageText] = useState("");
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
 
   const fetchTask = async () => {
     setLoading(true);
@@ -138,6 +144,38 @@ export default function UserTaskDetailsPage({ params }: { params: Promise<{ id: 
     }
   };
 
+  const handleSendMessage = async () => {
+    if (!messageText.trim()) {
+      toast.error("Please enter a message");
+      return;
+    }
+    
+    if (!task?.assignment?.runnerId) {
+      toast.error("No runner assigned to this task");
+      return;
+    }
+
+    setIsSendingMessage(true);
+    try {
+      const res = await sendMessageToRunner({
+        runnerId: task.assignment.runnerId,
+        message: messageText.trim(),
+        title: `Message regarding Task: ${task.title}`
+      });
+      if (res?.success) {
+        toast.success("Message sent successfully!");
+        setMessageText("");
+        setIsMessageModalOpen(false);
+      } else {
+        toast.error(res?.message || "Failed to send message");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "An error occurred while sending the message");
+    } finally {
+      setIsSendingMessage(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -165,7 +203,7 @@ export default function UserTaskDetailsPage({ params }: { params: Promise<{ id: 
 
   return (
     <div className="max-w-5xl mx-auto space-y-10 pb-20">
-      <Toaster position="top-right" richColors />
+      
 
       {/* Header */}
       <div className="space-y-6">
@@ -364,11 +402,15 @@ export default function UserTaskDetailsPage({ params }: { params: Promise<{ id: 
                         <p className="text-sm text-gray-400 font-bold">{task.assignment.runner.phone}</p>
                      </div>
                   </div>
-                  <div className="flex gap-2">
-                     <Button variant="outline" className="flex-1 rounded-xl font-bold gap-2">
-                        <MessageSquare className="w-4 h-4" /> Message
-                     </Button>
-                  </div>
+                   <div className="flex gap-2">
+                      <Button 
+                        onClick={() => setIsMessageModalOpen(true)}
+                        variant="outline" 
+                        className="flex-1 rounded-xl font-bold gap-2 hover:bg-primary/5 hover:text-primary transition-all"
+                      >
+                         <MessageSquare className="w-4 h-4" /> Message
+                      </Button>
+                   </div>
                </div>
              ) : (
                <div className="text-center py-8 space-y-4">
@@ -550,6 +592,59 @@ export default function UserTaskDetailsPage({ params }: { params: Promise<{ id: 
         onClose={() => setIsPaymentModalOpen(false)}
         onSuccess={handlePaymentSuccess}
       />
+
+      {/* Message Runner Modal */}
+      <Dialog open={isMessageModalOpen} onOpenChange={setIsMessageModalOpen}>
+        <DialogContent className="sm:max-w-[500px] rounded-[2.5rem] p-8 border-none bg-white dark:bg-zinc-950 shadow-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-black text-black dark:text-white flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                <MessageSquare className="w-6 h-6" />
+              </div>
+              Message to Runner
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-6 pt-4">
+            <div className="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 dark:bg-white/5">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-black uppercase overflow-hidden">
+                {task?.assignment?.runner?.avatarUrl ? (
+                  <img src={task.assignment.runner.avatarUrl} alt={task.assignment.runner.name} className="w-full h-full object-cover" />
+                ) : (
+                  task?.assignment?.runner?.name?.charAt(0) || "R"
+                )}
+              </div>
+              <div>
+                <p className="font-bold text-black dark:text-white">{task?.assignment?.runner?.name}</p>
+                <p className="text-xs text-gray-400">Assigned Runner</p>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Your Message</label>
+              <Textarea 
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+                placeholder="Type your message here..."
+                className="min-h-[150px] rounded-2xl bg-gray-50 dark:bg-white/5 border-none font-medium p-4 focus:ring-2 focus:ring-primary/20"
+              />
+            </div>
+
+            <Button 
+              onClick={handleSendMessage}
+              disabled={isSendingMessage || !messageText.trim()}
+              className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black text-lg shadow-xl shadow-primary/20 flex gap-3 transition-all"
+            >
+              {isSendingMessage ? (
+                <Loader2 className="w-6 h-6 animate-spin" />
+              ) : (
+                <Send className="w-6 h-6" />
+              )}
+              {isSendingMessage ? "Sending..." : "Send Message"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

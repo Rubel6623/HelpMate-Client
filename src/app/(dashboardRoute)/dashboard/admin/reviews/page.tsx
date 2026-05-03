@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { Star, Trash2, MessageSquare, User, Loader2, ShieldCheck, Search, Filter } from "lucide-react";
 import { getReviews, deleteReview } from "@/src/services/reviews";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 export default function AdminReviewsPage() {
   const [reviews, setReviews] = useState<any[]>([]);
@@ -64,7 +64,7 @@ export default function AdminReviewsPage() {
 
   return (
     <div className="space-y-8">
-      <Toaster position="top-right" richColors />
+      
       
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>

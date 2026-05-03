@@ -26,7 +26,7 @@ import {
 import { Button } from "@/src/components/ui/button";
 import { getMyAssignments, startAssignment } from "@/src/services/assignments";
 import Link from "next/link";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 export default function RunnerMyTasksPage() {
   const [activeTasks, setActiveTasks] = useState<any[]>([]);
@@ -104,7 +104,7 @@ export default function RunnerMyTasksPage() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-12 pb-20">
-      <Toaster position="top-right" richColors />
+      
 
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">

@@ -18,7 +18,7 @@ import { Label } from "@/src/components/ui/label";
 import { getAssignmentById, submitAssignment } from "@/src/services/assignments";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 export default function CompleteJobPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -116,7 +116,7 @@ export default function CompleteJobPage({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="max-w-3xl mx-auto space-y-8 pb-20">
-      <Toaster position="top-right" richColors />
+      
       
       <Link href="/dashboard/runner/my-tasks" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors font-bold group">
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />

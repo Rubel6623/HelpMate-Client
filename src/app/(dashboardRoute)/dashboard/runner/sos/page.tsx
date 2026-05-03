@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { ShieldAlert, MapPin, MessageSquare, Loader2, CheckCircle2, AlertCircle, Phone, Navigation } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { createSosAlert } from "@/src/services/sos";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 export default function RunnerSosPage() {
   const [loading, setLoading] = useState(false);
@@ -49,7 +49,7 @@ export default function RunnerSosPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-10 py-10">
-      <Toaster position="top-center" richColors />
+      
 
       <div className="text-center space-y-4">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-500/10 text-red-500 text-xs font-black uppercase tracking-widest border border-red-500/20">

@@ -9,7 +9,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
@@ -92,7 +92,7 @@ export default function CreateBlogPage() {
 
   return (
     <div className="max-w-5xl mx-auto pb-16">
-      <Toaster position="top-right" richColors />
+      
       
       <div className="mb-8 flex items-center justify-between">
         <Link 

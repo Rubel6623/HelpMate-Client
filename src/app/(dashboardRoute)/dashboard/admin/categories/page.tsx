@@ -13,11 +13,17 @@ import {
   FileText,
   Sparkles,
   X,
+  Pencil,
 } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
-import { getCategories, createCategory, deleteCategory } from "@/src/services/category";
-import { toast, Toaster } from "sonner";
+import {
+  getCategories,
+  createCategory,
+  deleteCategory,
+  updateCategory,
+} from "@/src/services/category";
+import { toast } from "sonner";
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<any[]>([]);
@@ -30,6 +36,7 @@ export default function AdminCategoriesPage() {
   const [name, setName] = useState("");
   const [icon, setIcon] = useState("");
   const [description, setDescription] = useState("");
+  const [editingCategory, setEditingCategory] = useState<any | null>(null);
 
   useEffect(() => {
     fetchCategories();
@@ -49,7 +56,7 @@ export default function AdminCategoriesPage() {
     }
   };
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
       toast.error("Category name is required.");
@@ -58,27 +65,52 @@ export default function AdminCategoriesPage() {
 
     setCreating(true);
     try {
-      const res = await createCategory({
+      const payload = {
         name: name.trim(),
         icon: icon.trim() || undefined,
         description: description.trim() || undefined,
-      });
+      };
+
+      let res;
+      if (editingCategory) {
+        res = await updateCategory(editingCategory.id, payload);
+      } else {
+        res = await createCategory(payload);
+      }
 
       if (res?.success) {
-        toast.success(`Category "${name}" created successfully!`);
-        setName("");
-        setIcon("");
-        setDescription("");
-        setShowForm(false);
+        toast.success(
+          editingCategory
+            ? `Category updated successfully!`
+            : `Category "${name}" created successfully!`
+        );
+        resetForm();
         await fetchCategories();
       } else {
-        toast.error(res?.message || "Failed to create category.");
+        toast.error(res?.message || "Failed to process request.");
       }
     } catch (error: any) {
       toast.error(error.message || "Something went wrong.");
     } finally {
       setCreating(false);
     }
+  };
+
+  const handleEdit = (category: any) => {
+    setEditingCategory(category);
+    setName(category.name);
+    setIcon(category.icon || "");
+    setDescription(category.description || "");
+    setShowForm(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const resetForm = () => {
+    setName("");
+    setIcon("");
+    setDescription("");
+    setEditingCategory(null);
+    setShowForm(false);
   };
 
   const handleDelete = async (id: string, categoryName: string) => {
@@ -115,7 +147,7 @@ export default function AdminCategoriesPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-10 pb-20">
-      <Toaster position="top-right" richColors />
+      
 
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -132,7 +164,14 @@ export default function AdminCategoriesPage() {
           </p>
         </div>
         <Button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => {
+            if (showForm && editingCategory) {
+              resetForm();
+            } else {
+              setShowForm(!showForm);
+              if (!showForm) setEditingCategory(null);
+            }
+          }}
           className={`h-14 px-8 rounded-2xl font-black text-lg shadow-xl transition-all flex gap-2 ${
             showForm
               ? "bg-gray-200 dark:bg-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-300"
@@ -160,18 +199,18 @@ export default function AdminCategoriesPage() {
             exit={{ opacity: 0, height: 0, y: -20 }}
             className="overflow-hidden"
           >
-            <form
-              onSubmit={handleCreate}
-              className="p-8 rounded-[2.5rem] bg-white dark:bg-white/5 border-2 border-primary/10 shadow-2xl space-y-6"
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                  <Sparkles className="w-5 h-5" />
+              <form
+                onSubmit={handleSubmit}
+                className="p-8 rounded-[2.5rem] bg-white dark:bg-white/5 border-2 border-primary/10 shadow-2xl space-y-6"
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                    {editingCategory ? <Pencil className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
+                  </div>
+                  <h3 className="text-2xl font-black text-black dark:text-white">
+                    {editingCategory ? "Edit Category" : "Create New Category"}
+                  </h3>
                 </div>
-                <h3 className="text-2xl font-black text-black dark:text-white">
-                  Create New Category
-                </h3>
-              </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
@@ -220,18 +259,20 @@ export default function AdminCategoriesPage() {
                 </div>
               </div>
 
-              <Button
-                type="submit"
-                disabled={creating}
-                className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black text-lg shadow-xl shadow-primary/20 flex gap-3 transition-all"
-              >
-                {creating ? (
-                  <Loader2 className="w-6 h-6 animate-spin" />
-                ) : (
-                  <Plus className="w-6 h-6" />
-                )}
-                {creating ? "Creating..." : "Create Category"}
-              </Button>
+                <Button
+                  type="submit"
+                  disabled={creating}
+                  className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black text-lg shadow-xl shadow-primary/20 flex gap-3 transition-all"
+                >
+                  {creating ? (
+                    <Loader2 className="w-6 h-6 animate-spin" />
+                  ) : editingCategory ? (
+                    <CheckCircle2 className="w-6 h-6" />
+                  ) : (
+                    <Plus className="w-6 h-6" />
+                  )}
+                  {creating ? (editingCategory ? "Updating..." : "Creating...") : editingCategory ? "Update Category" : "Create Category"}
+                </Button>
             </form>
           </motion.div>
         )}
@@ -260,43 +301,73 @@ export default function AdminCategoriesPage() {
             <p className="text-muted-foreground">Create your first category to get started.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {categories.map((category, index) => (
               <motion.div
                 key={category.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
-                className="group p-6 rounded-3xl bg-white dark:bg-white/5 border border-gray-100 dark:border-white/5 shadow-sm hover:shadow-xl hover:border-primary/20 transition-all flex items-center justify-between"
+                className="group relative p-8 rounded-[2rem] bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 shadow-sm hover:shadow-2xl hover:shadow-primary/5 hover:border-primary/20 transition-all duration-300 flex flex-col items-start overflow-hidden"
               >
-                <div className="flex items-center gap-4 min-w-0">
-                  <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-2xl shrink-0">
-                    {category.icon || "📁"}
+                {/* Background Decor */}
+                <div className="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors" />
+
+                <div className="flex items-center justify-between w-full mb-6">
+                  <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-300 shadow-inner">
+                    {category?.icon || "📁"}
                   </div>
-                  <div className="min-w-0">
-                    <h4 className="text-lg font-black text-black dark:text-white truncate">
-                      {category.name}
-                    </h4>
-                    {category.description && (
-                      <p className="text-sm text-muted-foreground truncate">
-                        {category.description}
-                      </p>
-                    )}
+                  <div className="flex flex-col items-end">
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+                      Usage
+                    </span>
+                    <div className="px-3 py-1 rounded-lg bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-bold border border-green-500/20">
+                      {category._count?.tasks || 0} Tasks
+                    </div>
                   </div>
                 </div>
 
-                <Button
-                  onClick={() => handleDelete(category.id, category.name)}
-                  disabled={deletingId === category.id}
-                  variant="ghost"
-                  className="shrink-0 ml-4 p-3 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 opacity-0 group-hover:opacity-100 transition-all"
-                >
-                  {deletingId === category.id ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
+                <div className="space-y-2 mb-8 flex-grow">
+                  <h4 className="text-xl font-black text-black dark:text-white group-hover:text-primary transition-colors">
+                    {category.name}
+                  </h4>
+                  {category.description ? (
+                    <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                      {category.description}
+                    </p>
                   ) : (
-                    <Trash2 className="w-5 h-5" />
+                    <p className="text-sm text-gray-400 italic">No description provided.</p>
                   )}
-                </Button>
+                </div>
+
+                <div className="flex items-center justify-between w-full pt-6 border-t border-gray-100 dark:border-white/5">
+                  <div className="flex items-center gap-1.5 text-xs text-gray-400 font-bold uppercase tracking-wider">
+                    <div className={`w-2 h-2 rounded-full ${category.isActive ? 'bg-green-500' : 'bg-gray-400'}`} />
+                    {category.isActive ? 'Active' : 'Inactive'}
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <Button
+                      onClick={() => handleEdit(category)}
+                      variant="ghost"
+                      className="h-10 w-10 p-0 rounded-xl text-primary hover:bg-primary/10 transition-all"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      onClick={() => handleDelete(category.id, category.name)}
+                      disabled={deletingId === category.id}
+                      variant="ghost"
+                      className="h-10 w-10 p-0 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all"
+                    >
+                      {deletingId === category.id ? (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <Trash2 className="w-5 h-5" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>

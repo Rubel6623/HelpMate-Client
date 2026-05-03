@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { AlertTriangle, Clock, CheckCircle2, XCircle, Search, Filter, Loader2, MessageSquare, ShieldCheck } from "lucide-react";
 import { getMyDisputes } from "@/src/services/disputes";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 export default function UserDisputesPage() {
   const [disputes, setDisputes] = useState<any[]>([]);
@@ -37,7 +37,7 @@ export default function UserDisputesPage() {
 
   return (
     <div className="space-y-8 pb-20">
-      <Toaster position="top-right" richColors />
+      
       
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>

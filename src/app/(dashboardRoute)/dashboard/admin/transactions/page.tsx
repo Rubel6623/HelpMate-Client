@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { CreditCard, ArrowUpRight, ArrowDownLeft, Search, Filter, Loader2, DollarSign, Wallet } from "lucide-react";
 import { getAllTransactions } from "@/src/services/transactions";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 export default function AdminTransactionsPage() {
   const [transactions, setTransactions] = useState<any[]>([]);
@@ -53,7 +53,7 @@ export default function AdminTransactionsPage() {
 
   return (
     <div className="space-y-8">
-      <Toaster position="top-right" richColors />
+      
       
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>

@@ -21,7 +21,7 @@ import {
 import { Textarea } from "@/src/components/ui/textarea";
 import Link from "next/link";
 import { Loader2, MessageSquare, Send } from "lucide-react";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 export default function RunnerDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -97,7 +97,7 @@ export default function RunnerDetailsPage({ params }: { params: Promise<{ id: st
 
   return (
     <div className="min-h-screen px-6 md:px-20 pb-20">
-      <Toaster position="top-right" richColors />
+      
       
       {/* Hero Header / Banner */}
       <div className="relative h-[400px] md:h-[500px] w-full overflow-hidden rounded-b-[4rem]">

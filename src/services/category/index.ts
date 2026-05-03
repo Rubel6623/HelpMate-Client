@@ -61,3 +61,22 @@ export const deleteCategory = async (id: string) => {
     return { success: false, message: error.message };
   }
 };
+
+export const updateCategory = async (id: string, data: { name?: string; icon?: string; description?: string; isActive?: boolean }) => {
+  const storeCookie = await cookies();
+  const token = storeCookie.get("token")?.value;
+
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/categories/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(data),
+    });
+    return await res.json();
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+};

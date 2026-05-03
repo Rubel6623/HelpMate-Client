@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { getAssignmentById, startAssignment } from "@/src/services/assignments";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -100,7 +100,7 @@ export default function RunnerJobDetailsPage({ params }: { params: Promise<{ id:
 
   return (
     <div className="max-w-5xl mx-auto space-y-10 pb-20">
-      <Toaster position="top-right" richColors />
+      
 
       {/* Header */}
       <div className="space-y-6">

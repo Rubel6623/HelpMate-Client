@@ -14,11 +14,12 @@ import {
   ShieldAlert,
   CreditCard,
   MessageSquare,
-  Package
+  Package,
+  RefreshCw
 } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { getMyNotifications, markNotificationAsRead, markAllAsRead, sendMessageToRunner } from "@/src/services/notifications";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import { 
   Dialog, 
   DialogContent, 
@@ -32,26 +33,36 @@ import { Send } from "lucide-react";
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [replyToNotification, setReplyToNotification] = useState<any>(null);
   const [replyMessage, setReplyMessage] = useState("");
   const [replying, setReplying] = useState(false);
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = async (isRefresh = false) => {
+    if (isRefresh) setRefreshing(true);
     try {
       const res = await getMyNotifications();
       if (res?.success) {
         setNotifications(res.data || []);
       }
     } catch (error) {
-      toast.error("Failed to load notifications");
+      if (isRefresh) toast.error("Failed to refresh notifications");
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
   useEffect(() => {
     fetchNotifications();
+    
+    // Auto update every 30 seconds
+    const interval = setInterval(() => {
+      fetchNotifications();
+    }, 30000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const handleMarkAsRead = async (id: string) => {
@@ -148,7 +159,7 @@ export default function NotificationsPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      <Toaster position="top-right" richColors />
+      
       
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
@@ -159,17 +170,30 @@ export default function NotificationsPage() {
           <p className="text-muted-foreground text-lg">Stay updated with your activities and task progress.</p>
         </div>
         
-        {unreadCount > 0 && (
-          <Button 
-            onClick={handleMarkAllRead} 
-            disabled={actionLoading}
-            variant="outline" 
-            className="rounded-xl font-bold flex gap-2"
+        <div className="flex items-center gap-3">
+          <Button
+            onClick={() => fetchNotifications(true)}
+            disabled={refreshing || loading}
+            variant="outline"
+            size="icon"
+            className="rounded-xl h-10 w-10 shadow-sm"
+            title="Refresh notifications"
           >
-            {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCheck className="w-4 h-4" />}
-            Mark all as read
+            <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
           </Button>
-        )}
+
+          {unreadCount > 0 && (
+            <Button 
+              onClick={handleMarkAllRead} 
+              disabled={actionLoading}
+              variant="outline" 
+              className="rounded-xl font-bold flex gap-2 h-10 shadow-sm"
+            >
+              {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCheck className="w-4 h-4" />}
+              Mark all as read
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="space-y-4">

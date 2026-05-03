@@ -16,7 +16,7 @@ import {
 import { Button } from "@/src/components/ui/button";
 import { getMyApplications } from "@/src/services/task-applications";
 import Link from "next/link";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 export default function RunnerApplicationsPage() {
   const [applications, setApplications] = useState<any[]>([]);
@@ -84,7 +84,7 @@ export default function RunnerApplicationsPage() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-10 pb-20">
-      <Toaster position="top-right" richColors />
+      
 
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-2">

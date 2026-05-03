@@ -7,7 +7,7 @@ import { getAllRunners } from "@/src/services/runners";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import Link from "next/link";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 export default function RunnersPage() {
   const [runners, setRunners] = useState<any[]>([]);
@@ -37,7 +37,7 @@ export default function RunnersPage() {
 
   return (
     <div className="container px-6 md:px-20 py-12">
-      <Toaster position="top-right" richColors />
+      
       
       {/* Back to Home Button */}
       <motion.div

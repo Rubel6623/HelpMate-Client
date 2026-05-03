@@ -6,7 +6,7 @@ import { Search, Filter, Eye, Trash2, Clock, CheckCircle2, AlertCircle, Loader2,
 import { Button } from "@/src/components/ui/button";
 import { getMyTasks, updateTaskStatus, deleteTask } from "@/src/services/tasks";
 import Link from "next/link";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import { TaskPaymentModal } from "@/src/components/shared/TaskPaymentModal";
 import { TaskConfirmationModal } from "@/src/components/shared/TaskConfirmationModal";
 
@@ -126,7 +126,7 @@ export default function MyTasksPage() {
 
   return (
     <div className="space-y-8">
-      <Toaster position="top-right" richColors />
+      
 
       {/* Payment Modal Integration */}
       {selectedTask && (

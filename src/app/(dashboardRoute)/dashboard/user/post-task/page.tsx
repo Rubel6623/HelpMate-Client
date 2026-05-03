@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 import { PlusCircle, MapPin, Calendar, Clock, DollarSign, FileText, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
@@ -97,7 +97,7 @@ function PostTaskForm() {
 
   return (
     <div className="relative max-w-4xl mx-auto pb-16">
-      <Toaster position="top-right" richColors />
+      
       
       <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-[600px] h-[600px] bg-primary/20 blur-[150px] rounded-full pointer-events-none" />
       <div className="absolute top-1/2 left-0 -translate-x-1/2 w-[500px] h-[500px] bg-blue-500/10 blur-[120px] rounded-full pointer-events-none" />

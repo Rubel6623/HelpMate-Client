@@ -9,7 +9,7 @@ import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
 import { Textarea } from "@/src/components/ui/textarea";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 export default function ProfilePage() {
   const [user, setUser] = useState<any>(null);
@@ -326,7 +326,7 @@ export default function ProfilePage() {
           </div>
         </motion.div>
       </div>
-      <Toaster position="top-right" richColors />
+      
     </div>
   );
 }

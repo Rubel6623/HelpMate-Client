@@ -6,7 +6,7 @@ import { Plus, Trash2, Edit3, Loader2, Award, Sparkles, X, Image as ImageIcon, S
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { getMyBadges,getBadges, createBadge, updateBadge, deleteBadge } from "@/src/services/badges";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 export default function AdminBadgesPage() {
   const [badges, setBadges] = useState<any[]>([]);
@@ -109,7 +109,7 @@ export default function AdminBadgesPage() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-10 pb-20">
-      <Toaster position="top-right" richColors />
+      
 
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-2">

@@ -20,7 +20,7 @@ import { createDispute } from "@/src/services/disputes";
 import { getTaskById } from "@/src/services/tasks";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 export default function GenericDisputePage({ params }: { params: Promise<{ taskId: string }> }) {
   const resolvedParams = use(params);
@@ -116,7 +116,7 @@ export default function GenericDisputePage({ params }: { params: Promise<{ taskI
 
   return (
     <div className="max-w-3xl mx-auto space-y-8 pb-20">
-      <Toaster position="top-right" richColors />
+      
       
       <Button variant="ghost" onClick={() => router.back()} className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors font-bold group">
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />

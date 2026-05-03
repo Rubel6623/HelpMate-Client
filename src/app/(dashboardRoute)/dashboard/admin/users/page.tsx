@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Search, ShieldAlert, UserCheck, Loader2, Eye, BadgeCheck, X } from "lucide-react";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import { getUsers, updateUser, getUserById } from "@/src/services/user";
 
 export default function AdminUsersPage() {
@@ -101,7 +101,7 @@ export default function AdminUsersPage() {
 
   return (
     <div className="space-y-8">
-      <Toaster position="top-right" richColors />
+      
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h1 className="text-3xl font-extrabold text-black dark:text-white mb-2">User Management</h1>
