@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Search, ShieldAlert, UserCheck, Loader2, Eye, BadgeCheck, X } from "lucide-react";
+import { Search, ShieldAlert, UserCheck, Loader2, Eye, BadgeCheck, X, UserCog } from "lucide-react";
 import { toast } from "sonner";
 import { getUsers, updateUser, getUserById } from "@/src/services/user";
 
@@ -90,6 +90,24 @@ export default function AdminUsersPage() {
       setIsModalOpen(false);
     } finally {
       setModalLoading(false);
+    }
+  };
+
+  const handleMakeRunner = async (userId: string) => {
+    if (!confirm("Are you sure you want to promote this user to Runner role? This will allow them to apply for tasks.")) return;
+    setUpdatingId(userId);
+    try {
+      const res = await updateUser(userId, { role: "RUNNER" });
+      if (res?.success) {
+        toast.success("User promoted to Runner successfully!");
+        setUsers(users.map(u => u.id === userId ? { ...u, role: "RUNNER" } : u));
+      } else {
+        toast.error(res?.message || "Failed to update role");
+      }
+    } catch (error) {
+      toast.error("An error occurred while updating role");
+    } finally {
+      setUpdatingId(null);
     }
   };
 
@@ -193,6 +211,16 @@ export default function AdminUsersPage() {
                            >
                               <Eye className="w-4 h-4" />
                            </button>
+
+                           {user.role === "USER" && (
+                              <button 
+                                onClick={() => handleMakeRunner(user.id)}
+                                title="Promote to Runner"
+                                className="p-2.5 hover:bg-purple-50 text-purple-600 rounded-xl transition-colors shadow-sm bg-white dark:bg-zinc-800 border border-gray-100 dark:border-white/10 dark:hover:bg-purple-500/10"
+                              >
+                                 <UserCog className="w-4 h-4" />
+                              </button>
+                            )}
 
                            {user.verificationStatus !== "VERIFIED" && (
                              <button 

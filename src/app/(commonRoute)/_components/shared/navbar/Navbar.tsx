@@ -89,12 +89,7 @@ export const Navbar = () => {
       title: "About HelpMate",
       description: "Our mission to support student employment",
       href: "/about-us",
-    },
-    {
-      title: "Blog",
-      description: "Our mission to support student employment",
-      href: "/blog",
-    },
+    }
   ];
 
   return (
