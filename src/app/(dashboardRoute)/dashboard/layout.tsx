@@ -26,6 +26,7 @@ import { getUser, UserLogOut } from "@/src/services/auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { ThemeToggle } from "@/src/components/shared/ThemeToggle";
+import { getMyNotifications } from "@/src/services/notifications";
 
 const menuItems = {
   USER: [
@@ -75,6 +76,7 @@ export default function DashboardLayout({
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const [unreadCount, setUnreadCount] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -88,6 +90,26 @@ export default function DashboardLayout({
     };
     fetchUser();
   }, [router]);
+
+  useEffect(() => {
+    if (user) {
+      const fetchUnreadCount = async () => {
+        try {
+          const res = await getMyNotifications();
+          if (res?.success) {
+            const count = res.data.filter((n: any) => !n.read).length;
+            setUnreadCount(count);
+          }
+        } catch (error) {
+          console.error("Failed to fetch notifications", error);
+        }
+      };
+      fetchUnreadCount();
+      // Set up an interval to refresh count every minute
+      const interval = setInterval(fetchUnreadCount, 60000);
+      return () => clearInterval(interval);
+    }
+  }, [user]);
 
   const handleLogout = async () => {
     await UserLogOut();
@@ -188,10 +210,14 @@ export default function DashboardLayout({
 
           <div className="flex items-center gap-6">
             <ThemeToggle />
-            <button className="relative p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors">
+            <Link href="/dashboard/notifications" className="relative p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors">
               <Bell className="w-6 h-6" />
-              <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 border-2 border-white dark:border-zinc-900 rounded-full" />
-            </button>
+              {unreadCount > 0 && (
+                <span className="absolute top-2 right-2 w-4 h-4 bg-red-500 border-2 border-white dark:border-zinc-900 rounded-full flex items-center justify-center text-[10px] text-white font-bold">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
+            </Link>
             <div className="flex items-center gap-4 pl-6 border-l border-gray-200 dark:border-white/5">
               <div className="text-right hidden sm:block">
                 <p className="text-sm font-bold text-black dark:text-white leading-none mb-1">

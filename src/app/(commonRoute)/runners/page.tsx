@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { UserCircle, Star, ShieldCheck, MapPin, Search, Filter, Loader2, Calendar } from "lucide-react";
+import { UserCircle, Star, ShieldCheck, MapPin, Search, Filter, Loader2, Calendar, Home, ArrowLeft } from "lucide-react";
 import { getAllRunners } from "@/src/services/runners";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
@@ -36,15 +36,30 @@ export default function RunnersPage() {
   });
 
   return (
-    <div className="container py-12">
+    <div className="container px-6 md:px-20 py-12">
       <Toaster position="top-right" richColors />
       
+      {/* Back to Home Button */}
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="mb-8"
+      >
+        <Link href="/">
+          <Button variant="ghost" className="rounded-full gap-2 text-white hover:text-primary transition-colors border border-white/20">
+            <ArrowLeft className="w-4 h-4" />
+            <Home className="w-4 h-4" />
+            <span>Back to Home</span>
+          </Button>
+        </Link>
+      </motion.div>
+
       {/* Header Section */}
       <div className="mb-12 text-center">
         <motion.h1 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-4xl md:text-6xl font-black mb-4 tracking-tight"
+          className="text-4xl md:text-6xl text-white font-bold mb-4 tracking-tight"
         >
           Find Your Perfect <span className="text-primary">Runner</span>
         </motion.h1>
@@ -159,12 +174,19 @@ export default function RunnersPage() {
                 </div>
 
                 {/* Action */}
-                <Link href={`/dashboard/user/post-task?runnerId=${user.id || item.userId}`}>
-                  <Button className="w-full h-14 rounded-2xl bg-gray-900 dark:bg-white dark:text-black hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-all duration-300 font-bold gap-3 group/btn">
-                    <Calendar className="w-5 h-5 transition-transform group-hover/btn:scale-110" />
-                    Book Now
-                  </Button>
-                </Link>
+                <div className="flex gap-3">
+                  <Link href={`/runners/${user.id || item.userId}`} className="flex-1">
+                    <Button variant="outline" className="w-full h-14 rounded-2xl border-gray-200 dark:border-white/10 hover:bg-gray-100 dark:hover:bg-white/5 transition-all duration-300 font-bold">
+                      View Details
+                    </Button>
+                  </Link>
+                  <Link href={`/dashboard/user/post-task?runnerId=${user.id || item.userId}`} className="flex-1">
+                    <Button className="w-full h-14 rounded-2xl bg-gray-900 dark:bg-white dark:text-black hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-all duration-300 font-bold gap-2 group/btn text-sm">
+                      <Calendar className="w-4 h-4 transition-transform group-hover/btn:scale-110" />
+                      Book Now
+                    </Button>
+                  </Link>
+                </div>
               </motion.div>
             );
           })}

@@ -17,13 +17,25 @@ import {
   Package
 } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
-import { getMyNotifications, markNotificationAsRead, markAllAsRead } from "@/src/services/notifications";
+import { getMyNotifications, markNotificationAsRead, markAllAsRead, sendMessageToRunner } from "@/src/services/notifications";
 import { toast, Toaster } from "sonner";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogFooter
+} from "@/src/components/ui/dialog";
+import { Textarea } from "@/src/components/ui/textarea";
+import { Send } from "lucide-react";
 
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
+  const [replyToNotification, setReplyToNotification] = useState<any>(null);
+  const [replyMessage, setReplyMessage] = useState("");
+  const [replying, setReplying] = useState(false);
 
   const fetchNotifications = async () => {
     try {
@@ -68,6 +80,40 @@ export default function NotificationsPage() {
     }
   };
 
+  const handleReply = async () => {
+    if (!replyMessage.trim()) {
+      toast.error("Please enter a message");
+      return;
+    }
+
+    const senderId = replyToNotification?.data?.senderId;
+    if (!senderId) {
+      toast.error("Could not find sender information");
+      return;
+    }
+
+    setReplying(true);
+    try {
+      const res = await sendMessageToRunner({
+        runnerId: senderId,
+        message: replyMessage,
+        title: `Reply from HelpMate Runner`
+      });
+
+      if (res?.success) {
+        toast.success("Reply sent successfully!");
+        setReplyMessage("");
+        setReplyToNotification(null);
+      } else {
+        toast.error(res?.message || "Failed to send reply");
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred");
+    } finally {
+      setReplying(false);
+    }
+  };
+
   const getIcon = (type: string) => {
     switch (type) {
       case "PAYMENT_RECEIVED":
@@ -83,6 +129,8 @@ export default function NotificationsPage() {
       case "APPLICATION_RECEIVED":
       case "APPLICATION_ACCEPTED":
         return <Package className="w-5 h-5 text-primary" />;
+      case "DIRECT_MESSAGE":
+        return <MessageSquare className="w-5 h-5 text-purple-500" />;
       default:
         return <Bell className="w-5 h-5 text-gray-400" />;
     }
@@ -173,6 +221,23 @@ export default function NotificationsPage() {
                     <p className={`text-sm leading-relaxed ${notif.read ? "text-gray-400" : "text-muted-foreground"}`}>
                       {notif.message}
                     </p>
+
+                    {notif.type === "DIRECT_MESSAGE" && (
+                      <div className="pt-3">
+                        <Button 
+                          size="sm" 
+                          variant="secondary" 
+                          className="rounded-xl font-bold h-9 gap-2"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setReplyToNotification(notif);
+                          }}
+                        >
+                          <MessageSquare className="w-4 h-4" />
+                          Reply
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -180,6 +245,49 @@ export default function NotificationsPage() {
           </AnimatePresence>
         )}
       </div>
+
+      <Dialog open={!!replyToNotification} onOpenChange={(open) => !open && setReplyToNotification(null)}>
+        <DialogContent className="sm:max-w-[500px] rounded-[2.5rem] p-8">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-black flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <MessageSquare className="w-6 h-6 text-primary" />
+              </div>
+              Reply to {replyToNotification?.data?.senderName || 'User'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6 py-6">
+            <div className="p-4 rounded-2xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 italic text-sm text-muted-foreground">
+              "{replyToNotification?.message}"
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Your Reply</label>
+              <Textarea 
+                placeholder="Type your reply here..."
+                className="min-h-[150px] rounded-2xl p-6 bg-gray-50 dark:bg-white/5 border-none focus:ring-2 focus:ring-primary/20"
+                value={replyMessage}
+                onChange={(e) => setReplyMessage(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button 
+              onClick={handleReply}
+              disabled={replying}
+              className="w-full h-14 rounded-2xl font-black text-lg gap-2"
+            >
+              {replying ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <>
+                  <Send className="w-5 h-5" />
+                  Send Reply
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

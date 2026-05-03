@@ -3,8 +3,10 @@
 import { motion } from "motion/react";
 import { Navbar } from "../_components/shared/navbar/Navbar";
 import { Footer } from "../_components/shared/footer/Footer";
-import { Mail, Phone, MapPin, Send, MessageCircle } from "lucide-react";
+import { Mail, Phone, MapPin, Send, MessageCircle, Loader2 } from "lucide-react";
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { toast } from "sonner";
+import { useState } from "react";
 
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
@@ -12,6 +14,23 @@ import { Textarea } from "@/src/components/ui/textarea";
 import { Label } from "@/src/components/ui/label";
 
 export default function ContactPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setIsSubmitting(false);
+      toast.success("Message sent successfully! Our team will get back to you soon.", {
+        description: "Thank you for reaching out to HelpMate.",
+        duration: 5000,
+      });
+      (e.target as HTMLFormElement).reset();
+    }, 1500);
+  };
+
   return (
     <>
       <Navbar />
@@ -51,7 +70,7 @@ export default function ContactPage() {
                 Send us a Message
               </h2>
               
-              <form className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-3">
                     <Label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Your Name</Label>
@@ -73,9 +92,22 @@ export default function ContactPage() {
                   <Textarea placeholder="Describe your inquiry..." className="min-h-[160px] p-6 rounded-2xl bg-white dark:bg-zinc-900 border-none shadow-sm focus:ring-2 focus:ring-primary/20 resize-none" />
                 </div>
 
-                <Button className="w-full h-16 rounded-2xl bg-primary hover:bg-primary/90 text-white text-lg font-bold shadow-xl shadow-primary/20 flex gap-3 group">
-                  Send Message
-                  <Send className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                <Button 
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full h-16 rounded-2xl bg-primary hover:bg-primary/90 text-white text-lg font-bold shadow-xl shadow-primary/20 flex gap-3 group"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-6 h-6 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      Send Message
+                      <Send className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                    </>
+                  )}
                 </Button>
               </form>
             </motion.div>

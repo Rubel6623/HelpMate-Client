@@ -3,12 +3,29 @@
 import { motion } from "motion/react";
 import Link from "next/link";
 import RegisterForm from "@/src/components/modules/auth/register/RegisterForm";
+import { ArrowLeft } from "lucide-react";
 
 export default function SignupPage() {
   return (
     <div className="relative min-h-screen py-20 flex items-center justify-center bg-transparent overflow-hidden px-4">
 
       
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="absolute top-8 left-8 z-20"
+      >
+        <Link 
+          href="/" 
+          className="flex items-center gap-2 text-gray-400 hover:text-white transition-all font-bold group"
+        >
+          <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 group-hover:border-white/30 transition-all shadow-sm">
+            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+          </div>
+          <span className="hidden sm:block">Back to Home</span>
+        </Link>
+      </motion.div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

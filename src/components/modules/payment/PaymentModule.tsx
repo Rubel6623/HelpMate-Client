@@ -11,11 +11,33 @@ import { motion, AnimatePresence } from "motion/react";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "pk_test_51TNuju2KMrtjiRDvh0UX76P5Vcz8hceBl7ih9fV9PuLsCHb9TAfWRO3XHQEXAZ9X3IEZWesePh6Ai1sCllXw8kcK00yChlNTL2");
 
-function CheckoutForm({ amount, onSuccess }: { amount: number; onSuccess: () => void }) {
+function CheckoutForm({ amount, onSuccess, clientSecret }: { amount: number; onSuccess: () => void; clientSecret: string }) {
   const stripe = useStripe();
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
   const [isReady, setIsReady] = useState(false);
+  const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
+
+  // Poll for payment success when displaying QR code
+  useEffect(() => {
+    if (!qrCodeUrl || !stripe || !clientSecret) return;
+
+    const intervalId = setInterval(() => {
+      stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
+        if (paymentIntent?.status === "succeeded" || paymentIntent?.status === "requires_capture") {
+          clearInterval(intervalId);
+          toast.success("Payment successful! Updating your balance...");
+          onSuccess();
+        } else if (paymentIntent?.status === "canceled") {
+          clearInterval(intervalId);
+          setQrCodeUrl(null);
+          toast.error("Payment was canceled.");
+        }
+      });
+    }, 3000);
+
+    return () => clearInterval(intervalId);
+  }, [qrCodeUrl, stripe, clientSecret, onSuccess]);
 
   useEffect(() => {
     if (!stripe) return;
@@ -70,6 +92,17 @@ function CheckoutForm({ amount, onSuccess }: { amount: number; onSuccess: () => 
         // Tell the parent component (PaymentModule) that we are done
         onSuccess(); 
       }
+      else if (paymentIntent && paymentIntent.status === "requires_action") {
+        if (paymentIntent.next_action?.type === "cashapp_handle_redirect_or_display_qr_code") {
+          const qrData = (paymentIntent.next_action as any).cashapp_handle_redirect_or_display_qr_code;
+          if (qrData?.qr_code?.image_url_png) {
+            setQrCodeUrl(qrData.qr_code.image_url_png);
+            toast.info("Please scan the QR code with your Cash App to complete the payment.");
+          }
+        } else {
+          toast.info("Please complete the required action.");
+        }
+      }
     } catch (err: any) {
       toast.error("Payment failed");
     } finally {
@@ -91,22 +124,50 @@ function CheckoutForm({ amount, onSuccess }: { amount: number; onSuccess: () => 
         </div>
       </div>
 
-      <div className="min-h-[200px] p-2 bg-white dark:bg-white/5 rounded-2xl border border-border">
-        <PaymentElement onReady={() => setIsReady(true)} />
-      </div>
+      {qrCodeUrl ? (
+        <div className="flex flex-col items-center justify-center p-8 bg-white dark:bg-white/5 rounded-3xl border border-border">
+          <h3 className="text-xl font-bold text-foreground mb-4">Scan to Pay with Cash App</h3>
+          <div className="bg-white p-4 rounded-2xl shadow-xl">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img 
+              src={qrCodeUrl} 
+              alt="Cash App QR Code" 
+              className="w-56 h-56 object-contain" 
+            />
+          </div>
+          <p className="mt-6 text-sm font-medium text-muted-foreground text-center animate-pulse flex items-center gap-2">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            Waiting for payment completion...
+          </p>
+          <Button 
+            type="button" 
+            variant="ghost" 
+            className="mt-6 text-muted-foreground hover:text-foreground"
+            onClick={() => setQrCodeUrl(null)}
+          >
+            Cancel or Choose Another Method
+          </Button>
+        </div>
+      ) : (
+        <div className="min-h-[200px] p-2 bg-white dark:bg-white/5 rounded-2xl border border-border">
+          <PaymentElement onReady={() => setIsReady(true)} />
+        </div>
+      )}
 
-      <Button 
-        type="submit" 
-        disabled={isLoading || !stripe || !elements || !isReady} 
-        className="w-full bg-primary hover:bg-primary/90 text-white font-black h-14 rounded-2xl transition-all shadow-xl shadow-primary/20 disabled:opacity-50 text-lg"
-      >
-        {isLoading ? (
-          <Loader2 className="animate-spin w-6 h-6 mr-2" />
-        ) : (
-          <CheckCircle2 className="w-6 h-6 mr-2" />
-        )}
-        {isReady ? `Confirm & Pay ৳${amount}` : "Securing Gateway..."}
-      </Button>
+      {!qrCodeUrl && (
+        <Button 
+          type="submit" 
+          disabled={isLoading || !stripe || !elements || !isReady} 
+          className="w-full bg-primary hover:bg-primary/90 text-white font-black h-14 rounded-2xl transition-all shadow-xl shadow-primary/20 disabled:opacity-50 text-lg"
+        >
+          {isLoading ? (
+            <Loader2 className="animate-spin w-6 h-6 mr-2" />
+          ) : (
+            <CheckCircle2 className="w-6 h-6 mr-2" />
+          )}
+          {isReady ? `Confirm & Pay ৳${amount}` : "Securing Gateway..."}
+        </Button>
+      )}
     </form>
   );
 }
@@ -243,7 +304,7 @@ export default function PaymentModule() {
             </div>
 
             <Elements key={clientSecret} stripe={stripePromise} options={{ clientSecret }}>
-              <CheckoutForm amount={parseFloat(amount)} onSuccess={() => setIsSuccess(true)} />
+              <CheckoutForm amount={parseFloat(amount)} onSuccess={() => setIsSuccess(true)} clientSecret={clientSecret} />
             </Elements>
           </motion.div>
         )}

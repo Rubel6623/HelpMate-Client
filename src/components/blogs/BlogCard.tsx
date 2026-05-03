@@ -10,7 +10,7 @@ export function BlogCard({ blog }: { blog: IBlog }) {
   });
 
   return (
-    <div className="group bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+    <div className="group bg-white dark:bg-zinc-900 border border-gray-100 dark:border-white/10 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full">
       <div className="relative overflow-hidden aspect-[16/10]">
         <Image
           src={blog.coverImage || "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80&w=600"}
@@ -19,7 +19,7 @@ export function BlogCard({ blog }: { blog: IBlog }) {
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute top-4 left-4">
-          <span className="bg-white/90 backdrop-blur-md text-black px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm">
+          <span className="bg-white/90 dark:bg-zinc-800/90 backdrop-blur-md text-black dark:text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm">
             {blog.category}
           </span>
         </div>
@@ -28,20 +28,20 @@ export function BlogCard({ blog }: { blog: IBlog }) {
       <div className="p-6 flex flex-col flex-grow">
         <div className="flex items-center gap-2 mb-3">
            {blog.author.avatarUrl && (
-             <Image src={blog.author.avatarUrl} alt={blog.author.name} width={20} height={20} className="rounded-full" />
+             <Image src={blog.author.avatarUrl} alt={blog.author.name} width={20} height={20} className="rounded-full h-5 w-5 object-cover" />
            )}
            <span className="text-xs text-gray-400 font-medium">{blog.author.name} • {formattedDate}</span>
         </div>
         
-        <h3 className="text-xl font-bold text-gray-900 leading-tight group-hover:text-blue-600 transition-colors">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
           {blog.title}
         </h3>
-        <p className="text-gray-600 text-sm mt-3 line-clamp-3 flex-grow">
+        <p className="text-gray-600 dark:text-gray-400 text-sm mt-3 line-clamp-3 flex-grow">
           {blog.excerpt}
         </p>
 
-        <div className="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
-          <Link href={`/blog/${blog.slug}`} className="flex items-center text-sm font-bold text-gray-900 group-hover:gap-2 transition-all">
+        <div className="mt-6 pt-4 border-t border-gray-50 dark:border-white/5 flex items-center justify-between">
+          <Link href={`/blog/${blog.slug}`} className="flex items-center text-sm font-bold text-gray-900 dark:text-white group-hover:gap-2 transition-all">
             Read Article <span className="ml-1">→</span>
           </Link>
           <span className="text-[10px] text-gray-400 font-medium">{blog.readTimeMin} min read</span>

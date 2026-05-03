@@ -8,72 +8,49 @@ import {
   ArrowRight,
   Eye,
   Flame,
+  Loader2,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getTasks } from "@/src/services/tasks";
+import Link from "next/link";
 
-const featuredTasks = [
-  {
-    id: 1,
-    title: "Grocery pickup from Shwapno",
-    category: "Grocery & Shopping",
-    budget: "৳250 - ৳400",
-    location: "Dhanmondi, Dhaka",
-    postedAgo: "5 min ago",
-    offers: 3,
-    urgent: true,
-  },
-  {
-    id: 2,
-    title: "Stand in queue at Passport Office",
-    category: "Queue & Waiting",
-    budget: "৳500 - ৳800",
-    location: "Agargaon, Dhaka",
-    postedAgo: "12 min ago",
-    offers: 7,
-    urgent: false,
-  },
-  {
-    id: 3,
-    title: "Deliver important documents to bank",
-    category: "Document Handling",
-    budget: "৳150 - ৳250",
-    location: "Gulshan, Dhaka",
-    postedAgo: "22 min ago",
-    offers: 5,
-    urgent: true,
-  },
-  {
-    id: 4,
-    title: "Help with moving furniture to new apartment",
-    category: "Household Assistance",
-    budget: "৳1000 - ৳1500",
-    location: "Mirpur, Dhaka",
-    postedAgo: "35 min ago",
-    offers: 2,
-    urgent: false,
-  },
-  {
-    id: 5,
-    title: "Dog walking for 1 hour in the evening",
-    category: "Pet Care",
-    budget: "৳200 - ৳300",
-    location: "Banani, Dhaka",
-    postedAgo: "45 min ago",
-    offers: 4,
-    urgent: false,
-  },
-  {
-    id: 6,
-    title: "Setup and configure new laptop",
-    category: "Tech Help",
-    budget: "৳300 - ৳500",
-    location: "Uttara, Dhaka",
-    postedAgo: "1 hr ago",
-    offers: 6,
-    urgent: false,
-  },
-];
+// Helper to format date
+const timeAgo = (date: string) => {
+  const seconds = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
+  if (seconds < 60) return "just now";
+  let interval = seconds / 31536000;
+  if (interval > 1) return Math.floor(interval) + " years ago";
+  interval = seconds / 2592000;
+  if (interval > 1) return Math.floor(interval) + " months ago";
+  interval = seconds / 86400;
+  if (interval > 1) return Math.floor(interval) + " days ago";
+  interval = seconds / 3600;
+  if (interval > 1) return Math.floor(interval) + " hrs ago";
+  interval = seconds / 60;
+  if (interval > 1) return Math.floor(interval) + " min ago";
+  return Math.floor(seconds) + " sec ago";
+};
 
 export const FeaturedTasks = () => {
+  const [tasks, setTasks] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const res = await getTasks("limit=6");
+        if (res?.success) {
+          setTasks(res.data.slice(0, 6));
+        }
+      } catch (error) {
+        console.error("Failed to fetch tasks", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTasks();
+  }, []);
+
   return (
     <section className="py-24 relative overflow-hidden">
       {/* Background */}
@@ -113,77 +90,92 @@ export const FeaturedTasks = () => {
             </motion.p>
           </div>
 
-          <motion.a
-            href="/tasks"
+          <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="flex items-center gap-2 text-primary font-bold text-lg hover:gap-3 transition-all group"
           >
-            View All Tasks
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </motion.a>
+            <Link
+              href="/tasks"
+              className="flex items-center gap-2 text-primary font-bold text-lg hover:gap-3 transition-all group"
+            >
+              View All Tasks
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </motion.div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featuredTasks.map((task, index) => (
-            <motion.div
-              key={task.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.08 }}
-              className="group p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:border-primary/30 hover:bg-white/10 transition-all duration-300 cursor-pointer"
-            >
-              {/* Header */}
-              <div className="flex items-start justify-between mb-4">
-                <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-white/10 text-gray-300">
-                  {task.category}
-                </span>
-                {task.urgent && (
-                  <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-red-500/20 text-red-400 border border-red-500/20">
-                    <Flame className="w-3 h-3" />
-                    Urgent
+          {loading ? (
+            <div className="col-span-full py-20 flex justify-center">
+              <Loader2 className="w-10 h-10 animate-spin text-primary" />
+            </div>
+          ) : tasks.length === 0 ? (
+            <div className="col-span-full py-20 text-center text-gray-400">
+              No tasks posted recently.
+            </div>
+          ) : (
+            tasks.map((task, index) => (
+              <motion.div
+                key={task.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.08 }}
+                className="group p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:border-primary/30 hover:bg-white/10 transition-all duration-300 cursor-pointer flex flex-col h-full"
+              >
+                {/* Header */}
+                <div className="flex items-start justify-between mb-4">
+                  <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-white/10 text-gray-300">
+                    {task.category?.name || "General"}
                   </span>
-                )}
-              </div>
+                  {task.isPromoted && (
+                    <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-red-500/20 text-red-400 border border-red-500/20">
+                      <Flame className="w-3 h-3" />
+                      Urgent
+                    </span>
+                  )}
+                </div>
 
-              {/* Title */}
-              <h3 className="text-lg font-bold text-white mb-4 group-hover:text-primary transition-colors line-clamp-2">
-                {task.title}
-              </h3>
+                {/* Title */}
+                <h3 className="text-lg font-bold text-white mb-4 group-hover:text-primary transition-colors line-clamp-2">
+                  {task.title}
+                </h3>
 
-              {/* Meta Info */}
-              <div className="space-y-2 mb-6">
-                <div className="flex items-center gap-2 text-sm text-gray-400">
-                  <DollarSign className="w-4 h-4 text-emerald-400" />
-                  <span className="font-semibold text-white">
-                    {task.budget}
+                {/* Meta Info */}
+                <div className="space-y-2 mb-6 flex-1">
+                  <div className="flex items-center gap-2 text-sm text-gray-400">
+                    <DollarSign className="w-4 h-4 text-emerald-400" />
+                    <span className="font-semibold text-white">
+                      ৳{task.offerPrice}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-400">
+                    <MapPin className="w-4 h-4 text-blue-400" />
+                    <span className="line-clamp-1">{task.stops?.[0]?.locationLabel || "Multiple locations"}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-400">
+                    <Clock className="w-4 h-4 text-yellow-400" />
+                    <span>{timeAgo(task.createdAt)}</span>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                  <span className="text-sm text-gray-500">
+                    <span className="text-primary font-bold">{task._count?.applications || 0}</span>{" "}
+                    offers
                   </span>
+                  <Link href="/tasks">
+                    <button className="flex items-center gap-2 text-sm font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Eye className="w-4 h-4" />
+                      View Task
+                    </button>
+                  </Link>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-400">
-                  <MapPin className="w-4 h-4 text-blue-400" />
-                  <span>{task.location}</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-400">
-                  <Clock className="w-4 h-4 text-yellow-400" />
-                  <span>{task.postedAgo}</span>
-                </div>
-              </div>
-
-              {/* Footer */}
-              <div className="flex items-center justify-between pt-4 border-t border-white/10">
-                <span className="text-sm text-gray-500">
-                  <span className="text-primary font-bold">{task.offers}</span>{" "}
-                  offers
-                </span>
-                <button className="flex items-center gap-2 text-sm font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Eye className="w-4 h-4" />
-                  View Task
-                </button>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))
+          )}
         </div>
       </div>
     </section>

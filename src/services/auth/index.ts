@@ -180,3 +180,41 @@ export const UserLogOut = async () => {
   const storeCookie = await cookies();
   storeCookie.delete("token");
 };
+
+export const socialLogin = async (data: any) => {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/social-login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      try {
+        const errorData = JSON.parse(text);
+        return errorData;
+      } catch (e) {
+        return {
+          success: false,
+          message: `Server error (${res.status}): ${text.slice(0, 100)}`
+        };
+      }
+    }
+
+    const result = await res.json();
+    const storeCookie = await cookies();
+
+    if (result.success) {
+      storeCookie.set("token", result?.data?.token);
+    }
+    return result;
+  } catch (error) {
+    return {
+      success: false,
+      message: (error as Error).message || "An unexpected error occurred"
+    };
+  }
+};

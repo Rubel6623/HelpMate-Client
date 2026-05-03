@@ -252,10 +252,10 @@ export const Navbar = () => {
             ) : (
               <div className="flex items-center gap-3">
                 <Link href="/login">
-                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 font-bold hover:bg-muted rounded-xl">Sign in</Button>
+                  <Button variant="ghost" className="text-gray-700 dark:text-gray-300 font-bold hover:bg-muted hover:cursor-pointer rounded-xl">Sign in</Button>
                 </Link>
                 <Link href="/register">
-                  <Button className="bg-black dark:bg-white text-white dark:text-black hover:scale-105 transition-transform font-bold px-6 rounded-xl shadow-xl">Join Now</Button>
+                  <Button className="bg-black dark:bg-white text-white dark:text-black hover:scale-105 transition-transform font-bold px-6 rounded-xl hover:cursor-pointer shadow-xl">Join Now</Button>
                 </Link>
               </div>
             )}
@@ -360,10 +360,10 @@ export const Navbar = () => {
                   ) : (
                     <>
                       <Link href="/login">
-                        <Button variant="outline" className="w-full border-border text-foreground hover:bg-muted">Sign in</Button>
+                        <Button variant="outline" className="w-full border-border text-foreground hover:bg-muted hover:cursor-pointer">Sign in</Button>
                       </Link>
                       <Link href="/register">
-                        <Button className="w-full bg-black dark:bg-white text-white dark:text-black hover:bg-black/90 dark:hover:bg-white/90">Join Now</Button>
+                        <Button className="w-full bg-black dark:bg-white text-white dark:text-black hover:bg-black/90 dark:hover:bg-white/90 hover:cursor-pointer">Join Now</Button>
                       </Link>
                     </>
                   )}
