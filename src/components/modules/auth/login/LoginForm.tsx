@@ -50,9 +50,15 @@ export default function LoginForm() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isValid, dirtyFields },
     watch,
   } = useForm<FieldValues>({ mode: "onChange" });
+
+  const handleFillDemo = (email: string, pass: string) => {
+    setValue("identifier", email, { shouldValidate: true, shouldDirty: true });
+    setValue("password", pass, { shouldValidate: true, shouldDirty: true });
+  };
 
   const identifier = watch("identifier", "");
 
@@ -229,6 +235,36 @@ export default function LoginForm() {
 
       {/* Social Login */}
       <SocialLoginButtons callbackUrl="/dashboard" />
+
+      {/* Demo Credentials Section */}
+      <div className="mt-8 pt-6 border-t border-white/10">
+        <p className="text-center text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">
+          Demo Access
+        </p>
+        <div className="grid grid-cols-3 gap-3">
+          <button
+            type="button"
+            onClick={() => handleFillDemo("admin@gmail.com", "admin6623")}
+            className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white/5 border border-black/30 hover:bg-primary/10 hover:border-primary/30 transition-all group"
+          >
+            <span className="text-[10px] font-bold text-gray-600 group-hover:text-primary mb-1 uppercase">Admin</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => handleFillDemo("omirudra2@gmail.com", "12345")}
+            className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white/5 border border-black/30 hover:bg-primary/10 hover:border-primary/30 transition-all group"
+          >
+            <span className="text-[10px] font-bold text-gray-600 group-hover:text-primary mb-1 uppercase">Runner</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => handleFillDemo("zerin@gmail.com", "12345")}
+            className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white/5 border border-black/30 hover:bg-primary/10 hover:border-primary/30 transition-all group"
+          >
+            <span className="text-[10px] font-bold text-gray-600 group-hover:text-primary mb-1 uppercase">User</span>
+          </button>
+        </div>
+      </div>
 
       {/* Footer */}
       <div className="mt-6 text-center">
