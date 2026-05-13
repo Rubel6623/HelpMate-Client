@@ -20,8 +20,9 @@ import {
 } from "@/src/components/ui/dialog";
 import { Textarea } from "@/src/components/ui/textarea";
 import Link from "next/link";
-import { Loader2, MessageSquare, Send } from "lucide-react";
+import { Loader2, MessageSquare, Send, Globe, History, Check } from "lucide-react";
 import { toast } from "sonner";
+import { Badge } from "@/src/components/ui/badge";
 
 export default function RunnerDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -126,19 +127,21 @@ export default function RunnerDetailsPage({ params }: { params: Promise<{ id: st
             animate={{ opacity: 1, y: 0 }}
             className="max-w-2xl"
           >
-            <div className="flex items-center gap-3 mb-4">
-              <span className="px-4 py-1.5 rounded-full bg-primary/20 backdrop-blur-md border border-primary/30 text-primary text-xs font-black uppercase tracking-widest">
+            <div className="flex flex-wrap items-center gap-3 mb-6">
+              <Badge variant="secondary" className="px-4 py-1.5 rounded-full bg-primary/20 backdrop-blur-md border border-primary/30 text-primary text-xs font-black uppercase tracking-widest gap-2">
+                {profile?.isVerified ? <ShieldCheck className="w-3.5 h-3.5" /> : null}
                 {profile?.isVerified ? "Verified Expert" : "Verified Student"}
-              </span>
-              <span className="px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-black uppercase tracking-widest">
-                Active Now
-              </span>
+              </Badge>
+              <Badge variant="secondary" className={`px-4 py-1.5 rounded-full backdrop-blur-md border border-white/20 text-white text-xs font-black uppercase tracking-widest gap-2 ${profile?.isOnline ? 'bg-emerald-500/20' : 'bg-gray-500/20'}`}>
+                <div className={`w-2 h-2 rounded-full ${profile?.isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-gray-400'}`} />
+                {profile?.isOnline ? "Online Now" : "Offline"}
+              </Badge>
             </div>
-            <h1 className="text-4xl md:text-7xl font-black text-white mb-4 tracking-tight leading-none">
-              Meet <span className="text-primary">{user.name.split(' ')[0]}</span>
+            <h1 className="text-5xl md:text-8xl font-black text-white mb-6 tracking-tight leading-none">
+              {user.name.split(' ')[0]}<span className="text-primary">.</span>
             </h1>
-            <p className="text-lg md:text-xl text-gray-300 font-medium max-w-xl">
-              Professional student runner from {profile?.university || "university"}. Dedicated to providing the best errands and logistics support on campus.
+            <p className="text-lg md:text-2xl text-gray-300 font-medium max-w-xl leading-relaxed">
+              Premium student runner from <span className="text-white font-bold">{profile?.university || "University"}</span>. Ready to handle your errands with efficiency and care.
             </p>
           </motion.div>
         </div>
@@ -176,18 +179,33 @@ export default function RunnerDetailsPage({ params }: { params: Promise<{ id: st
                 </p>
 
                 <div className="grid grid-cols-2 gap-4 w-full mb-8">
-                  <div className="bg-gray-50 dark:bg-white/5 p-4 rounded-2xl border border-gray-100 dark:border-white/10">
-                    <div className="flex items-center justify-center gap-1 text-amber-500 font-bold text-xl">
+                  <div className="bg-gray-50 dark:bg-white/5 p-4 rounded-2xl border border-gray-100 dark:border-white/10 flex flex-col items-center">
+                    <div className="flex items-center justify-center gap-1 text-amber-500 font-black text-xl">
                       <Star className="w-5 h-5 fill-current" />
                       {(profile?.averageRating || 0).toFixed(1)}
                     </div>
-                    <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Rating</span>
+                    <span className="text-[9px] uppercase font-bold text-muted-foreground tracking-widest mt-1">Avg Rating</span>
                   </div>
-                  <div className="bg-gray-50 dark:bg-white/5 p-4 rounded-2xl border border-gray-100 dark:border-white/10">
-                    <div className="font-bold text-xl">
+                  <div className="bg-gray-50 dark:bg-white/5 p-4 rounded-2xl border border-gray-100 dark:border-white/10 flex flex-col items-center">
+                    <div className="font-black text-xl text-primary">
                       {profile?.totalTasksDone || 0}
                     </div>
-                    <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Tasks Done</span>
+                    <span className="text-[9px] uppercase font-bold text-muted-foreground tracking-widest mt-1">Completed</span>
+                  </div>
+                </div>
+
+                <div className="w-full space-y-4 mb-8">
+                  <div className="flex justify-between items-center px-2">
+                    <span className="text-sm font-bold text-muted-foreground">Hourly Rate</span>
+                    <span className="text-xl font-black text-primary flex items-baseline gap-0.5">
+                      <span className="text-xs">৳</span>{profile?.hourlyRate || 10}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center px-2">
+                    <span className="text-sm font-bold text-muted-foreground">Service Radius</span>
+                    <span className="text-sm font-black flex items-baseline gap-1">
+                      {profile?.preferredRadius || 5} <span className="text-xs text-muted-foreground font-bold">KM</span>
+                    </span>
                   </div>
                 </div>
 
@@ -308,28 +326,86 @@ export default function RunnerDetailsPage({ params }: { params: Promise<{ id: st
               </div>
             </motion.div>
 
-            {/* Education & Context */}
+            {/* Reviews Section */}
             <motion.div 
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-6"
+              transition={{ delay: 0.4 }}
+              className="bg-white dark:bg-[#0a0a0a] rounded-[2.5rem] border border-gray-200 dark:border-white/10 p-8 md:p-12 shadow-xl"
             >
-              <div className="bg-white dark:bg-[#0a0a0a] rounded-[2.5rem] border border-gray-200 dark:border-white/10 p-8 shadow-xl">
-                <h3 className="text-xl font-bold mb-4 flex items-center gap-3">
-                  <GraduationCap className="w-5 h-5 text-blue-500" />
-                  Education
-                </h3>
-                <p className="font-bold text-gray-900 dark:text-white">{profile?.university || "University Student"}</p>
-                <p className="text-sm text-muted-foreground">Currently enrolled in Undergraduate Program</p>
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="text-2xl font-bold flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                    <Star className="w-6 h-6 text-amber-500" />
+                  </div>
+                  Recent Reviews
+                </h2>
+                <span className="text-sm font-bold text-muted-foreground">{user.reviewsReceived?.length || 0} Total Reviews</span>
               </div>
-              <div className="bg-white dark:bg-[#0a0a0a] rounded-[2.5rem] border border-gray-200 dark:border-white/10 p-8 shadow-xl">
-                <h3 className="text-xl font-bold mb-4 flex items-center gap-3">
-                  <Briefcase className="w-5 h-5 text-emerald-500" />
-                  Work Status
-                </h3>
-                <p className="font-bold text-gray-900 dark:text-white">Active Runner</p>
-                <p className="text-sm text-muted-foreground">Available for tasks and errands</p>
+              
+              <div className="space-y-6">
+                {user.reviewsReceived?.length > 0 ? (
+                  user.reviewsReceived.slice(0, 3).map((review: any) => (
+                    <div key={review.id} className="p-6 rounded-3xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10">
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                            {review.reviewer?.name?.charAt(0) || "U"}
+                          </div>
+                          <div>
+                            <p className="font-bold text-sm">{review.reviewer?.name || "Verified User"}</p>
+                            <p className="text-[10px] text-muted-foreground font-bold">{new Date(review.createdAt).toLocaleDateString()}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1 text-amber-500">
+                          {[...Array(5)].map((_, i) => (
+                            <Star key={i} className={`w-3 h-3 ${i < review.rating ? 'fill-current' : 'text-gray-300'}`} />
+                          ))}
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground italic leading-relaxed">
+                        "{review.comment}"
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-10 opacity-50">
+                    <MessageSquare className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                    <p className="font-medium">No reviews yet for this runner.</p>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+
+            {/* Task History Summary */}
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+              className="bg-white dark:bg-[#0a0a0a] rounded-[2.5rem] border border-gray-200 dark:border-white/10 p-8 md:p-12 shadow-xl"
+            >
+              <h2 className="text-2xl font-bold mb-8 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                  <History className="w-6 h-6 text-blue-500" />
+                </div>
+                Trust & History
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="p-6 rounded-3xl bg-emerald-500/5 border border-emerald-500/10 text-center">
+                  <Check className="w-6 h-6 text-emerald-500 mx-auto mb-2" />
+                  <p className="text-2xl font-black text-emerald-500">{profile?.acceptanceRate || "100"}%</p>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Acceptance Rate</p>
+                </div>
+                <div className="p-6 rounded-3xl bg-blue-500/5 border border-blue-500/10 text-center">
+                  <Globe className="w-6 h-6 text-blue-500 mx-auto mb-2" />
+                  <p className="text-2xl font-black text-blue-500">{profile?.preferredRadius || 5}km</p>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Service Area</p>
+                </div>
+                <div className="p-6 rounded-3xl bg-purple-500/5 border border-purple-500/10 text-center">
+                  <ShieldCheck className="w-6 h-6 text-purple-500 mx-auto mb-2" />
+                  <p className="text-2xl font-black text-purple-500">Verified</p>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Runner Status</p>
+                </div>
               </div>
             </motion.div>
           </div>
