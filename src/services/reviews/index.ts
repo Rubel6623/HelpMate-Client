@@ -6,12 +6,15 @@ export const getReviews = async (query?: string) => {
   const storeCookie = await cookies();
   const token = storeCookie.get("token")?.value;
 
+  const headers: Record<string, string> = {};
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/reviews${query ? `?${query}` : ''}`, {
       method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`
-      },
+      headers,
       cache: "no-store",
     });
     return await res.json();

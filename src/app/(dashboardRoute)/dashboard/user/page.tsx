@@ -22,6 +22,8 @@ import Link from "next/link";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/src/components/ui/dialog";
 import { Input } from "@/src/components/ui/input";
 
+import { Skeleton } from "@/src/components/ui/skeleton";
+
 export default function UserDashboard() {
   const [tasks, setTasks] = useState<any[]>([]);
   const [wallet, setWallet] = useState<any>(null);
@@ -101,8 +103,48 @@ export default function UserDashboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-12 h-12 animate-spin text-primary" />
+      <div className="space-y-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-2">
+            <Skeleton className="h-10 w-64 rounded-xl bg-gray-200 dark:bg-white/5" />
+            <Skeleton className="h-6 w-96 rounded-lg bg-gray-200 dark:bg-white/5" />
+          </div>
+          <Skeleton className="h-14 w-48 rounded-2xl bg-gray-200 dark:bg-white/10" />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[...Array(3)].map((_, i) => (
+            <Skeleton key={i} className="h-32 rounded-3xl bg-gray-200 dark:bg-white/5" />
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-6">
+            <div className="flex justify-between items-center px-2">
+              <Skeleton className="h-8 w-48 rounded-lg bg-gray-200 dark:bg-white/5" />
+              <Skeleton className="h-6 w-24 rounded-lg bg-gray-200 dark:bg-white/5" />
+            </div>
+            <div className="rounded-[2.5rem] border border-gray-100 dark:border-white/5 overflow-hidden">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="p-6 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
+                  <div className="flex items-center gap-6">
+                    <Skeleton className="w-14 h-14 rounded-2xl bg-gray-200 dark:bg-white/10" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-6 w-48 rounded-lg bg-gray-200 dark:bg-white/10" />
+                      <Skeleton className="h-4 w-32 rounded-lg bg-gray-200 dark:bg-white/10" />
+                    </div>
+                  </div>
+                  <Skeleton className="h-10 w-24 rounded-xl bg-gray-200 dark:bg-white/10" />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="space-y-6">
+            <Skeleton className="h-8 w-32 px-2 bg-gray-200 dark:bg-white/5" />
+            <Skeleton className="h-[240px] w-full rounded-[2.5rem] bg-gray-200 dark:bg-white/5" />
+            <Skeleton className="h-[180px] w-full rounded-[2.5rem] bg-gray-200 dark:bg-white/5" />
+          </div>
+        </div>
       </div>
     );
   }

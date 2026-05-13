@@ -22,6 +22,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 
+import { Skeleton } from "@/src/components/ui/skeleton";
+
 export default function GenericDisputePage({ params }: { params: Promise<{ taskId: string }> }) {
   const resolvedParams = use(params);
   const taskId = resolvedParams.taskId;
@@ -98,8 +100,27 @@ export default function GenericDisputePage({ params }: { params: Promise<{ taskI
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-10 h-10 text-primary animate-spin" />
+      <div className="max-w-3xl mx-auto space-y-8 pb-20">
+        <Skeleton className="h-10 w-20 rounded-xl bg-gray-200 dark:bg-white/5" />
+        <div className="space-y-4">
+          <Skeleton className="h-12 w-64 rounded-xl bg-gray-200 dark:bg-white/5" />
+          <Skeleton className="h-6 w-96 rounded-lg bg-gray-200 dark:bg-white/5" />
+        </div>
+        <div className="p-8 rounded-[2.5rem] bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 space-y-8">
+          <Skeleton className="h-24 w-full rounded-3xl bg-gray-200 dark:bg-white/10" />
+          <div className="space-y-4">
+            <Skeleton className="h-4 w-32 bg-gray-200 dark:bg-white/5" />
+            <Skeleton className="h-[150px] w-full rounded-2xl bg-gray-200 dark:bg-white/5" />
+          </div>
+          <div className="space-y-4">
+            <div className="flex justify-between">
+              <Skeleton className="h-4 w-32 bg-gray-200 dark:bg-white/5" />
+              <Skeleton className="h-8 w-24 bg-gray-200 dark:bg-white/5" />
+            </div>
+            <Skeleton className="h-12 w-full rounded-xl bg-gray-200 dark:bg-white/5" />
+          </div>
+          <Skeleton className="h-16 w-full rounded-2xl bg-gray-200 dark:bg-white/10" />
+        </div>
       </div>
     );
   }

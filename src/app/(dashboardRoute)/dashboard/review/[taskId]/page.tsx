@@ -20,6 +20,7 @@ import { getUser } from "@/src/services/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
+import { Skeleton } from "@/src/components/ui/skeleton";
 
 export default function GenericReviewPage({ params }: { params: Promise<{ taskId: string }> }) {
   const resolvedParams = use(params);
@@ -99,8 +100,34 @@ export default function GenericReviewPage({ params }: { params: Promise<{ taskId
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-10 h-10 text-primary animate-spin" />
+      <div className="max-w-3xl mx-auto space-y-8 pb-20">
+        <Skeleton className="h-10 w-20 rounded-xl bg-gray-200 dark:bg-white/5" />
+        <div className="space-y-2 text-center">
+          <Skeleton className="h-12 w-80 mx-auto rounded-xl bg-gray-200 dark:bg-white/5" />
+          <Skeleton className="h-6 w-64 mx-auto rounded-lg bg-gray-200 dark:bg-white/5" />
+        </div>
+        <div className="p-10 rounded-[3rem] bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 shadow-2xl space-y-10">
+          <div className="flex flex-col items-center gap-4 text-center">
+            <Skeleton className="w-20 h-20 rounded-3xl bg-gray-200 dark:bg-white/10" />
+            <div className="space-y-2">
+              <Skeleton className="h-8 w-48 rounded-xl bg-gray-200 dark:bg-white/10" />
+              <Skeleton className="h-4 w-64 rounded-lg bg-gray-200 dark:bg-white/10" />
+            </div>
+          </div>
+          <div className="flex flex-col items-center gap-6">
+            <Skeleton className="h-4 w-32 bg-gray-200 dark:bg-white/5" />
+            <div className="flex gap-4">
+              {[...Array(5)].map((_, i) => (
+                <Skeleton key={i} className="w-14 h-14 rounded-2xl bg-gray-200 dark:bg-white/10" />
+              ))}
+            </div>
+          </div>
+          <div className="space-y-4">
+            <Skeleton className="h-4 w-32 bg-gray-200 dark:bg-white/5" />
+            <Skeleton className="h-[150px] w-full rounded-[2rem] bg-gray-200 dark:bg-white/10" />
+          </div>
+          <Skeleton className="h-16 w-full rounded-2xl bg-gray-200 dark:bg-white/20" />
+        </div>
       </div>
     );
   }

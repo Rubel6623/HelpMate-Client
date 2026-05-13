@@ -6,31 +6,56 @@ const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 // Fallback chain: try each model in order until one works
 const GEMINI_MODELS = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-flash-latest"];
 
-const CHAT_SYSTEM = `You are HelpMate Assistant — the friendly, helpful AI for HelpMate, a platform that connects busy people (Users) with verified helpers for quick, affordable tasks.
+const CHAT_SYSTEM = `You are HelpMate Assistant — the friendly, expert AI for HelpMate, a platform connecting busy people with verified student runners for quick, affordable errands.
 
-Your role:
-- Help Users post tasks, understand pricing, track orders, and navigate the platform
-- Help Runners find suitable tasks, understand how payments work, and build their reputation
-- Answer questions about safety, trust, payments (bKash, Nagad, card), disputes, and verification
-- Keep responses short, friendly, and in a conversational tone
-- If someone asks in Bangla, respond in Bangla
-- When unsure, direct users to contact support
+== YOUR CAPABILITIES ==
+1. FAQ & Platform Guidance — answer any question about HelpMate features
+2. Booking & Task Flow — walk users step-by-step through posting a task or booking a runner
+3. Content Suggestions — recommend relevant HelpMate blog posts or guides based on user interests
+4. Newsletter & Updates — suggest what the user should subscribe to based on their goals
+5. Runner Support — help runners find tasks, understand earnings, build reputation
 
-Platform details:
-- Task categories: Grocery & Shopping, Queue & Waiting, Document Handling, Household Help, Tech Help, Pet Care
-- Pricing: User sets price; HelpMate takes 10-15% service fee
-- Payments: bKash, Nagad, Rocket, debit/credit card via in-app wallet
-- Runner verification: National ID + Profile verification required
-- Task radius: default 5 km, configurable
-- Ratings: 1-5 stars, mutual after task completion
-- Safety: SOS button, address masking, in-app chat only
-- Disputes: resolved within 4 hours by admin team
+== PLATFORM KNOWLEDGE ==
+Categories: Grocery & Shopping, Queue & Waiting, Document Handling, Household Help, Tech Help, Pet Care
+Pricing: User sets price; HelpMate takes 10-15% service fee
+Payments: bKash, Nagad, Rocket, debit/credit cards via in-app wallet (escrow-protected)
+Runner verification: Student ID + National ID required, approved within 24 hrs
+Safety: SOS button, address masking, in-app chat only, disputes resolved in 4 hrs
+Ratings: 1-5 stars, mutual rating after completion
 
-Common FAQs:
-- "How do I post a task?" → Tap Post a Task → pick category → fill details → set price → confirm
-- "How does payment work?" → Funds held in escrow until task is done, then released to Runner
-- "How do I become a Runner?" → Sign up → upload Verification Docs → wait 24hr approval
-- "What if something goes wrong?" → Use in-app Report button; admin reviews within 4 hours`;
+== BOOKING GUIDANCE ==
+When user wants to book a runner or post a task, guide them:
+1. Go to /runners → pick a runner → click "Book"
+2. Or go to /dashboard/user/post-task → fill in task details
+3. Set your budget → confirm → runner gets notified
+4. Track progress in My Tasks dashboard
+5. After completion, release payment and leave a rating
+
+== CONTENT SUGGESTIONS ==
+When detecting user interests, suggest relevant blog topics:
+- Grocery tasks → "How to save time with grocery runners", "Top grocery errands students can help with"
+- Tech help → "5 tech tasks students can handle in an hour"
+- Becoming runner → "How to earn ৳5000/week as a HelpMate Runner", "Building your runner reputation"
+- Safety → "How HelpMate keeps your data safe", "Escrow payments explained"
+- General → "HelpMate's top 10 most-booked tasks", "New features this month"
+Format suggestions as: 📖 [Title] — [brief reason why it's relevant]
+
+== NEWSLETTER RECOMMENDATIONS ==
+When user asks about updates, newsletters, or staying informed, suggest:
+- Weekly Task Digest (new tasks in their area)
+- Runner Tips Newsletter (earning strategies, platform updates)
+- Safety & Trust Updates (new verification features)
+- HelpMate Deals (discounted service fees, promotions)
+Always encourage them to subscribe via email for personalized recommendations.
+
+== RESPONSE STYLE ==
+- Keep responses concise and friendly (2-4 sentences max for simple questions)
+- Use emojis sparingly for warmth
+- For step-by-step tasks, use numbered lists
+- For content suggestions, use the 📖 format
+- If user writes in Bangla, respond in Bangla
+- Always end complex answers with a follow-up question to keep engagement
+- When unsure, say: "Great question! Let me connect you with our support team."`;
 
 const TASK_SYSTEM = `You are a task optimization AI for HelpMate platform. 
 Analyze a task description and return ONLY valid JSON (no markdown, no explanation).
@@ -186,27 +211,59 @@ const CATEGORY_COLORS = {
   "Pet Care":            { bg: "#ffedd5", text: "#9a3412", dot: "#f97316" },
 };
 
+// ─── Static data for Blog & Newsletter tabs ────────────────────────────────────
+const BLOG_SUGGESTIONS = [
+  { emoji: "🛒", title: "Save Time on Grocery Runs", tag: "Lifestyle", url: "/blog" },
+  { emoji: "💰", title: "Earn ৳5000/week as a Runner", tag: "Runners", url: "/blog" },
+  { emoji: "🔒", title: "How Escrow Payments Keep You Safe", tag: "Safety", url: "/blog" },
+  { emoji: "📋", title: "Top 10 Most-Booked Tasks", tag: "Trending", url: "/blog" },
+  { emoji: "🎓", title: "Student Runner: Getting Started Guide", tag: "Guide", url: "/blog" },
+  { emoji: "⚡", title: "Post Your First Task in 60 Seconds", tag: "Quick Start", url: "/blog" },
+];
+
+const NEWSLETTER_OPTIONS = [
+  { id: "digest",   emoji: "📰", label: "Weekly Task Digest",       desc: "New tasks near you every Monday" },
+  { id: "runner",   emoji: "🏃", label: "Runner Tips Newsletter",    desc: "Earning strategies & platform updates" },
+  { id: "safety",   emoji: "🔐", label: "Safety & Trust Updates",    desc: "New verification & security features" },
+  { id: "deals",    emoji: "🎁", label: "HelpMate Deals",            desc: "Fee discounts & limited promotions" },
+];
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // FEATURE 1: AI CHAT ASSISTANT
 // ═══════════════════════════════════════════════════════════════════════════════
 export function AIChatAssistant() {
   const [open, setOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [activeTab, setActiveTab] = useState("chat");
   const [messages, setMessages] = useState([
-    { role: "assistant", text: "👋 Hi! I'm your HelpMate Assistant. Ask me anything about posting tasks, becoming a Runner, payments, or safety!", ts: Date.now() }
+    { role: "assistant", text: "👋 Hi! I'm your HelpMate Assistant.\n\nI can:\n• Answer FAQs & guide you through booking\n• Suggest blogs tailored to your interests\n• Recommend newsletters for you\n\nWhat can I help you with today?", ts: Date.now() }
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [pulse, setPulse] = useState(true);
+  const [email, setEmail] = useState("");
+  const [selectedNewsletters, setSelectedNewsletters] = useState(["digest"]);
+  const [newsletterSent, setNewsletterSent] = useState(false);
+  const [emailError, setEmailError] = useState("");
   const bottomRef = useRef(null);
   const inputRef  = useRef(null);
 
   const QUICK_REPLIES = [
-    "How do I post a task?",
-    "How does payment work?",
+    "How do I book a runner? 🏃",
+    "Suggest me some blogs 📖",
+    "What newsletters suit me? 📧",
+    "How does payment work? 💳",
     "How to become a Runner?",
-    "Is my address safe?",
+    "Is my data safe? 🔐",
   ];
+
+  const TABS = [
+    { id: "chat",       label: "Chat",       emoji: "💬" },
+    { id: "blogs",      label: "Blogs",      emoji: "📖" },
+    { id: "newsletter", label: "Newsletter", emoji: "📧" },
+  ];
+
+  const formatTime = (ts) => new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
   useEffect(() => {
     setIsMounted(true);
@@ -215,26 +272,25 @@ export function AIChatAssistant() {
   }, []);
 
   useEffect(() => {
-    if (open) {
+    if (open && activeTab === "chat") {
       setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
       setTimeout(() => inputRef.current?.focus(), 200);
     }
-  }, [open, messages]);
+  }, [open, messages, activeTab]);
 
   const send = useCallback(async (text) => {
     const userMsg = text || input.trim();
     if (!userMsg || loading) return;
     setInput("");
+    setActiveTab("chat");
     setMessages(prev => [...prev, { role: "user", text: userMsg, ts: Date.now() }]);
     setLoading(true);
-
     try {
       const history = messages
         .filter(m => m.role !== "assistant" || messages.indexOf(m) > 0)
         .map(m => ({ role: m.role === "assistant" ? "assistant" : "user", content: m.text }));
       history.push({ role: "user", content: userMsg });
-
-      const reply = await callGemini(history, CHAT_SYSTEM, 500);
+      const reply = await callGemini(history, CHAT_SYSTEM, 600);
       setMessages(prev => [...prev, { role: "assistant", text: reply, ts: Date.now() }]);
     } catch {
       setMessages(prev => [...prev, { role: "assistant", text: "Sorry, I'm having trouble connecting right now. Please try again in a moment.", ts: Date.now() }]);
@@ -243,7 +299,24 @@ export function AIChatAssistant() {
     }
   }, [input, loading, messages]);
 
-  const formatTime = (ts) => new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const toggleNewsletter = (id) => {
+    setSelectedNewsletters(prev =>
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
+  };
+
+  const handleNewsletterSubmit = () => {
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setEmailError("Please enter a valid email address.");
+      return;
+    }
+    if (selectedNewsletters.length === 0) {
+      setEmailError("Please select at least one newsletter.");
+      return;
+    }
+    setEmailError("");
+    setNewsletterSent(true);
+  };
 
   return (
     <>
@@ -254,47 +327,26 @@ export function AIChatAssistant() {
         @keyframes hm-pulse-ring { 0%{transform:scale(1);opacity:.6} 100%{transform:scale(2.2);opacity:0} }
         .hm-spin { animation: hm-spin 1s linear infinite; }
         .hm-msg-in { animation: hm-fade-in 0.25s ease; }
-        .hm-chat-bubble { font-family: 'DM Sans', sans-serif; }
         .hm-chat-input:focus { outline: none; }
         .hm-quick-btn:hover { background: #1d4ed8 !important; color: #fff !important; }
         .hm-send-btn:hover:not(:disabled) { background: #1d4ed8 !important; }
         .hm-chat-fab:hover { transform: scale(1.08); }
+        .hm-blog-card:hover { background: #f1f5f9 !important; transform: translateY(-1px); }
+        .hm-nl-opt:hover { border-color: #2563eb !important; }
       `}</style>
 
       {/* FAB */}
       <div style={{ position: "fixed", bottom: 28, right: 28, zIndex: 9999 }}>
         {!open && pulse && (
-          <div style={{
-            position: "absolute", inset: -4,
-            borderRadius: "50%", background: "#2563eb",
-            animation: "hm-pulse-ring 2s ease-out infinite",
-          }}/>
+          <div style={{ position: "absolute", inset: -4, borderRadius: "50%", background: "#2563eb", animation: "hm-pulse-ring 2s ease-out infinite" }}/>
         )}
-        <button
-          onClick={() => { setOpen(o => !o); setPulse(false); }}
-          className="hm-chat-fab"
-          style={{
-            width: 58, height: 58, borderRadius: "50%",
-            background: open ? "#1e293b" : "linear-gradient(135deg, #2563eb, #1d4ed8)",
-            border: "none", cursor: "pointer", color: "#fff",
-            boxShadow: "0 8px 32px rgba(37,99,235,0.45)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            transition: "all 0.2s ease",
-          }}
+        <button onClick={() => { setOpen(o => !o); setPulse(false); }} className="hm-chat-fab"
+          style={{ width: 58, height: 58, borderRadius: "50%", background: open ? "#1e293b" : "linear-gradient(135deg,#2563eb,#1d4ed8)", border: "none", cursor: "pointer", color: "#fff", boxShadow: "0 8px 32px rgba(37,99,235,0.45)", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s ease" }}
         >
-          <div style={{ width: 26, height: 26, transition: "transform 0.2s", transform: open ? "scale(0.9)" : "scale(1)" }}>
-            {open ? <Icon.X /> : <Icon.Bot />}
-          </div>
+          <div style={{ width: 26, height: 26 }}>{open ? <Icon.X /> : <Icon.Bot />}</div>
         </button>
         {!open && (
-          <div style={{
-            position: "absolute", bottom: 66, right: 0, whiteSpace: "nowrap",
-            background: "#1e293b", color: "#e2e8f0", fontSize: 12, fontWeight: 600,
-            padding: "6px 12px", borderRadius: 20,
-            fontFamily: "'DM Sans', sans-serif",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-            animation: "hm-fade-in 0.4s ease",
-          }}>
+          <div style={{ position: "absolute", bottom: 66, right: 0, whiteSpace: "nowrap", background: "#1e293b", color: "#e2e8f0", fontSize: 12, fontWeight: 600, padding: "6px 12px", borderRadius: 20, fontFamily: "'DM Sans',sans-serif", boxShadow: "0 4px 12px rgba(0,0,0,0.15)", animation: "hm-fade-in 0.4s ease" }}>
             💬 Ask HelpMate AI
           </div>
         )}
@@ -302,119 +354,127 @@ export function AIChatAssistant() {
 
       {/* Chat Window */}
       {open && (
-        <div style={{
-          position: "fixed", bottom: 100, right: 28, zIndex: 9998,
-          width: 380, height: 540,
-          background: "#fff", borderRadius: 20,
-          boxShadow: "0 24px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.06)",
-          display: "flex", flexDirection: "column",
-          animation: "hm-fade-in 0.3s cubic-bezier(.22,.68,0,1.2)",
-          fontFamily: "'DM Sans', sans-serif",
-          overflow: "hidden",
-        }}>
+        <div style={{ position: "fixed", bottom: 100, right: 28, zIndex: 9998, width: 390, height: 580, background: "#fff", borderRadius: 20, boxShadow: "0 24px 80px rgba(0,0,0,0.18),0 0 0 1px rgba(0,0,0,0.06)", display: "flex", flexDirection: "column", animation: "hm-fade-in 0.3s cubic-bezier(.22,.68,0,1.2)", fontFamily: "'DM Sans',sans-serif", overflow: "hidden" }}>
+
           {/* Header */}
-          <div style={{
-            background: "linear-gradient(135deg, #1e40af 0%, #2563eb 100%)",
-            padding: "16px 20px", display: "flex", alignItems: "center", gap: 12,
-          }}>
-            <div style={{
-              width: 40, height: 40, borderRadius: "50%",
-              background: "rgba(255,255,255,0.15)", backdropFilter: "blur(4px)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              color: "#fff", flexShrink: 0,
-            }}>
-              <div style={{ width: 22, height: 22 }}><Icon.Bot /></div>
+          <div style={{ background: "linear-gradient(135deg,#1e40af,#2563eb)", padding: "14px 18px", display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", flexShrink: 0 }}>
+              <div style={{ width: 20, height: 20 }}><Icon.Bot /></div>
             </div>
-            <div>
-              <div style={{ color: "#fff", fontWeight: 700, fontSize: 15 }}>HelpMate Assistant</div>
-              <div style={{ color: "rgba(255,255,255,0.75)", fontSize: 12, display: "flex", alignItems: "center", gap: 5 }}>
-                <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#4ade80", display: "inline-block" }}/>
-                Online · Powered by Gemini AI
+            <div style={{ flex: 1 }}>
+              <div style={{ color: "#fff", fontWeight: 700, fontSize: 14 }}>HelpMate Assistant</div>
+              <div style={{ color: "rgba(255,255,255,0.75)", fontSize: 11, display: "flex", alignItems: "center", gap: 5 }}>
+                <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#4ade80", display: "inline-block" }}/> Online · Powered by Gemini AI
               </div>
             </div>
           </div>
 
-          {/* Messages */}
-          <div style={{ flex: 1, overflowY: "auto", padding: "16px 16px 0", display: "flex", flexDirection: "column", gap: 12 }}>
-            {messages.map((msg, i) => (
-              <div key={i} className="hm-msg-in" style={{ display: "flex", flexDirection: "column", alignItems: msg.role === "user" ? "flex-end" : "flex-start" }}>
-                <div style={{
-                  maxWidth: "82%", padding: "10px 14px",
-                  borderRadius: msg.role === "user" ? "18px 18px 4px 18px" : "4px 18px 18px 18px",
-                  background: msg.role === "user" ? "linear-gradient(135deg,#2563eb,#1d4ed8)" : "#f1f5f9",
-                  color: msg.role === "user" ? "#fff" : "#1e293b",
-                  fontSize: 14, lineHeight: 1.55, fontWeight: 400,
-                  boxShadow: msg.role === "user" ? "0 2px 8px rgba(37,99,235,0.3)" : "none",
-                  whiteSpace: "pre-wrap",
-                }}>
-                  {msg.text}
-                </div>
-                <div suppressHydrationWarning style={{ fontSize: 10, color: "#94a3b8", marginTop: 3, paddingInline: 4 }}>
-                  {isMounted ? formatTime(msg.ts) : ""}
-                </div>
-              </div>
+          {/* Tabs */}
+          <div style={{ display: "flex", borderBottom: "1px solid #f1f5f9", background: "#fff", flexShrink: 0 }}>
+            {TABS.map(tab => (
+              <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ flex: 1, padding: "9px 4px", border: "none", cursor: "pointer", background: "transparent", fontFamily: "inherit", fontSize: 12, fontWeight: 600, color: activeTab === tab.id ? "#2563eb" : "#94a3b8", borderBottom: activeTab === tab.id ? "2px solid #2563eb" : "2px solid transparent", transition: "all 0.15s", display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>
+                <span>{tab.emoji}</span>{tab.label}
+              </button>
             ))}
-            {loading && (
-              <div className="hm-msg-in" style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-                <div style={{ padding: "12px 16px", background: "#f1f5f9", borderRadius: "4px 18px 18px 18px", display: "flex", gap: 5, alignItems: "center" }}>
-                  {[0,1,2].map(d => (
-                    <div key={d} style={{ width: 7, height: 7, borderRadius: "50%", background: "#94a3b8", animation: `hm-bounce 1.2s ease ${d*0.18}s infinite` }}/>
-                  ))}
+          </div>
+
+          {/* ── TAB: CHAT ── */}
+          {activeTab === "chat" && (<>
+            <div style={{ flex: 1, overflowY: "auto", padding: "12px 14px 0", display: "flex", flexDirection: "column", gap: 10 }}>
+              {messages.map((msg, i) => (
+                <div key={i} className="hm-msg-in" style={{ display: "flex", flexDirection: "column", alignItems: msg.role === "user" ? "flex-end" : "flex-start" }}>
+                  <div style={{ maxWidth: "84%", padding: "10px 14px", borderRadius: msg.role === "user" ? "18px 18px 4px 18px" : "4px 18px 18px 18px", background: msg.role === "user" ? "linear-gradient(135deg,#2563eb,#1d4ed8)" : "#f1f5f9", color: msg.role === "user" ? "#fff" : "#1e293b", fontSize: 13.5, lineHeight: 1.6, whiteSpace: "pre-wrap", boxShadow: msg.role === "user" ? "0 2px 8px rgba(37,99,235,0.3)" : "none" }}>
+                    {msg.text}
+                  </div>
+                  <div suppressHydrationWarning style={{ fontSize: 10, color: "#94a3b8", marginTop: 2, paddingInline: 4 }}>{isMounted ? formatTime(msg.ts) : ""}</div>
                 </div>
+              ))}
+              {loading && (
+                <div className="hm-msg-in" style={{ display: "flex" }}>
+                  <div style={{ padding: "12px 16px", background: "#f1f5f9", borderRadius: "4px 18px 18px 18px", display: "flex", gap: 5, alignItems: "center" }}>
+                    {[0,1,2].map(d => <div key={d} style={{ width: 7, height: 7, borderRadius: "50%", background: "#94a3b8", animation: `hm-bounce 1.2s ease ${d*0.18}s infinite` }}/>)}
+                  </div>
+                </div>
+              )}
+              <div ref={bottomRef}/>
+            </div>
+
+            {messages.length <= 2 && (
+              <div style={{ padding: "8px 14px 0", display: "flex", flexWrap: "wrap", gap: 5 }}>
+                {QUICK_REPLIES.map(q => (
+                  <button key={q} onClick={() => send(q)} className="hm-quick-btn" style={{ background: "#eff6ff", color: "#1d4ed8", border: "1px solid #bfdbfe", borderRadius: 20, padding: "4px 10px", fontSize: 11, cursor: "pointer", fontFamily: "inherit", fontWeight: 500, transition: "all 0.15s" }}>{q}</button>
+                ))}
               </div>
             )}
-            <div ref={bottomRef}/>
-          </div>
 
-          {/* Quick Replies */}
-          {messages.length <= 2 && (
-            <div style={{ padding: "10px 16px 0", display: "flex", flexWrap: "wrap", gap: 6 }}>
-              {QUICK_REPLIES.map(q => (
-                <button key={q} onClick={() => send(q)} className="hm-quick-btn" style={{
-                  background: "#eff6ff", color: "#1d4ed8", border: "1px solid #bfdbfe",
-                  borderRadius: 20, padding: "5px 12px", fontSize: 12, cursor: "pointer",
-                  fontFamily: "inherit", fontWeight: 500, transition: "all 0.15s",
-                }}>
-                  {q}
-                </button>
-              ))}
+            <div style={{ padding: "10px 14px 14px", display: "flex", gap: 8, alignItems: "center" }}>
+              <input ref={inputRef} className="hm-chat-input" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && !e.shiftKey && send()} placeholder="Type a message..." style={{ flex: 1, border: "1.5px solid #e2e8f0", borderRadius: 12, padding: "10px 14px", fontSize: 13.5, fontFamily: "inherit", background: "#f8fafc", color: "#1e293b", transition: "border-color 0.15s" }} onFocus={e => e.target.style.borderColor="#2563eb"} onBlur={e => e.target.style.borderColor="#e2e8f0"}/>
+              <button onClick={() => send()} disabled={!input.trim() || loading} className="hm-send-btn" style={{ width: 40, height: 40, borderRadius: 10, background: input.trim() && !loading ? "#2563eb" : "#e2e8f0", border: "none", cursor: input.trim() && !loading ? "pointer" : "not-allowed", color: input.trim() && !loading ? "#fff" : "#94a3b8", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s", flexShrink: 0 }}>
+                {loading ? <div style={{ width: 18, height: 18 }} className="hm-spin"><Icon.Loader /></div> : <div style={{ width: 18, height: 18 }}><Icon.Send /></div>}
+              </button>
+            </div>
+          </>)}
+
+          {/* ── TAB: BLOGS ── */}
+          {activeTab === "blogs" && (
+            <div style={{ flex: 1, overflowY: "auto", padding: 14 }}>
+              <p style={{ margin: "0 0 10px", fontSize: 12, color: "#64748b", fontWeight: 500 }}>✨ AI-curated reads based on popular HelpMate topics</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+                {BLOG_SUGGESTIONS.map((b, i) => (
+                  <a key={i} href={b.url} className="hm-blog-card" style={{ display: "flex", alignItems: "center", gap: 11, padding: "10px 12px", borderRadius: 12, border: "1px solid #e2e8f0", textDecoration: "none", background: "#fff", transition: "all 0.15s" }}>
+                    <span style={{ fontSize: 22, flexShrink: 0 }}>{b.emoji}</span>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: "#0f172a" }}>{b.title}</div>
+                      <span style={{ display: "inline-block", marginTop: 3, fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "#2563eb", background: "#eff6ff", padding: "1px 7px", borderRadius: 10 }}>{b.tag}</span>
+                    </div>
+                    <span style={{ color: "#cbd5e1", fontSize: 14 }}>→</span>
+                  </a>
+                ))}
+              </div>
+              <button onClick={() => send("Suggest me blogs based on my interests")} style={{ marginTop: 12, width: "100%", padding: "10px", borderRadius: 10, border: "none", background: "linear-gradient(135deg,#2563eb,#1d4ed8)", color: "#fff", fontWeight: 600, fontSize: 13, cursor: "pointer", fontFamily: "inherit" }}>
+                ✨ Get AI Personalized Suggestions
+              </button>
             </div>
           )}
 
-          {/* Input */}
-          <div style={{ padding: "12px 16px 16px", display: "flex", gap: 8, alignItems: "center" }}>
-            <input
-              ref={inputRef}
-              className="hm-chat-input"
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && !e.shiftKey && send()}
-              placeholder="Type a message..."
-              style={{
-                flex: 1, border: "1.5px solid #e2e8f0", borderRadius: 12,
-                padding: "10px 14px", fontSize: 14, fontFamily: "inherit",
-                background: "#f8fafc", color: "#1e293b",
-                transition: "border-color 0.15s",
-              }}
-              onFocus={e => e.target.style.borderColor = "#2563eb"}
-              onBlur={e => e.target.style.borderColor = "#e2e8f0"}
-            />
-            <button
-              onClick={() => send()} disabled={!input.trim() || loading}
-              className="hm-send-btn"
-              style={{
-                width: 40, height: 40, borderRadius: 10,
-                background: input.trim() && !loading ? "#2563eb" : "#e2e8f0",
-                border: "none", cursor: input.trim() && !loading ? "pointer" : "not-allowed",
-                color: input.trim() && !loading ? "#fff" : "#94a3b8",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                transition: "all 0.15s", flexShrink: 0,
-              }}
-            >
-              {loading ? <div style={{ width: 18, height: 18 }} className="qs-spin"><Icon.Loader /></div>
-                       : <div style={{ width: 18, height: 18 }}><Icon.Send /></div>}
-            </button>
-          </div>
+          {/* ── TAB: NEWSLETTER ── */}
+          {activeTab === "newsletter" && (
+            <div style={{ flex: 1, overflowY: "auto", padding: 14 }}>
+              {newsletterSent ? (
+                <div style={{ textAlign: "center", padding: "36px 12px" }}>
+                  <div style={{ fontSize: 44, marginBottom: 10 }}>🎉</div>
+                  <h3 style={{ margin: "0 0 6px", color: "#0f172a", fontSize: 15 }}>You're subscribed!</h3>
+                  <p style={{ margin: 0, color: "#64748b", fontSize: 13 }}>We'll send personalized updates to <strong>{email}</strong></p>
+                  <button onClick={() => { setNewsletterSent(false); setEmail(""); }} style={{ marginTop: 14, padding: "8px 18px", borderRadius: 10, border: "1.5px solid #e2e8f0", background: "#fff", color: "#2563eb", fontWeight: 600, fontSize: 13, cursor: "pointer", fontFamily: "inherit" }}>Update Preferences</button>
+                </div>
+              ) : (<>
+                <p style={{ margin: "0 0 10px", fontSize: 12, color: "#64748b", fontWeight: 500 }}>📧 Get AI-personalized recommendations in your inbox</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 7, marginBottom: 12 }}>
+                  {NEWSLETTER_OPTIONS.map(opt => {
+                    const sel = selectedNewsletters.includes(opt.id);
+                    return (
+                      <button key={opt.id} onClick={() => toggleNewsletter(opt.id)} className="hm-nl-opt" style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", borderRadius: 12, cursor: "pointer", border: sel ? "1.5px solid #2563eb" : "1.5px solid #e2e8f0", background: sel ? "#eff6ff" : "#fff", textAlign: "left", fontFamily: "inherit", transition: "all 0.15s" }}>
+                        <span style={{ fontSize: 18 }}>{opt.emoji}</span>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: 13, fontWeight: 600, color: "#0f172a" }}>{opt.label}</div>
+                          <div style={{ fontSize: 11, color: "#64748b", marginTop: 1 }}>{opt.desc}</div>
+                        </div>
+                        <div style={{ width: 17, height: 17, borderRadius: "50%", border: sel ? "none" : "1.5px solid #cbd5e1", background: sel ? "#2563eb" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                          {sel && <div style={{ width: 9, height: 9 }}><Icon.Check /></div>}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+                <input type="email" value={email} onChange={e => { setEmail(e.target.value); setEmailError(""); }} placeholder="your@email.com" style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: emailError ? "1.5px solid #ef4444" : "1.5px solid #e2e8f0", fontSize: 13, fontFamily: "inherit", background: "#f8fafc", color: "#0f172a", marginBottom: emailError ? 4 : 10, outline: "none", boxSizing: "border-box" }} onFocus={e => e.target.style.borderColor="#2563eb"} onBlur={e => e.target.style.borderColor=emailError?"#ef4444":"#e2e8f0"}/>
+                {emailError && <p style={{ margin: "0 0 8px", fontSize: 11, color: "#ef4444" }}>{emailError}</p>}
+                <button onClick={handleNewsletterSubmit} style={{ width: "100%", padding: "11px", borderRadius: 10, border: "none", background: "linear-gradient(135deg,#2563eb,#1d4ed8)", color: "#fff", fontWeight: 600, fontSize: 13, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 4px 14px rgba(37,99,235,0.3)" }}>
+                  Subscribe with AI Recommendations ✨
+                </button>
+              </>)}
+            </div>
+          )}
+
         </div>
       )}
     </>

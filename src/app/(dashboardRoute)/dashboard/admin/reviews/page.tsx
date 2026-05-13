@@ -6,6 +6,8 @@ import { Star, Trash2, MessageSquare, User, Loader2, ShieldCheck, Search, Filter
 import { getReviews, deleteReview } from "@/src/services/reviews";
 import { toast } from "sonner";
 
+import { Skeleton } from "@/src/components/ui/skeleton";
+
 export default function AdminReviewsPage() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,8 +58,41 @@ export default function AdminReviewsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-10 h-10 animate-spin text-primary" />
+      <div className="space-y-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-2">
+            <Skeleton className="h-10 w-64 rounded-xl bg-gray-200 dark:bg-white/5" />
+            <Skeleton className="h-6 w-96 rounded-lg bg-gray-200 dark:bg-white/5" />
+          </div>
+          <Skeleton className="h-14 w-48 rounded-2xl bg-gray-200 dark:bg-white/10" />
+        </div>
+
+        <div className="bg-white dark:bg-zinc-900 rounded-[2.5rem] border border-gray-100 dark:border-white/5 shadow-2xl overflow-hidden">
+          <div className="p-8 border-b border-gray-100 dark:border-white/5 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <Skeleton className="h-12 w-full lg:max-w-md rounded-xl bg-gray-200 dark:bg-white/5" />
+            <div className="flex gap-2">
+              {[...Array(6)].map((_, i) => (
+                <Skeleton key={i} className="h-10 w-16 rounded-xl bg-gray-200 dark:bg-white/5" />
+              ))}
+            </div>
+          </div>
+          <div className="divide-y divide-gray-100 dark:divide-white/5">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="p-8 space-y-6">
+                <div className="flex justify-between">
+                  <Skeleton className="h-6 w-48 rounded-lg bg-gray-200 dark:bg-white/5" />
+                  <Skeleton className="h-10 w-10 rounded-xl bg-gray-200 dark:bg-white/5" />
+                </div>
+                <Skeleton className="h-24 w-full rounded-3xl bg-gray-200 dark:bg-white/5" />
+                <div className="flex gap-8">
+                  <Skeleton className="h-12 w-40 rounded-xl bg-gray-200 dark:bg-white/5" />
+                  <Skeleton className="h-12 w-40 rounded-xl bg-gray-200 dark:bg-white/5" />
+                  <Skeleton className="h-12 w-40 rounded-xl bg-gray-200 dark:bg-white/5" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }

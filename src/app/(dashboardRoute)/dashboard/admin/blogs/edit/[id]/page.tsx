@@ -15,6 +15,8 @@ import { getBlogById, updateBlog } from "@/src/services/blogs";
 import { blogSchema, BlogValues } from "@/src/validation/blog.validation";
 import Link from "next/link";
 
+import { Skeleton } from "@/src/components/ui/skeleton";
+
 export default function EditBlogPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
@@ -39,7 +41,6 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
     const fetchBlog = async () => {
       const res = await getBlogById(id);
       if (res?.success) {
-        // Prepare data for the form
         const { author, createdAt, updatedAt, publishedAt, id: blogId, viewCount, ...formData } = res.data;
         reset(formData);
       } else {
@@ -97,8 +98,46 @@ export default function EditBlogPage({ params }: { params: Promise<{ id: string 
 
   if (initialLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-10 h-10 animate-spin text-primary" />
+      <div className="max-w-5xl mx-auto pb-16">
+        <div className="mb-8">
+          <Skeleton className="h-5 w-32 rounded-lg bg-gray-200 dark:bg-white/5" />
+        </div>
+        <div className="flex flex-col md:flex-row md:items-center gap-6 mb-12">
+          <Skeleton className="w-16 h-16 rounded-2xl bg-gray-200 dark:bg-white/5" />
+          <div className="space-y-2">
+            <Skeleton className="h-10 w-64 rounded-xl bg-gray-200 dark:bg-white/5" />
+            <Skeleton className="h-5 w-48 rounded-lg bg-gray-200 dark:bg-white/5" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-8">
+            <div className="p-8 rounded-[2rem] bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/5 space-y-8">
+              <div className="space-y-4">
+                <Skeleton className="h-4 w-20 ml-1 bg-gray-200 dark:bg-white/5" />
+                <Skeleton className="h-14 w-full rounded-xl bg-gray-200 dark:bg-white/5" />
+              </div>
+              <div className="space-y-4">
+                <Skeleton className="h-4 w-40 ml-1 bg-gray-200 dark:bg-white/5" />
+                <Skeleton className="h-[400px] w-full rounded-xl bg-gray-200 dark:bg-white/5" />
+              </div>
+            </div>
+          </div>
+          <div className="space-y-8">
+            <div className="p-8 rounded-[2rem] bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/5 space-y-8">
+              <div className="space-y-6">
+                <Skeleton className="h-6 w-full rounded-lg bg-gray-200 dark:bg-white/5" />
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="space-y-3">
+                    <Skeleton className="h-4 w-24 bg-gray-200 dark:bg-white/5" />
+                    <Skeleton className="h-12 w-full rounded-xl bg-gray-200 dark:bg-white/5" />
+                  </div>
+                ))}
+              </div>
+              <Skeleton className="h-14 w-full rounded-xl bg-gray-200 dark:bg-white/10" />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

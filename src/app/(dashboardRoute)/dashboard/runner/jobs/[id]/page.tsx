@@ -28,6 +28,8 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import { Skeleton } from "@/src/components/ui/skeleton";
+
 export default function RunnerJobDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const assignmentId = resolvedParams.id;
@@ -76,8 +78,55 @@ export default function RunnerJobDetailsPage({ params }: { params: Promise<{ id:
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-12 h-12 animate-spin text-primary" />
+      <div className="max-w-5xl mx-auto space-y-10 pb-20">
+        <div className="space-y-6">
+          <Skeleton className="h-10 w-40 rounded-xl bg-gray-200 dark:bg-white/5" />
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <Skeleton className="h-6 w-24 rounded-full bg-gray-200 dark:bg-white/5" />
+                <Skeleton className="h-5 w-48 rounded-lg bg-gray-200 dark:bg-white/5" />
+              </div>
+              <Skeleton className="h-14 w-full md:w-[500px] rounded-xl bg-gray-200 dark:bg-white/5" />
+            </div>
+            <div className="flex flex-col items-end gap-2">
+              <Skeleton className="h-4 w-24 bg-gray-200 dark:bg-white/5" />
+              <Skeleton className="h-14 w-32 rounded-xl bg-gray-200 dark:bg-white/5" />
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          <div className="lg:col-span-2 space-y-8">
+            <div className="p-10 rounded-[3rem] bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 space-y-8">
+              <Skeleton className="h-8 w-48 rounded-lg bg-gray-200 dark:bg-white/10" />
+              <Skeleton className="h-24 w-full rounded-2xl bg-gray-200 dark:bg-white/10" />
+              <div className="grid grid-cols-2 gap-8 pt-8">
+                <div className="space-y-4">
+                  <Skeleton className="h-6 w-32 bg-gray-200 dark:bg-white/10" />
+                  <Skeleton className="h-12 w-full rounded-xl bg-gray-200 dark:bg-white/10" />
+                </div>
+                <div className="space-y-4">
+                  <Skeleton className="h-6 w-32 bg-gray-200 dark:bg-white/10" />
+                  <Skeleton className="h-12 w-full rounded-xl bg-gray-200 dark:bg-white/10" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="space-y-8">
+            <div className="p-8 rounded-[3rem] bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 space-y-6">
+              <Skeleton className="h-8 w-48 rounded-lg bg-gray-200 dark:bg-white/10" />
+              <div className="flex items-center gap-4">
+                <Skeleton className="w-16 h-16 rounded-2xl bg-gray-200 dark:bg-white/10" />
+                <div className="space-y-2">
+                  <Skeleton className="h-6 w-32 rounded-lg bg-gray-200 dark:bg-white/10" />
+                  <Skeleton className="h-4 w-40 rounded-lg bg-gray-200 dark:bg-white/10" />
+                </div>
+              </div>
+            </div>
+            <Skeleton className="h-[200px] w-full rounded-[3rem] bg-gray-200 dark:bg-white/5" />
+          </div>
+        </div>
       </div>
     );
   }

@@ -22,6 +22,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 
+import { Skeleton } from "@/src/components/ui/skeleton";
+
 export default function RunnerReviewPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const assignmentId = resolvedParams.id;
@@ -83,8 +85,27 @@ export default function RunnerReviewPage({ params }: { params: Promise<{ id: str
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-10 h-10 text-primary animate-spin" />
+      <div className="max-w-3xl mx-auto space-y-8 pb-20">
+        <Skeleton className="h-10 w-24 rounded-xl bg-gray-200 dark:bg-white/5" />
+        <div className="space-y-2 text-center">
+          <Skeleton className="h-12 w-80 mx-auto rounded-xl bg-gray-200 dark:bg-white/5" />
+          <Skeleton className="h-6 w-96 mx-auto rounded-lg bg-gray-200 dark:bg-white/5" />
+        </div>
+        <div className="p-10 rounded-[3rem] bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 shadow-2xl space-y-10">
+          <div className="flex flex-col items-center gap-6">
+            <Skeleton className="h-4 w-32 bg-gray-200 dark:bg-white/5" />
+            <div className="flex gap-4">
+              {[...Array(5)].map((_, i) => (
+                <Skeleton key={i} className="w-16 h-16 rounded-2xl bg-gray-200 dark:bg-white/10" />
+              ))}
+            </div>
+          </div>
+          <div className="space-y-4">
+            <Skeleton className="h-4 w-32 bg-gray-200 dark:bg-white/5" />
+            <Skeleton className="h-[150px] w-full rounded-[2rem] bg-gray-200 dark:bg-white/10" />
+          </div>
+          <Skeleton className="h-16 w-full rounded-2xl bg-gray-200 dark:bg-white/20" />
+        </div>
       </div>
     );
   }

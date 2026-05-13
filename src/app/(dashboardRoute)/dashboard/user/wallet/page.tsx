@@ -7,21 +7,69 @@ import { Button } from "@/src/components/ui/button";
 import { getMyWallet } from "@/src/services/wallets";
 import Link from "next/link";
 
+import { Skeleton } from "@/src/components/ui/skeleton";
+
 export default function WalletPage() {
   const [wallet, setWallet] = useState<any>(null);
   const [transactions, setTransactions] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchWallet = async () => {
-    const res = await getMyWallet();
-    if (res?.success && res.data) {
-      setWallet(res.data);
-      setTransactions(res.data.transactions || []);
+    setLoading(true);
+    try {
+      const res = await getMyWallet();
+      if (res?.success && res.data) {
+        setWallet(res.data);
+        setTransactions(res.data.transactions || []);
+      }
+    } catch (error) {
+      console.error("Wallet fetch error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchWallet();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-2">
+            <Skeleton className="h-10 w-48 rounded-xl bg-gray-200 dark:bg-white/5" />
+            <Skeleton className="h-6 w-80 rounded-lg bg-gray-200 dark:bg-white/5" />
+          </div>
+          <Skeleton className="h-14 w-48 rounded-2xl bg-gray-200 dark:bg-white/10" />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <Skeleton className="h-[400px] rounded-[2.5rem] bg-gray-200 dark:bg-white/5" />
+          <div className="lg:col-span-2 space-y-6">
+            <div className="flex justify-between px-2">
+              <Skeleton className="h-8 w-48 rounded-lg bg-gray-200 dark:bg-white/5" />
+              <Skeleton className="h-6 w-24 rounded-lg bg-gray-200 dark:bg-white/5" />
+            </div>
+            <div className="space-y-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="p-6 flex items-center justify-between">
+                  <div className="flex items-center gap-6 flex-1">
+                    <Skeleton className="w-14 h-14 rounded-2xl bg-gray-200 dark:bg-white/10" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-6 w-48 rounded-lg bg-gray-200 dark:bg-white/10" />
+                      <Skeleton className="h-4 w-32 rounded-lg bg-gray-200 dark:bg-white/10" />
+                    </div>
+                  </div>
+                  <Skeleton className="h-10 w-24 rounded-xl bg-gray-200 dark:bg-white/10" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">

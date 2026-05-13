@@ -6,6 +6,8 @@ import { Star, MessageSquare, User, Loader2, Quote, ShieldCheck, ThumbsUp } from
 import { getMyReviews } from "@/src/services/reviews";
 import { toast } from "sonner";
 
+import { Skeleton } from "@/src/components/ui/skeleton";
+
 export default function UserReviewsPage() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,8 +31,34 @@ export default function UserReviewsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-10 h-10 animate-spin text-primary" />
+      <div className="space-y-10 pb-20">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-2">
+            <Skeleton className="h-10 w-48 rounded-xl bg-gray-200 dark:bg-white/5" />
+            <Skeleton className="h-6 w-96 rounded-lg bg-gray-200 dark:bg-white/5" />
+          </div>
+          <Skeleton className="h-24 w-64 rounded-3xl bg-gray-200 dark:bg-white/10" />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="p-8 rounded-[3rem] bg-white dark:bg-white/5 border border-gray-100 dark:border-white/5 shadow-sm space-y-6">
+              <div className="flex gap-2">
+                {[...Array(5)].map((_, starIdx) => (
+                  <Skeleton key={starIdx} className="h-4 w-4 rounded-full bg-gray-200 dark:bg-white/10" />
+                ))}
+              </div>
+              <Skeleton className="h-20 w-full rounded-2xl bg-gray-200 dark:bg-white/10" />
+              <div className="flex items-center gap-3">
+                <Skeleton className="w-10 h-10 rounded-xl bg-gray-200 dark:bg-white/10" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-32 rounded-lg bg-gray-200 dark:bg-white/10" />
+                  <Skeleton className="h-3 w-20 rounded-lg bg-gray-200 dark:bg-white/10" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

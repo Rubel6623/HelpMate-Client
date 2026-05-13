@@ -24,6 +24,8 @@ import { Loader2, MessageSquare, Send, Globe, History, Check } from "lucide-reac
 import { toast } from "sonner";
 import { Badge } from "@/src/components/ui/badge";
 
+import { Skeleton } from "@/src/components/ui/skeleton";
+
 export default function RunnerDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [runner, setRunner] = useState<any>(null);
@@ -36,7 +38,6 @@ export default function RunnerDetailsPage({ params }: { params: Promise<{ id: st
     const fetchRunner = async () => {
       const res = await getRunnerProfile(id);
       if (res?.success && res.data) {
-        // If it's an array, take the first one, otherwise take it as is
         const data = Array.isArray(res.data) ? res.data[0] : res.data;
         setRunner(data);
       }
@@ -47,9 +48,45 @@ export default function RunnerDetailsPage({ params }: { params: Promise<{ id: st
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <Loader2 className="w-12 h-12 animate-spin text-primary" />
-        <p className="text-muted-foreground animate-pulse font-medium">Loading runner profile...</p>
+      <div className="min-h-screen px-6 md:px-20 pb-20">
+        {/* Hero Skeleton */}
+        <Skeleton className="relative h-[400px] md:h-[500px] w-full rounded-b-[4rem] bg-gray-200 dark:bg-white/5" />
+
+        <div className="container mt-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left: Profile Card Skeleton */}
+            <div className="lg:col-span-1">
+              <div className="bg-white dark:bg-white/5 rounded-[2.5rem] border border-gray-100 dark:border-white/10 p-8 shadow-xl space-y-6">
+                <div className="flex flex-col items-center gap-4">
+                  <Skeleton className="w-32 h-32 rounded-[2.5rem] bg-gray-200 dark:bg-white/10" />
+                  <Skeleton className="h-8 w-40 rounded-xl bg-gray-200 dark:bg-white/10" />
+                  <Skeleton className="h-5 w-32 rounded-lg bg-gray-200 dark:bg-white/10" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <Skeleton className="h-20 rounded-2xl bg-gray-200 dark:bg-white/10" />
+                  <Skeleton className="h-20 rounded-2xl bg-gray-200 dark:bg-white/10" />
+                </div>
+                <div className="space-y-3">
+                  <Skeleton className="h-5 w-full rounded-lg bg-gray-200 dark:bg-white/10" />
+                  <Skeleton className="h-5 w-3/4 rounded-lg bg-gray-200 dark:bg-white/10" />
+                </div>
+                <Skeleton className="h-14 w-full rounded-2xl bg-gray-200 dark:bg-white/10" />
+                <Skeleton className="h-14 w-full rounded-2xl bg-gray-200 dark:bg-white/10" />
+                <div className="pt-6 border-t border-gray-100 dark:border-white/10 space-y-3">
+                  <Skeleton className="h-4 w-full rounded-lg bg-gray-200 dark:bg-white/10" />
+                  <Skeleton className="h-4 w-2/3 rounded-lg bg-gray-200 dark:bg-white/10" />
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Content Skeletons */}
+            <div className="lg:col-span-2 space-y-8">
+              {[240, 180, 300, 200].map((h, i) => (
+                <Skeleton key={i} className={`h-[${h}px] w-full rounded-[2.5rem] bg-gray-200 dark:bg-white/5`} />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

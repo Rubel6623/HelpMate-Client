@@ -20,6 +20,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 
+import { Skeleton } from "@/src/components/ui/skeleton";
+
 export default function CompleteJobPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const id = resolvedParams.id;
@@ -37,7 +39,6 @@ export default function CompleteJobPage({ params }: { params: Promise<{ id: stri
         if (res?.success) {
           setAssignment(res.data);
           
-          // Redirect if already completed
           if (res.data.completedAt) {
             toast.info("This task is already marked as completed.");
             router.push("/dashboard/runner/my-tasks");
@@ -96,8 +97,24 @@ export default function CompleteJobPage({ params }: { params: Promise<{ id: stri
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-10 h-10 text-primary animate-spin" />
+      <div className="max-w-3xl mx-auto space-y-8 pb-20">
+        <Skeleton className="h-10 w-48 rounded-xl bg-gray-200 dark:bg-white/5" />
+        <div className="space-y-2">
+          <Skeleton className="h-12 w-64 rounded-xl bg-gray-200 dark:bg-white/5" />
+          <Skeleton className="h-6 w-96 rounded-lg bg-gray-200 dark:bg-white/5" />
+        </div>
+        <div className="p-8 rounded-[2.5rem] bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 shadow-2xl space-y-8">
+          <Skeleton className="h-32 w-full rounded-3xl bg-gray-200 dark:bg-white/10" />
+          <div className="space-y-4">
+            <div className="flex justify-between">
+              <Skeleton className="h-4 w-48 bg-gray-200 dark:bg-white/5" />
+              <Skeleton className="h-8 w-24 bg-gray-200 dark:bg-white/5" />
+            </div>
+            <Skeleton className="h-12 w-full rounded-xl bg-gray-200 dark:bg-white/5" />
+          </div>
+          <div className="p-6 rounded-2xl bg-gray-200 dark:bg-white/10 h-24 w-full" />
+          <Skeleton className="h-16 w-full rounded-2xl bg-gray-200 dark:bg-white/20" />
+        </div>
       </div>
     );
   }

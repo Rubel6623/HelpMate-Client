@@ -2,13 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { Search, Filter, Eye, Trash2, Clock, CheckCircle2, AlertCircle, Loader2, XCircle, Pencil, CreditCard } from "lucide-react";
+import { Filter, Eye, Trash2, Clock, CheckCircle2, AlertCircle, Loader2, XCircle, Pencil, CreditCard } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { getMyTasks, updateTaskStatus, deleteTask } from "@/src/services/tasks";
 import Link from "next/link";
 import { toast } from "sonner";
 import { TaskPaymentModal } from "@/src/components/shared/TaskPaymentModal";
 import { TaskConfirmationModal } from "@/src/components/shared/TaskConfirmationModal";
+import { Skeleton } from "@/src/components/ui/skeleton";
+import { AISmartSearch } from "@/src/components/shared/AISmartSearch";
 
 export default function MyTasksPage() {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -16,12 +18,8 @@ export default function MyTasksPage() {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   
-  // Payment Modal State (for initial funding if needed)
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
-  
-  // Confirmation Modal State (for releasing payment)
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  
   const [selectedTask, setSelectedTask] = useState<any>(null);
 
   useEffect(() => {
@@ -115,10 +113,47 @@ export default function MyTasksPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-10 h-10 text-primary animate-spin" />
-          <p className="text-muted-foreground font-medium">Loading your tasks...</p>
+      <div className="space-y-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-2">
+            <Skeleton className="h-10 w-48 rounded-xl bg-gray-200 dark:bg-white/5" />
+            <Skeleton className="h-6 w-96 rounded-lg bg-gray-200 dark:bg-white/5" />
+          </div>
+          <div className="flex gap-4">
+            <Skeleton className="h-12 w-64 rounded-xl bg-gray-200 dark:bg-white/5" />
+            <Skeleton className="h-12 w-32 rounded-xl bg-gray-200 dark:bg-white/5" />
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/5 overflow-hidden shadow-xl">
+          <div className="p-6 border-b border-gray-100 dark:border-white/5">
+            <div className="grid grid-cols-5 gap-4">
+              {[...Array(5)].map((_, i) => (
+                <Skeleton key={i} className="h-4 w-24 bg-gray-200 dark:bg-white/10" />
+              ))}
+            </div>
+          </div>
+          <div className="divide-y divide-gray-100 dark:divide-white/5">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="p-6 flex items-center justify-between">
+                <div className="flex items-center gap-6 flex-1">
+                  <div className="space-y-2">
+                    <Skeleton className="h-6 w-48 rounded-lg bg-gray-200 dark:bg-white/10" />
+                    <Skeleton className="h-4 w-32 rounded-lg bg-gray-200 dark:bg-white/10" />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <Skeleton className="h-8 w-24 rounded-full bg-gray-200 dark:bg-white/10" />
+                </div>
+                <div className="flex-1">
+                  <Skeleton className="h-8 w-32 rounded-lg bg-gray-200 dark:bg-white/10" />
+                </div>
+                <div className="flex-1 text-right">
+                  <Skeleton className="h-10 w-24 rounded-xl bg-gray-200 dark:bg-white/10 ml-auto" />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -156,16 +191,15 @@ export default function MyTasksPage() {
           <p className="text-muted-foreground text-lg">Track and manage all your posted tasks.</p>
         </div>
         <div className="flex gap-4">
-          <div className="relative">
-            <Search className="absolute left-4 top-3 h-5 w-5 text-gray-400" />
-            <input 
-              placeholder="Search tasks..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-12 w-64 pl-12 rounded-xl bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 outline-none focus:border-primary transition-colors font-medium"
-            />
-          </div>
-          <Button onClick={fetchTasks} variant="outline" className="h-12 px-6 rounded-xl border-gray-200 dark:border-white/10 font-bold flex gap-2">
+          <AISmartSearch
+            placeholder="Search tasks..."
+            value={searchQuery}
+            onChange={setSearchQuery}
+            context="tasks"
+            data={tasks}
+            className="w-64"
+          />
+          <Button onClick={fetchTasks} variant="outline" className="h-12 px-6 rounded-xl border-gray-200 dark:border-white/10 font-bold flex gap-2 flex-shrink-0">
             Refresh
           </Button>
         </div>

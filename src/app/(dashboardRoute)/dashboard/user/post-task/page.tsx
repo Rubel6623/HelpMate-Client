@@ -15,6 +15,7 @@ import { getCategories } from "@/src/services/category";
 import { createTask } from "@/src/services/tasks";
 import { getRunnerProfile } from "@/src/services/runners";
 import { postTaskSchema, PostTaskValues } from "@/src/validation/task.validation";
+import { Skeleton } from "@/src/components/ui/skeleton";
 
 function PostTaskForm() {
   const router = useRouter();
@@ -285,9 +286,35 @@ function PostTaskForm() {
   );
 }
 
+function PostTaskSkeleton() {
+  return (
+    <div className="max-w-4xl mx-auto space-y-12 pb-16">
+      <div className="flex flex-col md:flex-row items-center gap-6">
+        <Skeleton className="w-20 h-20 rounded-[2rem] bg-gray-200 dark:bg-white/5" />
+        <div className="space-y-4">
+          <Skeleton className="h-12 w-[400px] rounded-xl bg-gray-200 dark:bg-white/5" />
+          <Skeleton className="h-6 w-[600px] rounded-lg bg-gray-200 dark:bg-white/5" />
+        </div>
+      </div>
+      <div className="p-8 md:p-12 rounded-[2.5rem] bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 shadow-2xl space-y-10">
+        <div className="space-y-6">
+          <Skeleton className="h-8 w-48 rounded-lg bg-gray-200 dark:bg-white/10" />
+          <Skeleton className="h-16 w-full rounded-2xl bg-gray-200 dark:bg-white/10" />
+          <Skeleton className="h-[160px] w-full rounded-2xl bg-gray-200 dark:bg-white/10" />
+        </div>
+        <div className="grid grid-cols-2 gap-8">
+          <Skeleton className="h-16 w-full rounded-2xl bg-gray-200 dark:bg-white/10" />
+          <Skeleton className="h-16 w-full rounded-2xl bg-gray-200 dark:bg-white/10" />
+        </div>
+        <Skeleton className="h-20 w-full rounded-[1.5rem] bg-gray-200 dark:bg-white/20" />
+      </div>
+    </div>
+  );
+}
+
 export default function PostTaskPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="w-10 h-10 animate-spin text-primary" /></div>}>
+    <Suspense fallback={<PostTaskSkeleton />}>
       <PostTaskForm />
     </Suspense>
   );
