@@ -11,6 +11,8 @@ import {
   Eye,
   BadgeCheck,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Skeleton } from "@/src/components/ui/skeleton";
 
 const safetyFeatures = [
   {
@@ -51,7 +53,27 @@ const safetyFeatures = [
   },
 ];
 
+const SafetySkeleton = () => (
+  <div className="p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm space-y-6 flex flex-col h-full">
+    <Skeleton className="w-12 h-12 rounded-xl bg-emerald-500/10" />
+    <div className="space-y-4 flex-grow">
+      <Skeleton className="h-7 w-3/4 rounded-lg bg-emerald-500/10" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-full rounded-md bg-emerald-500/10" />
+        <Skeleton className="h-4 w-5/6 rounded-md bg-emerald-500/10" />
+      </div>
+    </div>
+  </div>
+);
+
 export const SafetyTrust = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <section className="py-24 relative overflow-hidden">
       {/* Background */}
@@ -94,8 +116,11 @@ export const SafetyTrust = () => {
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {safetyFeatures.map((feature, index) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {loading ? (
+            [...Array(4)].map((_, i) => <SafetySkeleton key={i} />)
+          ) : (
+            safetyFeatures.map((feature, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
@@ -115,7 +140,8 @@ export const SafetyTrust = () => {
                 {feature.description}
               </p>
             </motion.div>
-          ))}
+          ))
+        )}
         </div>
 
         {/* Trust Badge Banner */}

@@ -13,6 +13,8 @@ import {
   CheckCircle2
 } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Skeleton } from "@/src/components/ui/skeleton";
 
 const services = [
   {
@@ -77,7 +79,38 @@ const services = [
   }
 ];
 
+const ServiceCardSkeleton = () => (
+  <div className="h-full p-8 rounded-[2.5rem] bg-gray-50 dark:bg-white/5 border border-transparent shadow-sm space-y-6 flex flex-col">
+    <div className="flex items-start justify-between">
+      <Skeleton className="w-16 h-16 rounded-2xl bg-gray-200 dark:bg-white/10" />
+      <Skeleton className="w-20 h-4 rounded-full bg-gray-200 dark:bg-white/10" />
+    </div>
+    <div className="space-y-4 flex-grow">
+      <Skeleton className="h-8 w-3/4 rounded-xl bg-gray-200 dark:bg-white/10" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-full rounded-lg bg-gray-200 dark:bg-white/10" />
+        <Skeleton className="h-4 w-5/6 rounded-lg bg-gray-200 dark:bg-white/10" />
+      </div>
+      <div className="space-y-3 pt-6">
+        <Skeleton className="h-4 w-1/2 rounded-lg bg-gray-200 dark:bg-white/10" />
+        <Skeleton className="h-4 w-2/3 rounded-lg bg-gray-200 dark:bg-white/10" />
+      </div>
+    </div>
+    <div className="mt-8 pt-6 border-t border-gray-200 dark:border-white/5 flex items-center justify-between">
+      <Skeleton className="h-4 w-24 rounded-lg bg-gray-200 dark:bg-white/10" />
+      <Skeleton className="w-10 h-10 rounded-full bg-gray-200 dark:bg-white/10" />
+    </div>
+  </div>
+);
+
 export const RunnerServices = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <section className="py-24 relative overflow-hidden bg-transparent">
       {/* Background Decoration */}
@@ -118,8 +151,11 @@ export const RunnerServices = () => {
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service, index) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          {loading ? (
+            [...Array(4)].map((_, i) => <ServiceCardSkeleton key={i} />)
+          ) : (
+            services.map((service, index) => (
             <Link href={service.href} key={index} className="block group relative">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
@@ -169,7 +205,8 @@ export const RunnerServices = () => {
                 </div>
               </motion.div>
             </Link>
-          ))}
+          ))
+        )}
         </div>
 
         {/* Call to Action */}

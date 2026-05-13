@@ -8,7 +8,13 @@ import {
   BadgeDollarSign,
   CheckCircle2,
   Sparkles,
+  MapPin,
+  Headset,
+  CalendarClock,
+  GraduationCap,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Skeleton } from "@/src/components/ui/skeleton";
 
 const features = [
   {
@@ -43,9 +49,65 @@ const features = [
     highlights: ["You Set Budget", "Competitive Offers", "Zero Hidden Fees"],
     color: "from-purple-500 to-pink-500",
   },
+  {
+    icon: MapPin,
+    title: "Real-Time Tracking",
+    description:
+      "Track your runner's progress in real-time from the moment they accept to the final delivery at your doorstep.",
+    highlights: ["Live GPS Tracking", "In-App Navigation", "Instant ETA"],
+    color: "from-indigo-500 to-blue-500",
+  },
+  {
+    icon: Headset,
+    title: "24/7 Support",
+    description:
+      "Our dedicated support team is available around the clock to help you with any questions or issues you might have.",
+    highlights: ["Human Support", "24/7 Availability", "Fast Resolution"],
+    color: "from-rose-500 to-red-400",
+  },
+  {
+    icon: CalendarClock,
+    title: "Flexible Scheduling",
+    description:
+      "Need help right now or planning ahead? Schedule tasks for immediate action or pick a time that works best for you.",
+    highlights: ["Instant Booking", "Scheduled Tasks", "Recurring Options"],
+    color: "from-cyan-500 to-blue-400",
+  },
+  {
+    icon: GraduationCap,
+    title: "Student Powered",
+    description:
+      "Support local students' livelihoods. Our runners are hardworking students earning while they learn, ensuring great service.",
+    highlights: ["Supports Students", "Community Driven", "Verified IDs"],
+    color: "from-amber-500 to-orange-400",
+  },
 ];
 
+const FeatureSkeleton = () => (
+  <div className="p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-sm space-y-6 flex flex-col h-full">
+    <Skeleton className="w-14 h-14 rounded-2xl bg-gray-200/10" />
+    <div className="space-y-4 flex-grow">
+      <Skeleton className="h-8 w-3/4 rounded-xl bg-gray-200/10" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-full rounded-lg bg-gray-200/10" />
+        <Skeleton className="h-4 w-5/6 rounded-lg bg-gray-200/10" />
+      </div>
+    </div>
+    <div className="flex flex-wrap gap-2 pt-4">
+      <Skeleton className="h-6 w-20 rounded-full bg-gray-200/10" />
+      <Skeleton className="h-6 w-24 rounded-full bg-gray-200/10" />
+    </div>
+  </div>
+);
+
 export const WhyChooseUs = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <section className="py-24 relative overflow-hidden">
       {/* Background Decor */}
@@ -89,8 +151,11 @@ export const WhyChooseUs = () => {
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {features.map((feature, index) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          {loading ? (
+            [...Array(4)].map((_, i) => <FeatureSkeleton key={i} />)
+          ) : (
+            features.map((feature, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 30 }}
@@ -126,7 +191,8 @@ export const WhyChooseUs = () => {
                 ))}
               </div>
             </motion.div>
-          ))}
+          ))
+        )}
         </div>
       </div>
     </section>

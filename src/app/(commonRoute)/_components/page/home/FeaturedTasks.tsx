@@ -13,6 +13,7 @@ import {
 import { useEffect, useState } from "react";
 import { getTasks } from "@/src/services/tasks";
 import Link from "next/link";
+import { Skeleton } from "@/src/components/ui/skeleton";
 
 // Helper to format date
 const timeAgo = (date: string) => {
@@ -30,6 +31,27 @@ const timeAgo = (date: string) => {
   if (interval > 1) return Math.floor(interval) + " min ago";
   return Math.floor(seconds) + " sec ago";
 };
+
+const TaskCardSkeleton = () => (
+  <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm space-y-6 flex flex-col h-full">
+    <div className="flex justify-between items-center">
+      <Skeleton className="h-6 w-20 rounded-full bg-white/10" />
+      <Skeleton className="h-6 w-16 rounded-full bg-white/10" />
+    </div>
+    <div className="space-y-3 flex-grow">
+      <Skeleton className="h-6 w-full rounded-lg bg-white/10" />
+      <Skeleton className="h-6 w-2/3 rounded-lg bg-white/10" />
+    </div>
+    <div className="space-y-3 pb-4">
+      <Skeleton className="h-4 w-1/2 rounded-md bg-white/10" />
+      <Skeleton className="h-4 w-3/4 rounded-md bg-white/10" />
+    </div>
+    <div className="flex justify-between items-center pt-4 border-t border-white/10">
+      <Skeleton className="h-4 w-16 rounded-md bg-white/10" />
+      <Skeleton className="h-8 w-24 rounded-lg bg-white/10" />
+    </div>
+  </div>
+);
 
 export const FeaturedTasks = () => {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -105,11 +127,9 @@ export const FeaturedTasks = () => {
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {loading ? (
-            <div className="col-span-full py-20 flex justify-center">
-              <Loader2 className="w-10 h-10 animate-spin text-primary" />
-            </div>
+            [...Array(4)].map((_, i) => <TaskCardSkeleton key={i} />)
           ) : tasks.length === 0 ? (
             <div className="col-span-full py-20 text-center text-gray-400">
               No tasks posted recently.
@@ -167,7 +187,7 @@ export const FeaturedTasks = () => {
                     offers
                   </span>
                   <Link href="/tasks">
-                    <button className="flex items-center gap-2 text-sm font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button className="flex items-center gap-2 text-sm font-bold text-white dark:text-white cursor-pointer hover:text-primary/100  text-primary  group-hover:opacity-100 transition-opacity">
                       <Eye className="w-4 h-4" />
                       View Task
                     </button>
@@ -176,7 +196,7 @@ export const FeaturedTasks = () => {
               </motion.div>
             ))
           )}
-        </div>
+        </div> 
       </div>
     </section>
   );

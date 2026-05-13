@@ -3,6 +3,8 @@
 import { ShoppingCart, Clock, FileText, Home, Cpu, Dog, ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Skeleton } from "@/src/components/ui/skeleton";
 
 const categories = [
   {
@@ -55,7 +57,31 @@ const categories = [
   },
 ];
 
+const CategorySkeleton = () => (
+  <div className="relative p-8 h-full rounded-[2rem] bg-gray-50 dark:bg-white/5 border border-transparent shadow-sm space-y-6 flex flex-col">
+    <Skeleton className="w-14 h-14 rounded-2xl bg-gray-200 dark:bg-white/10" />
+    <div className="space-y-4 flex-grow">
+      <Skeleton className="h-8 w-3/4 rounded-xl bg-gray-200 dark:bg-white/10" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-full rounded-lg bg-gray-200 dark:bg-white/10" />
+        <Skeleton className="h-4 w-5/6 rounded-lg bg-gray-200 dark:bg-white/10" />
+      </div>
+    </div>
+    <div className="flex items-center justify-between pt-6 border-t border-gray-200 dark:border-white/10">
+      <Skeleton className="h-4 w-24 rounded-lg bg-gray-200 dark:bg-white/10" />
+      <Skeleton className="h-4 w-16 rounded-lg bg-gray-200 dark:bg-white/10" />
+    </div>
+  </div>
+);
+
 export const Categories = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <section className="py-24 bg-transparent overflow-hidden">
 
@@ -79,8 +105,11 @@ export const Categories = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {categories.map((category, index) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          {loading ? (
+            [...Array(4)].map((_, i) => <CategorySkeleton key={i} />)
+          ) : (
+            categories.map((category, index) => (
             <Link href={category.href} key={index} className="block group">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -108,7 +137,8 @@ export const Categories = () => {
                 </div>
               </motion.div>
             </Link>
-          ))}
+          ))
+        )}
         </div>
       </div>
     </section>
