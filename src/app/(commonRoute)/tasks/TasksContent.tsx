@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { Loader2, MapPin, Clock, ShieldCheck, AlertCircle, PlusCircle, Eye, ArrowLeft, Home } from "lucide-react";
+import { Loader2, MapPin, Clock, ShieldCheck, AlertCircle, PlusCircle, Eye, ArrowLeft, Home, Users, Timer, Flame } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { getTasks } from "@/src/services/tasks";
 import { applyForTask, getMyApplications } from "@/src/services/task-applications";
@@ -179,9 +179,16 @@ export default function TasksContent() {
                         className="group p-8 rounded-[2.5rem] bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 shadow-xl hover:shadow-primary/5 hover:border-primary/20 transition-all duration-500 flex flex-col h-full"
                       >
                         <div className="flex justify-between items-start mb-6">
-                          <span className="text-[10px] font-bold px-3 py-1 bg-primary/10 text-primary rounded-full uppercase tracking-widest">
-                            {task.category?.name || "General"}
-                          </span>
+                          <div className="flex flex-col gap-2 items-start">
+                            <span className="text-[10px] font-bold px-3 py-1 bg-primary/10 text-primary rounded-full uppercase tracking-widest">
+                              {task.category?.name || "General"}
+                            </span>
+                            {task.isPromoted && (
+                              <span className="text-[10px] font-bold px-3 py-1 bg-orange-500/10 text-orange-500 rounded-full uppercase tracking-widest flex items-center gap-1">
+                                <Flame className="w-3 h-3" /> Promoted
+                              </span>
+                            )}
+                          </div>
                           <p className="text-2xl font-black text-black dark:text-white">
                             ৳{task.offerPrice || "N/A"}
                           </p>
@@ -195,19 +202,54 @@ export default function TasksContent() {
                           </p>
                         )}
 
-                        <div className="space-y-3 mb-8">
-                          <div className="flex items-center gap-3 text-muted-foreground">
-                            <MapPin className="w-5 h-5 text-primary shrink-0" />
-                            <span className="font-bold text-xs truncate uppercase tracking-tight">
+                        <div className="grid grid-cols-2 gap-4 mb-8">
+                          <div className="flex flex-col gap-1 text-muted-foreground">
+                            <div className="flex items-center gap-2">
+                              <MapPin className="w-4 h-4 text-primary shrink-0" />
+                              <span className="font-bold text-[11px] truncate uppercase tracking-tight">
+                                Location
+                              </span>
+                            </div>
+                            <span className="text-xs font-medium text-black dark:text-white truncate">
                               {task.stops?.[0]?.locationLabel || "Multiple stops"}
                             </span>
                           </div>
-                          <div className="flex items-center gap-3 text-muted-foreground">
-                            <Clock className="w-5 h-5 text-primary shrink-0" />
-                            <span className="font-bold text-xs uppercase">
+
+                          <div className="flex flex-col gap-1 text-muted-foreground">
+                            <div className="flex items-center gap-2">
+                              <Clock className="w-4 h-4 text-primary shrink-0" />
+                              <span className="font-bold text-[11px] uppercase">
+                                Deadline
+                              </span>
+                            </div>
+                            <span className="text-xs font-medium text-black dark:text-white truncate">
                               {task.deadline
-                                ? `Due: ${new Date(task.deadline).toLocaleDateString()}`
+                                ? new Date(task.deadline).toLocaleDateString()
                                 : "Flexible timing"}
+                            </span>
+                          </div>
+
+                          <div className="flex flex-col gap-1 text-muted-foreground">
+                            <div className="flex items-center gap-2">
+                              <Timer className="w-4 h-4 text-primary shrink-0" />
+                              <span className="font-bold text-[11px] uppercase tracking-tight">
+                                Est. Time
+                              </span>
+                            </div>
+                            <span className="text-xs font-medium text-black dark:text-white truncate">
+                              {task.estimatedDuration ? `${task.estimatedDuration} min` : "Not specified"}
+                            </span>
+                          </div>
+
+                          <div className="flex flex-col gap-1 text-muted-foreground">
+                            <div className="flex items-center gap-2">
+                              <Users className="w-4 h-4 text-primary shrink-0" />
+                              <span className="font-bold text-[11px] uppercase">
+                                Applicants
+                              </span>
+                            </div>
+                            <span className="text-xs font-medium text-black dark:text-white truncate">
+                              {task._count?.applications ?? task.applications?.length ?? 0} runners applied
                             </span>
                           </div>
                         </div>

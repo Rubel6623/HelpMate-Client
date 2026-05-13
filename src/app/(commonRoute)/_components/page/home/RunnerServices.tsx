@@ -15,6 +15,7 @@ import {
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/src/components/ui/skeleton";
+import { Button } from "@/src/components/ui/button";
 
 const services = [
   {
@@ -80,25 +81,24 @@ const services = [
 ];
 
 const ServiceCardSkeleton = () => (
-  <div className="h-full p-8 rounded-[2.5rem] bg-gray-50 dark:bg-white/5 border border-transparent shadow-sm space-y-6 flex flex-col">
+  <div className="h-full p-6 rounded-[2.5rem] bg-gray-50 dark:bg-white/5 border border-transparent shadow-sm space-y-4 flex flex-col">
     <div className="flex items-start justify-between">
-      <Skeleton className="w-16 h-16 rounded-2xl bg-gray-200 dark:bg-white/10" />
-      <Skeleton className="w-20 h-4 rounded-full bg-gray-200 dark:bg-white/10" />
+      <Skeleton className="w-12 h-12 rounded-xl bg-gray-200 dark:bg-white/10" />
+      <Skeleton className="w-16 h-3 rounded-full bg-gray-200 dark:bg-white/10" />
     </div>
-    <div className="space-y-4 flex-grow">
-      <Skeleton className="h-8 w-3/4 rounded-xl bg-gray-200 dark:bg-white/10" />
+    <div className="space-y-3 flex-grow">
+      <Skeleton className="h-6 w-3/4 rounded-xl bg-gray-200 dark:bg-white/10" />
       <div className="space-y-2">
-        <Skeleton className="h-4 w-full rounded-lg bg-gray-200 dark:bg-white/10" />
-        <Skeleton className="h-4 w-5/6 rounded-lg bg-gray-200 dark:bg-white/10" />
+        <Skeleton className="h-3 w-full rounded-lg bg-gray-200 dark:bg-white/10" />
+        <Skeleton className="h-3 w-5/6 rounded-lg bg-gray-200 dark:bg-white/10" />
       </div>
-      <div className="space-y-3 pt-6">
-        <Skeleton className="h-4 w-1/2 rounded-lg bg-gray-200 dark:bg-white/10" />
-        <Skeleton className="h-4 w-2/3 rounded-lg bg-gray-200 dark:bg-white/10" />
+      <div className="space-y-3 pt-4">
+        <Skeleton className="h-3 w-1/2 rounded-lg bg-gray-200 dark:bg-white/10" />
+        <Skeleton className="h-3 w-2/3 rounded-lg bg-gray-200 dark:bg-white/10" />
       </div>
     </div>
-    <div className="mt-8 pt-6 border-t border-gray-200 dark:border-white/5 flex items-center justify-between">
-      <Skeleton className="h-4 w-24 rounded-lg bg-gray-200 dark:bg-white/10" />
-      <Skeleton className="w-10 h-10 rounded-full bg-gray-200 dark:bg-white/10" />
+    <div className="mt-auto pt-4 border-t border-gray-200 dark:border-white/5">
+      <Skeleton className="w-full h-10 rounded-xl bg-gray-200 dark:bg-white/10" />
     </div>
   </div>
 );
@@ -156,18 +156,18 @@ export const RunnerServices = () => {
             [...Array(4)].map((_, i) => <ServiceCardSkeleton key={i} />)
           ) : (
             services.map((service, index) => (
-            <Link href={service.href} key={index} className="block group relative">
               <motion.div
+                key={index}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: service.delay }}
-                className="h-full p-8 rounded-[2.5rem] bg-gray-50 dark:bg-white/5 border border-transparent hover:border-primary/40 transition-all duration-500 hover:bg-white dark:hover:bg-white/10 shadow-sm hover:shadow-2xl hover:shadow-primary/10 backdrop-blur-sm flex flex-col"
+                className="group p-6 rounded-[2.5rem] bg-gray-50 dark:bg-white/5 border border-transparent hover:border-primary/40 transition-all duration-500 hover:bg-white dark:hover:bg-white/10 shadow-sm hover:shadow-2xl hover:shadow-primary/10 backdrop-blur-sm flex flex-col h-full"
               >
                 {/* Icon Header */}
-                <div className="flex items-start justify-between mb-8">
-                  <div className={`p-4 rounded-2xl bg-gradient-to-br ${service.color} shadow-lg shadow-current/20`}>
-                    <service.icon className="w-8 h-8 text-white" />
+                <div className="flex items-start justify-between mb-6">
+                  <div className={`p-3 rounded-2xl bg-gradient-to-br ${service.color} shadow-lg shadow-current/20`}>
+                    <service.icon className="w-7 h-7 text-white" />
                   </div>
                   <div className="text-right">
                     <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors">
@@ -177,35 +177,37 @@ export const RunnerServices = () => {
                 </div>
 
                 {/* Content */}
-                <h3 className="text-2xl font-bold text-black dark:text-white mb-4 group-hover:text-primary transition-colors">
+                <h3 className="text-xl font-bold text-black dark:text-white mb-2 group-hover:text-primary transition-colors">
                   {service.title}
                 </h3>
-                <p className="text-muted-foreground mb-8 flex-grow leading-relaxed">
+                <p className="text-muted-foreground text-sm mb-4 leading-relaxed line-clamp-2">
                   {service.description}
                 </p>
 
                 {/* Features List */}
-                <div className="space-y-3 pt-6 border-t border-gray-200 dark:border-white/5">
+                <div className="space-y-3 pt-6 border-t border-gray-200 dark:border-white/5 flex-grow">
                   {service.features.map((feature, fIndex) => (
                     <div key={fIndex} className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
-                      <CheckCircle2 className="w-4 h-4 text-primary" />
+                      <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
                       <span>{feature}</span>
                     </div>
                   ))}
                 </div>
 
-                {/* Hover Action */}
-                <div className="mt-8 pt-6 border-t border-gray-200 dark:border-white/5 flex items-center justify-between">
-                  <span className="text-xs font-bold text-muted-foreground group-hover:text-black dark:group-hover:text-white transition-colors">
-                    Explore Details
-                  </span>
-                  <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-white/5 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300 -rotate-45 group-hover:rotate-0">
-                    <Search className="w-5 h-5" />
-                  </div>
+                {/* Action Button */}
+                <div className="mt-6 pt-4 border-t border-gray-200 dark:border-white/5 mt-auto">
+                  <Link href={service.href} className="w-full block">
+                    <Button 
+                      variant="outline" 
+                      className="w-full h-10 rounded-xl border-gray-200 dark:border-white/10 hover:bg-primary hover:text-white hover:border-primary dark:hover:bg-primary transition-all duration-300 font-bold text-xs gap-2 group/btn"
+                    >
+                      Explore Services
+                      <Search className="w-4 h-4 ml-1 group-hover/btn:scale-110 transition-transform" />
+                    </Button>
+                  </Link>
                 </div>
               </motion.div>
-            </Link>
-          ))
+            ))
         )}
         </div>
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { UserCircle, Star, ShieldCheck, MapPin, Filter, Calendar, Home, ArrowLeft } from "lucide-react";
+import { UserCircle, Star, ShieldCheck, MapPin, Filter, Calendar, Home, ArrowLeft, Globe, History, Zap } from "lucide-react";
 import { getAllRunners } from "@/src/services/runners";
 import { Button } from "@/src/components/ui/button";
 import Link from "next/link";
@@ -92,7 +92,7 @@ export default function RunnersContent() {
         </div>
 
         {filteredRunners.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
             {filteredRunners.map((item, index) => {
               const user = item.user || item;
               const profile = item.runnerProfile || (item.user ? item : null);
@@ -109,11 +109,14 @@ export default function RunnersContent() {
                 >
                   <div className="flex items-start justify-between mb-6">
                     <div className="relative">
-                      <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-primary/10 to-purple-500/10 flex items-center justify-center overflow-hidden border border-white/10">
+                      <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-primary/10 to-purple-500/10 flex items-center justify-center overflow-hidden border border-white/10 relative">
                         {user.avatarUrl ? (
                           <img src={user.avatarUrl} alt={user.name} className="w-full h-full object-cover" />
                         ) : (
                           <UserCircle className="w-12 h-12 text-gray-400" />
+                        )}
+                        {profile.isOnline && (
+                          <div className="absolute top-1 right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white dark:border-[#0a0a0a] animate-pulse" />
                         )}
                       </div>
                       {profile.isVerified && (
@@ -152,6 +155,23 @@ export default function RunnersContent() {
                     <p className="text-sm text-muted-foreground line-clamp-2 font-medium min-h-[2.5rem]">
                       {profile.bio || "Student runner ready to help with your errands and tasks across the campus."}
                     </p>
+
+                    <div className="grid grid-cols-2 gap-3 py-2">
+                      <div className="flex flex-col gap-0.5">
+                        <div className="flex items-center gap-1.5 text-muted-foreground">
+                          <Zap className="w-3 h-3 text-primary" />
+                          <span className="text-[10px] font-bold uppercase tracking-tight">Acceptance</span>
+                        </div>
+                        <span className="text-xs font-bold text-black dark:text-white">{profile.acceptanceRate || 100}%</span>
+                      </div>
+                      <div className="flex flex-col gap-0.5">
+                        <div className="flex items-center gap-1.5 text-muted-foreground">
+                          <Globe className="w-3 h-3 text-primary" />
+                          <span className="text-[10px] font-bold uppercase tracking-tight">Radius</span>
+                        </div>
+                        <span className="text-xs font-bold text-black dark:text-white">{profile.preferredRadius || 5} KM</span>
+                      </div>                      
+                    </div>
 
                     <div className="flex flex-wrap gap-2 pt-2">
                       {profile.skills?.slice(0, 2).map((skill: string) => (

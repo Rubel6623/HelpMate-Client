@@ -47,6 +47,9 @@ export default function HomePage() {
           <RunnerServices />
         </div>
 
+        {/* 7. Featured Tasks / Live Marketplace */}
+        <FeaturedTasks />
+
         {/* 5. Why Choose HelpMate */}
         <div id="why-choose-us">
           <WhyChooseUs />
@@ -57,8 +60,7 @@ export default function HomePage() {
           <SafetyTrust />
         </div>
 
-        {/* 7. Featured Tasks / Live Marketplace */}
-        <FeaturedTasks />
+        
 
         {/* 8. Testimonials / Reviews */}
         <div id="reviews">
