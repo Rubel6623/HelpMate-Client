@@ -30,7 +30,7 @@ export default function RunnersContent() {
   const filteredRunners = runners.filter((runner) => {
     const userName = runner.name || runner.user?.name || "";
     const university = runner.runnerProfile?.university || runner.university || "";
-    
+
     return (
       userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       university.toLowerCase().includes(searchQuery.toLowerCase())
@@ -50,171 +50,171 @@ export default function RunnersContent() {
               animate={{ opacity: 1, x: 0 }}
               className="mb-8"
             >
-          <Link href="/">
-            <Button variant="ghost" className="rounded-full gap-2 text-white hover:text-primary transition-colors border border-white/20">
-              <ArrowLeft className="w-4 h-4" />
-              <Home className="w-4 h-4" />
-              <span>Back to Home</span>
-            </Button>
-          </Link>
-        </motion.div>
+              <Link href="/">
+                <Button variant="ghost" className="rounded-full gap-2 text-white hover:text-primary transition-colors border border-white/20">
+                  <ArrowLeft className="w-4 h-4" />
+                  <Home className="w-4 h-4" />
+                  <span>Back to Home</span>
+                </Button>
+              </Link>
+            </motion.div>
 
-        <div className="mb-12 text-center">
-          <motion.h1 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-6xl text-white font-bold mb-4 tracking-tight"
-          >
-            Find Your Perfect <span className="text-primary">Runner</span>
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-lg text-muted-foreground max-w-2xl mx-auto"
-          >
-            Browse through our active student runners ready to help you with your errands and tasks.
-          </motion.p>
-        </div>
+            <div className="mb-12 text-center">
+              <motion.h1
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-4xl md:text-6xl text-white font-bold mb-4 tracking-tight"
+              >
+                Find Your Perfect <span className="text-primary">Runner</span>
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="text-lg text-muted-foreground max-w-2xl mx-auto"
+              >
+                Browse through our active student runners ready to help you with your errands and tasks.
+              </motion.p>
+            </div>
 
-        <div className="flex flex-col md:flex-row gap-4 mb-12">
-          <AISmartSearch
-            placeholder="Search by name, university, or skill..."
-            value={searchQuery}
-            onChange={setSearchQuery}
-            context="runners"
-            data={runners}
-          />
-          <Button variant="outline" className="h-14 px-8 rounded-2xl border-white/10 gap-2 flex-shrink-0">
-            <Filter className="w-5 h-5" />
-            Filters
-          </Button>
-        </div>
+            <div className="flex flex-col md:flex-row gap-4 mb-12">
+              <AISmartSearch
+                placeholder="Search by name, university, or skill..."
+                value={searchQuery}
+                onChange={setSearchQuery}
+                context="runners"
+                data={runners}
+              />
+              <Button variant="outline" className="h-14 px-8 rounded-2xl border-white/10 gap-2 flex-shrink-0">
+                <Filter className="w-5 h-5" />
+                Filters
+              </Button>
+            </div>
 
-        {filteredRunners.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-            {filteredRunners.map((item, index) => {
-              const user = item.user || item;
-              const profile = item.runnerProfile || (item.user ? item : null);
-              
-              if (!profile) return null;
+            {filteredRunners.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+                {filteredRunners.map((item, index) => {
+                  const user = item.user || item;
+                  const profile = item.runnerProfile || (item.user ? item : null);
 
-              return (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="group relative p-6 rounded-[2.5rem] bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 shadow-xl hover:shadow-primary/5 hover:border-primary/20 transition-all duration-500 h-full flex flex-col"
-                >
-                  <div className="flex items-start justify-between mb-6">
-                    <div className="relative">
-                      <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-primary/10 to-purple-500/10 flex items-center justify-center overflow-hidden border border-white/10 relative">
-                        {user.avatarUrl ? (
-                          <img src={user.avatarUrl} alt={user.name} className="w-full h-full object-cover" />
-                        ) : (
-                          <UserCircle className="w-12 h-12 text-gray-400" />
-                        )}
-                        {profile.isOnline && (
-                          <div className="absolute top-1 right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white dark:border-[#0a0a0a] animate-pulse" />
-                        )}
-                      </div>
-                      {profile.isVerified && (
-                        <div className="absolute -bottom-2 -right-2 bg-primary text-white p-1.5 rounded-xl shadow-lg border-2 border-white dark:border-[#0a0a0a]">
-                          <ShieldCheck className="w-4 h-4" />
+                  if (!profile) return null;
+
+                  return (
+                    <motion.div
+                      key={item.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="group p-8 rounded-[2.5rem] bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 shadow-xl hover:shadow-primary/5 hover:border-primary/20 transition-all duration-500 h-full flex flex-col"
+                    >
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="relative">
+                          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/10 to-purple-500/10 flex items-center justify-center overflow-hidden border border-white/10 relative">
+                            {user.avatarUrl ? (
+                              <img src={user.avatarUrl} alt={user.name} className="w-full h-full object-cover" />
+                            ) : (
+                              <UserCircle className="w-12 h-12 text-gray-400" />
+                            )}
+                            {profile.isOnline && (
+                              <div className="absolute top-1 right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white dark:border-[#0a0a0a] animate-pulse" />
+                            )}
+                          </div>
+                          {profile.isVerified && (
+                            <div className="absolute -bottom-2 -right-2 bg-primary text-white p-1.5 rounded-xl shadow-lg border-2 border-white dark:border-[#0a0a0a]">
+                              <ShieldCheck className="w-4 h-4" />
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                    <div className="flex flex-col items-end">
-                      <div className="text-primary font-black text-2xl flex items-baseline gap-0.5">
-                        <span className="text-sm font-bold">৳</span>
-                        {profile.hourlyRate}
-                        <span className="text-[10px] text-muted-foreground font-bold uppercase ml-1">/hr</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-amber-500 font-bold text-sm mt-1">
-                        <Star className="w-3.5 h-3.5 fill-current" />
-                        {(profile.averageRating || 0).toFixed(1)}
-                      </div>
-                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-1">
-                        {profile.totalTasksDone || 0} Tasks Done
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4 mb-8 flex-grow">
-                    <div>
-                      <h3 className="text-xl font-black text-gray-900 dark:text-white group-hover:text-primary transition-colors line-clamp-1">
-                        {user.name}
-                      </h3>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium mt-1">
-                        <MapPin className="w-3.5 h-3.5" />
-                        <span className="line-clamp-1">{profile.university}</span>
-                      </div>
-                    </div>
-                    
-                    <p className="text-sm text-muted-foreground line-clamp-2 font-medium min-h-[2.5rem]">
-                      {profile.bio || "Student runner ready to help with your errands and tasks across the campus."}
-                    </p>
-
-                    <div className="grid grid-cols-2 gap-3 py-2">
-                      <div className="flex flex-col gap-0.5">
-                        <div className="flex items-center gap-1.5 text-muted-foreground">
-                          <Zap className="w-3 h-3 text-primary" />
-                          <span className="text-[10px] font-bold uppercase tracking-tight">Acceptance</span>
+                        <div className="flex flex-col items-end">
+                          <div className="text-primary font-black text-2xl flex items-baseline gap-0.5">
+                            <span className="text-sm font-bold">৳</span>
+                            {profile.hourlyRate}
+                            <span className="text-[10px] text-muted-foreground font-bold uppercase ml-1">/hr</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-amber-500 font-bold text-sm mt-1">
+                            <Star className="w-3.5 h-3.5 fill-current" />
+                            {(profile.averageRating || 0).toFixed(1)}
+                          </div>
+                          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-1">
+                            {profile.totalTasksDone || 0} Tasks Done
+                          </span>
                         </div>
-                        <span className="text-xs font-bold text-black dark:text-white">{profile.acceptanceRate || 100}%</span>
                       </div>
-                      <div className="flex flex-col gap-0.5">
-                        <div className="flex items-center gap-1.5 text-muted-foreground">
-                          <Globe className="w-3 h-3 text-primary" />
-                          <span className="text-[10px] font-bold uppercase tracking-tight">Radius</span>
+
+                      <div className="space-y-3 mb-6 flex-grow">
+                        <div>
+                          <h3 className="text-xl font-black text-gray-900 dark:text-white group-hover:text-primary transition-colors line-clamp-1 mb-1">
+                            {user.name}
+                          </h3>
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium mb-3">
+                            <MapPin className="w-3.5 h-3.5" />
+                            <span className="line-clamp-1">{profile.university}</span>
+                          </div>
                         </div>
-                        <span className="text-xs font-bold text-black dark:text-white">{profile.preferredRadius || 5} KM</span>
-                      </div>                      
-                    </div>
 
-                    <div className="flex flex-wrap gap-2 pt-2">
-                      {profile.skills?.slice(0, 2).map((skill: string) => (
-                        <span key={skill} className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-[9px] font-bold uppercase tracking-widest">
-                          {skill}
-                        </span>
-                      ))}
-                      {profile.skills?.length > 2 && (
-                        <span className="px-2.5 py-1 rounded-full bg-gray-100 dark:bg-white/5 text-gray-500 text-[9px] font-bold uppercase tracking-widest">
-                          +{profile.skills.length - 2}
-                        </span>
-                      )}
-                    </div>
-                  </div>
+                        <p className="text-sm text-muted-foreground line-clamp-2 font-medium min-h-[2.5rem] mb-4">
+                          {profile.bio || "Student runner ready to help with your errands and tasks across the campus."}
+                        </p>
 
-                  <div className="flex gap-2 mt-auto">
-                    <Link href={`/runners/${user.id || item.userId}`} className="flex-1">
-                      <Button variant="outline" className="w-full h-12 rounded-xl border-gray-300 dark:border-white/10 hover:bg-gray-100 dark:hover:bg-white/5 transition-all duration-300 font-bold text-xs cursor-pointer hover:bg-primary/90 hover:text-white">
-                        View Details
-                      </Button>
-                    </Link>
-                    <Link href={`/dashboard/user/post-task?runnerId=${user.id || item.userId}`} className="flex-1">
-                      <Button className="w-full h-12 rounded-xl bg-gray-900 dark:bg-white dark:text-black hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-all duration-300 font-bold gap-2 group/btn text-xs cursor-pointer">
-                        <Calendar className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" />
-                        Book
-                      </Button>
-                    </Link>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="text-center py-20 bg-white/5 rounded-[2.5rem] border border-white/10">
-            <UserCircle className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-2xl font-bold mb-2">No runners found</h3>
-            <p className="text-muted-foreground">Try adjusting your search query or check back later.</p>
-          </div>
+                        <div className="grid grid-cols-2 gap-3 mb-6">
+                          <div className="flex flex-col gap-0.5">
+                            <div className="flex items-center gap-1.5 text-muted-foreground">
+                              <Zap className="w-3 h-3 text-primary" />
+                              <span className="text-[10px] font-bold uppercase tracking-tight">Acceptance</span>
+                            </div>
+                            <span className="text-xs font-bold text-black dark:text-white">{profile.acceptanceRate || 100}%</span>
+                          </div>
+                          <div className="flex flex-col gap-0.5">
+                            <div className="flex items-center gap-1.5 text-muted-foreground">
+                              <Globe className="w-3 h-3 text-primary" />
+                              <span className="text-[10px] font-bold uppercase tracking-tight">Radius</span>
+                            </div>
+                            <span className="text-xs font-bold text-black dark:text-white">{profile.preferredRadius || 5} KM</span>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2 pt-2">
+                          {profile.skills?.slice(0, 2).map((skill: string) => (
+                            <span key={skill} className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-[9px] font-bold uppercase tracking-widest">
+                              {skill}
+                            </span>
+                          ))}
+                          {profile.skills?.length > 2 && (
+                            <span className="px-2.5 py-1 rounded-full bg-gray-100 dark:bg-white/5 text-gray-500 text-[9px] font-bold uppercase tracking-widest">
+                              +{profile.skills.length - 2}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2 mt-auto">
+                        <Link href={`/runners/${user.id || item.userId}`} className="flex-1">
+                          <Button variant="outline" className="w-full h-12 rounded-xl border-gray-300 dark:border-white/10 hover:bg-gray-100 dark:hover:bg-white/5 transition-all duration-300 font-bold text-xs cursor-pointer hover:bg-primary/90 hover:text-white">
+                            View Details
+                          </Button>
+                        </Link>
+                        <Link href={`/dashboard/user/post-task?runnerId=${user.id || item.userId}`} className="flex-1">
+                          <Button className="w-full h-12 rounded-xl bg-gray-900 dark:bg-white dark:text-black hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-all duration-300 font-bold gap-2 group/btn text-xs cursor-pointer">
+                            <Calendar className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" />
+                            Book
+                          </Button>
+                        </Link>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-20 bg-white/5 rounded-[2.5rem] border border-white/10">
+                <UserCircle className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-2xl font-bold mb-2">No runners found</h3>
+                <p className="text-muted-foreground">Try adjusting your search query or check back later.</p>
+              </div>
+            )}
+          </>
         )}
-      </>
-    )}
-  </div>
-  <Footer />
-</>
-);
+      </div>
+      <Footer />
+    </>
+  );
 }
